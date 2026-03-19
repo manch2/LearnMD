@@ -37,7 +37,7 @@ export function markdownToHtml(markdown: string): string {
  */
 export function extractSections(markdown: string): LessonSection[] {
   const sections: LessonSection[] = [];
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const headingRegex = /^(#{1,6})\s+([^\n\r]+)$/gm;
   let match;
 
   while ((match = headingRegex.exec(markdown)) !== null) {
@@ -62,7 +62,7 @@ export function extractSections(markdown: string): LessonSection[] {
  * Extract quiz from markdown content using custom syntax
  */
 export function extractQuiz(markdown: string, slug: string): Lesson['quiz'] {
-  const quizRegex = /<Quiz\s+question=["']([^"']+)["']\s+options=\{([^}]+)\}\s+correct=\{(\d+)\}/g;
+  const quizRegex = /<Quiz\s+question=["']([^"']*)["']\s+options=\{([^{}]*)\}\s+correct=\{([0-9]+)\}/g;
   const questions: NonNullable<Lesson['quiz']>['questions'] = [];
   let match;
 
@@ -183,17 +183,32 @@ export function extractEmbeddedMedia(markdown: string): Array<{
   // Extract video embeds
   const videoRegex = /<VideoEmbed\s+[^>]*url=["']([^"']+)["'][^>]*>/g;
   let match;
+
+  const isDomain = (urlStr: string, domains: string[]): boolean => {
+    try {
+      const url = new URL(urlStr);
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
+      const hostname = url.hostname.toLowerCase();
+      return domains.some((d) => {
+        const domain = d.toLowerCase();
+        return hostname === domain || hostname.endsWith('.' + domain);
+      });
+    } catch {
+      return false;
+    }
+  };
+
   while ((match = videoRegex.exec(markdown)) !== null) {
     const url = match[1];
     let provider: string | undefined;
 
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    if (isDomain(url, ['youtube.com', 'youtu.be'])) {
       provider = 'youtube';
-    } else if (url.includes('vimeo.com')) {
+    } else if (isDomain(url, ['vimeo.com'])) {
       provider = 'vimeo';
-    } else if (url.includes('onedrive.live.com')) {
+    } else if (isDomain(url, ['onedrive.live.com'])) {
       provider = 'onedrive';
-    } else if (url.includes('drive.google.com')) {
+    } else if (isDomain(url, ['drive.google.com'])) {
       provider = 'googledrive';
     }
 

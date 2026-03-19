@@ -154,7 +154,7 @@ export class I18nManager implements I18nAdapter {
     content: string
   ): Array<{ key: string; translations: Record<string, string> }> {
     const paragraphs: Array<{ key: string; translations: Record<string, string> }> = [];
-    const paragraphRegex = /<Paragraph\s+i18n=["']([^"']+)["']>([\s\S]*?)<\/Paragraph>/g;
+    const paragraphRegex = /<Paragraph\s+i18n=["']([^"']*)["']\s*>([\s\S]*?)<\/Paragraph>/g;
     let match;
 
     while ((match = paragraphRegex.exec(content)) !== null) {
@@ -180,7 +180,7 @@ export class I18nManager implements I18nAdapter {
    */
   processContent(content: string): string {
     return content.replace(
-      /<Paragraph\s+i18n=["']([^"']+)["']>([\s\S]*?)<\/Paragraph>/g,
+      /<Paragraph\s+i18n=["']([^"']*)["']\s*>([\s\S]*?)<\/Paragraph>/g,
       (_match, key, content_) => {
         const translated = this.getParagraphTranslation(content_);
         return `<p data-i18n="${key}">${translated}</p>`;
