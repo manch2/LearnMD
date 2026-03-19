@@ -33,10 +33,20 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Zip build artifacts
+        run: |
+          for pkg in packages/*/; do
+            if [ -d "$pkg/dist" ]; then
+              pkgname=$(basename $pkg)
+              echo "Zipping $pkgname"
+              cd "$pkg/dist" && zip -r "../../../${pkgname}-dist.zip" . && cd ../../..
+            fi
+          done
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'packages/*/dist'
+          artifacts: '*-dist.zip'
           artifactErrorsFailBuild: true
           generateReleaseNotes: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +84,11 @@ jobs:
             if [ -f "$pkg/package.json" ]; then
               echo "Publishing $pkg"
               cd "$pkg"
-              npm publish --access public
+              TAG_FLAG=""
+              if [[ "${GITHUB_REF_NAME}" == *"beta"* ]]; then
+                TAG_FLAG="--tag beta"
+              fi
+              pnpm publish --access public --no-git-checks $TAG_FLAG
               cd ../..
             fi
           done
