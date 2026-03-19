@@ -46,11 +46,12 @@ program
   .description('Add new resources (course or lesson)')
   .argument('<type>', 'Type of resource (course, lesson)')
   .argument('<name>', 'Name/Title of the resource')
-  .action((type, name) => {
+  .option('-c, --course <courseName>', 'Course name to add the lesson to (defaults to demo-course)')
+  .action((type, name, options) => {
     if (type === 'course') {
       addCourseCommand(name);
     } else if (type === 'lesson') {
-      addLessonCommand(name);
+      addLessonCommand(name, options.course || 'demo-course');
     } else {
       console.error('Invalid resource type. Use "course" or "lesson".');
     }

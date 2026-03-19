@@ -1,0 +1,220 @@
+---
+title:
+  en: 'Operators in JavaScript'
+  es: 'Operadores en JavaScript'
+description:
+  en: 'Learn about arithmetic, comparison, and logical operators'
+  es: 'Aprende sobre operadores aritméticos, de comparación y lógicos'
+duration: '15 minutes'
+difficulty: 'beginner'
+points: 75
+learningObjectives:
+  - en:
+      - 'Use arithmetic operators'
+      - 'Compare values with comparison operators'
+      - 'Combine conditions with logical operators'
+  - es:
+      - 'Usar operadores aritméticos'
+      - 'Comparar valores con operadores de comparación'
+      - 'Combinar condiciones con operadores lógicos'
+---
+<LanguageSwitcher variant="dropdown" showLabel />
+# Operadores en JavaScript
+
+<Callout type="info">
+  <Paragraph i18n="intro-ops">
+    <en>
+      Operators allow you to perform operations on values. JavaScript has several types of operators
+      for different purposes.
+    </en>
+    <es>
+      Los operadores te permiten realizar operaciones con valores. JavaScript tiene varios tipos de
+      operadores para diferentes propósitos.
+    </es>
+  </Paragraph>
+</Callout>
+
+## Arithmetic Operators
+
+<Paragraph i18n="arith-intro">
+  <en>Use arithmetic operators to perform mathematical calculations:</en>
+  <es>Usa operadores aritméticos para realizar cálculos matemáticos:</es>
+</Paragraph>
+
+```javascript
+let a = 10;
+let b = 3;
+
+console.log(a + b); // 13  (addition)
+console.log(a - b); // 7   (subtraction)
+console.log(a * b); // 30  (multiplication)
+console.log(a / b); // 3.33... (division)
+console.log(a % b); // 1   (remainder)
+console.log(a ** b); // 1000 (exponentiation)
+```
+
+## Comparison Operators
+
+<Paragraph i18n="comp-intro">
+  <en>Comparison operators return `true` or `false`:</en>
+  <es>Los operadores de comparación devuelven `true` o `false`:</es>
+</Paragraph>
+
+```javascript
+let x = 5;
+let y = '5';
+
+console.log(x == y); // true  (loose equality)
+console.log(x === y); // false (strict equality)
+console.log(x != y); // false (loose inequality)
+console.log(x !== y); // true  (strict inequality)
+console.log(x > 3); // true
+console.log(x <= 5); // true
+```
+
+<Callout type="warning">
+  <Paragraph i18n="strict-vs-loose">
+    <en>
+      **Important:** Always use `===` and `!==` (strict) instead of `==` and `!=` (loose) to avoid
+      unexpected type coercion.
+    </en>
+    <es>
+      **Importante:** Siempre usa `===` y `!==` (estricto) en lugar de `==` y `!=` (laxo) para
+      evitar conversiones de tipo inesperadas.
+    </es>
+  </Paragraph>
+</Callout>
+
+## Logical Operators
+
+<Paragraph i18n="logical-intro">
+  <en>Logical operators combine boolean expressions:</en>
+  <es>Los operadores lógicos combinan expresiones booleanas:</es>
+</Paragraph>
+
+```javascript
+let isAdult = true;
+let hasLicense = false;
+
+console.log(isAdult && hasLicense); // false (AND)
+console.log(isAdult || hasLicense); // true  (OR)
+console.log(!isAdult); // false (NOT)
+```
+
+## Operator Precedence
+
+<Paragraph i18n="precedence">
+  <en>JavaScript follows standard mathematical precedence:</en>
+  <es>JavaScript sigue la precedencia matemática estándar:</es>
+</Paragraph>
+
+| Priority | Operators                          |
+| -------- | ---------------------------------- |
+| 1        | `()` (parentheses)                 |
+| 2        | `**` (exponent)                    |
+| 3        | `*`, `/`, `%`                      |
+| 4        | `+`, `-`                           |
+| 5        | `===`, `!==`, `<`, `>`, `<=`, `>=` |
+| 6        | `&&`                               |
+| 7        | `\|\|`                             |
+
+## Quiz Time!
+
+<Quiz
+  id="operators-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is the result of: 10 % 3?',
+        es: '¿Cuál es el resultado de: 10 % 3?'
+      },
+      options: [
+        { id: 'a', label: '3' },
+        { id: 'b', label: '1' },
+        { id: 'c', label: '3.33' },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'The modulo operator (%) returns the remainder. 10 divided by 3 is 3 with remainder 1.',
+        es: 'El operador de módulo (%) devuelve el resto. 10 dividido por 3 es 3 con resto 1.'
+      },
+      points: 10,
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is the difference between == and ===?',
+        es: '¿Cuál es la diferencia entre == y ===?'
+      },
+      options: [
+        { id: 'a', label: { en: 'They are exactly the same', es: 'Son exactamente lo mismo' } },
+        { id: 'b', label: { en: '=== checks type and value, == only checks value', es: '=== verifica tipo y valor, == solo verifica valor' } },
+        { id: 'c', label: { en: '== checks type and value, === only checks value', es: '== verifica tipo y valor, === solo verifica valor' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: '=== (strict equality) checks both type and value, while == (loose equality) only checks value with type coercion.',
+        es: '=== (igualdad estricta) verifica tanto el tipo como el valor, mientras que == (igualdad laxa) solo verifica el valor con conversión de tipos.'
+      },
+      points: 10,
+    },
+    {
+      id: 'q3',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is true && false?',
+        es: '¿Qué es true && false?'
+      },
+      options: [
+        { id: 'a', label: 'true' },
+        { id: 'b', label: 'false' },
+        { id: 'c', label: 'undefined' },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'The AND operator (&&) returns true only if BOTH operands are true. true && false = false.',
+        es: 'El operador AND (&&) devuelve true solo si AMBOS operandos son true. true && false = false.'
+      },
+      points: 10,
+    },
+    {
+      id: 'q4',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is the result of: 2 + 3 * 4?',
+        es: '¿Cuál es el resultado de: 2 + 3 * 4?'
+      },
+      options: [
+        { id: 'a', label: '20' },
+        { id: 'b', label: '14' },
+        { id: 'c', label: '24' },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'Multiplication has higher precedence than addition, so 3*4=12, then 2+12=14.',
+        es: 'La multiplicación tiene mayor precedencia que la suma, por lo que 3*4=12, luego 2+12=14.'
+      },
+      points: 10,
+    },
+  ]}
+/>
+
+<Progress value={100} showPercentage label="Course Progress" />
+
+<Callout type="success">
+  <Paragraph i18n="congrats">
+    <en>
+      🎉 Congratulations! You've completed the JavaScript Basics course! Now you know the
+      fundamentals of JavaScript.
+    </en>
+    <es>
+      🎉 ¡Felicitaciones! ¡Has completado el curso de Fundamentos de JavaScript! Ahora conoces los
+      fundamentos de JavaScript.
+    </es>
+  </Paragraph>
+</Callout>
+
+

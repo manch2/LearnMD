@@ -73,9 +73,9 @@ export interface Quiz {
  */
 export interface QuizQuestion {
   id: string;
-  type: 'multiple-choice' | 'true-false' | 'input' | 'drag-drop';
+  type: 'multiple-choice' | 'true-false' | 'input';
   question: string | TranslatedString;
-  options?: QuizOption[];
+  options?: Array<{ id: string; label: string | TranslatedString }>;
   correctAnswer: string | string[];
   explanation?: string | TranslatedString;
   points?: number;
@@ -159,6 +159,8 @@ export interface CourseProgress {
  */
 export interface UserProfile {
   id: string;
+  name?: string;
+  email?: string;
   totalPoints: number;
   badges: Badge[];
   coursesProgress: Record<string, CourseProgress>;

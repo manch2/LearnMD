@@ -21,18 +21,18 @@ export function useI18n() {
       setCurrentLanguage(lang);
     });
     return unsubscribe;
-  }, []);
+  }, [i18n]);
 
   const setLanguage = useCallback((lang: string) => {
     i18n.setLanguage(lang);
     setCurrentLanguage(lang);
-  }, []);
+  }, [i18n]);
 
   const translate = useCallback(
     (key: string) => {
       return i18n.translate(key);
     },
-    [currentLanguage]
+    [i18n]
   );
 
   const t = translate;

@@ -59,7 +59,7 @@ async function askForProjectName(): Promise<string> {
 }
 
 async function createBasicStructure(projectPath: string) {
-  const dirs = ['lessons', 'public', 'src'];
+  const dirs = ['courses/demo-course/lessons', 'public', 'src'];
 
   for (const dir of dirs) {
     await mkdir(join(projectPath, dir), { recursive: true });
@@ -75,7 +75,7 @@ async function createBasicStructure(projectPath: string) {
   await writeFile(join(projectPath, 'learnmd.config.ts'), getLearnMdConfig());
   await writeFile(join(projectPath, '.gitignore'), getGitIgnore());
 
-  await writeFile(join(projectPath, 'lessons/.gitkeep'), '');
+  await writeFile(join(projectPath, 'courses/demo-course/lessons/.gitkeep'), '');
 }
 
 async function createEssentialFiles(projectPath: string, _isInWorkspace: boolean) {
@@ -103,6 +103,7 @@ function getMainTsx(): string {
   return `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import '@learnmd/default-theme/styles';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -116,21 +117,34 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function getAppTsx(): string {
   return `/// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CourseViewer } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer } from '@learnmd/default-theme';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import config from '../learnmd.config';
 
-// Glob all markdown files dynamically as MDX components
-const lessonModules = import.meta.glob('../lessons/*.mdx', { eager: true });
-const lessons = Object.entries(lessonModules).map(([path, mod]) => ({
-  slug: path.replace('../lessons/', '').replace('.mdx', ''),
-  Component: (mod as any).default as React.ComponentType,
-  frontmatter: (mod as any).frontmatter || {}
-}));
+// Glob all markdown files dynamically across all courses
+const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });
+const allLessons = Object.entries(lessonModules).map(([path, mod]) => {
+  const parts = path.split('/');
+  const courseSlug = parts[2];
+  const lessonSlug = parts[4].replace('.mdx', '');
+  return {
+    courseSlug,
+    slug: lessonSlug,
+    Component: (mod as any).default as React.ComponentType,
+    frontmatter: (mod as any).frontmatter || {}
+  };
+});
 
 function App() {
   return (
     <LearnMDProvider config={config}>
-      <CourseViewer lessons={lessons} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<CatalogViewer courses={allLessons} />} />
+          <Route path="/profile" element={<ProfileViewer />} />
+          <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} />} />
+        </Routes>
+      </BrowserRouter>
     </LearnMDProvider>
   );
 }
@@ -170,6 +184,7 @@ function getViteConfig(): string {
   return `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from '@mdx-js/rollup';
+import remarkGfm from 'remark-gfm';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { resolve } from 'path';
@@ -179,7 +194,7 @@ export default defineConfig({
     {
       enforce: 'pre',
       ...mdx({
-        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+        remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
         providerImportSource: '@mdx-js/react'
       })
     },
@@ -254,6 +269,7 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
   const dependencies: Record<string, string> = {
     react: '^18.2.0',
     'react-dom': '^18.2.0',
+    'react-router-dom': '^6.22.3',
     '@mdx-js/react': '^3.0.1'
   };
 
@@ -262,6 +278,7 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
     '@types/react-dom': '^18.2.0',
     '@vitejs/plugin-react': '^4.2.0',
     '@mdx-js/rollup': '^3.0.1',
+    'remark-gfm': '^4.0.0',
     'remark-frontmatter': '^5.0.0',
     'remark-mdx-frontmatter': '^4.0.0',
     typescript: '^5.4.0',

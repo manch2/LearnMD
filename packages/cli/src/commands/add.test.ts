@@ -21,11 +21,12 @@ describe('addLessonCommand', () => {
   it('should create a lesson file with correct content', async () => {
     const title = 'Test Lesson';
     const slug = 'test-lesson';
-    const expectedPath = join(process.cwd(), 'lessons', `${slug}.mdx`);
+    const courseSlug = 'demo-course';
+    const expectedPath = join(process.cwd(), 'courses', courseSlug, 'lessons', `${slug}.mdx`);
 
     await addLessonCommand(title);
 
-    expect(mkdir).toHaveBeenCalledWith(expect.stringContaining('lessons'), { recursive: true });
+    expect(mkdir).toHaveBeenCalledWith(expect.stringContaining(join('courses', courseSlug, 'lessons')), { recursive: true });
     expect(writeFile).toHaveBeenCalledWith(
       expectedPath,
       expect.stringContaining('title:'),

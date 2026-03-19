@@ -1,0 +1,119 @@
+---
+title:
+  en: 'Introduction to JavaScript'
+  es: 'Introducción a JavaScript'
+description:
+  en: 'Overview of the JavaScript programming language'
+  es: 'Visión general del lenguaje de programación JavaScript'
+duration: '10 minutes'
+difficulty: 'beginner'
+points: 50
+learningObjectives:
+  - en:
+      - 'Understand what JavaScript is'
+      - 'Know its main uses'
+      - 'Set up your development environment'
+  - es:
+      - 'Entender qué es JavaScript'
+      - 'Conocer sus principales usos'
+      - 'Configurar tu entorno de desarrollo'
+---
+
+# Introducción a JavaScript
+
+<Callout type="info">
+  <Paragraph i18n="welcome">
+    <en>
+      Welcome to your first JavaScript lesson! By the end of this lesson, you'll understand the
+      basics of the world's most popular programming language.
+    </en>
+    <es>
+      ¡Bienvenido a tu primera lección de JavaScript! Al final de esta lección, entenderás los
+      fundamentos del lenguaje de programación más popular del mundo.
+    </es>
+  </Paragraph>
+</Callout>
+
+## What is JavaScript?
+
+<Paragraph i18n="what-is-js">
+  <en>
+    JavaScript is a programming language that powers the web. Initially created to make web pages
+    interactive, it has evolved into a versatile language used for:
+  </en>
+  <es>
+    JavaScript es un lenguaje de programación que impulsa la web. Inicialmente creado para hacer
+    páginas web interactivas, ha evolucionado hasta convertirse en un lenguaje versátil utilizado
+    para:
+  </es>
+</Paragraph>
+
+- 🌐 **Web Development** - Creating interactive websites
+- 📱 **Mobile Apps** - Building cross-platform applications
+- 🖥️ **Backend** - Server-side programming with Node.js
+- 🎮 **Games** - Browser-based games and more
+
+<Callout type="tip">
+  <Paragraph i18n="fun-fact">
+    <en>**Fun fact:** JavaScript was created in just 10 days by Brendan Eich in 1995!</en>
+    <es>**Dato curioso:** ¡JavaScript fue creado en solo 10 días por Brendan Eich en 1995!</es>
+  </Paragraph>
+</Callout>
+
+## Your First Code
+
+<Paragraph i18n="first-code">
+  <en>
+    Let's start with the classic "Hello, World!" program. In JavaScript, you can use `console.log()`
+    to print messages:
+  </en>
+  <es>
+    Comencemos con el clásico programa "¡Hola, Mundo!". En JavaScript, puedes usar `console.log()`
+    para imprimir mensajes:
+  </es>
+</Paragraph>
+
+```javascript
+console.log('Hello, World!');
+console.log('¡Hola, Mundo!');
+```
+
+## Quiz Time!
+
+<Quiz
+  id="intro-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: 'What was JavaScript originally created for?',
+      options: [
+        { id: 'a', label: 'Making web pages interactive' },
+        { id: 'b', label: 'Building mobile apps' },
+        { id: 'c', label: 'Database management' },
+      ],
+      correctAnswer: 'a',
+      explanation:
+        'JavaScript was originally created by Netscape in 1995 to make web pages interactive.',
+      points: 10,
+    },
+    {
+      id: 'q2',
+      type: 'multiple-choice',
+      question: 'Which method is used to print messages to the console in JavaScript?',
+      options: [
+        { id: 'a', label: 'console.log()' },
+        { id: 'b', label: 'print()' },
+        { id: 'c', label: 'echo()' },
+      ],
+      correctAnswer: 'a',
+      explanation:
+        'console.log() is the standard method for outputting messages to the browser console.',
+      points: 10,
+    },
+  ]}
+/>
+
+<Progress value={33} showPercentage label="Course Progress" />
+
+<LanguageSwitcher variant="dropdown" showLabel />
