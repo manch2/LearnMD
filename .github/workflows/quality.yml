@@ -1,17 +1,11 @@
-name: Code Quality (SonarQube)
+name: Code Quality (SonarCloud)
 
 on:
   push:
     branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
-    inputs:
-      sonar_token:
-        description: 'SonarQube Token'
-        required: false
-      sonar_host:
-        description: 'SonarQube Host URL'
-        required: false
-        default: 'https://sonarcloud.io'
 
 jobs:
   sonarcloud:
@@ -39,21 +33,10 @@ jobs:
         run: pnpm build
 
       - name: Run tests with coverage
-        run: pnpm test:coverage || pnpm test
+        run: pnpm -r test:coverage
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
+        uses: sonarsource/sonarcloud-github-action@master
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN || github.event.inputs.sonar_token || '' }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || github.event.inputs.sonar_host || 'https://sonarcloud.io' }}
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=learnmd
-            -Dsonar.projectKey=learnmd
-            -Dsonar.sources=packages
-            -Dsonar.tests=packages
-            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
-            -Dsonar.exclusions=**/*.md,**/dist/**,**/node_modules/**
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
-            -Dsonar.sourceEncoding=UTF-8
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

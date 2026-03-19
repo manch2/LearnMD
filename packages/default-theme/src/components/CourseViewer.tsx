@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ThemeProvider } from '../hooks';
 import { CourseLayout } from '../layouts';
 // @ts-ignore
@@ -14,7 +14,7 @@ import { getTranslatedString } from '@learnmd/core';
 import { useParams, useNavigate } from 'react-router-dom';
 
 export interface CourseViewerProps {
-  allLessons: Array<{ courseSlug: string; slug: string; Component: React.ComponentType; frontmatter: any }>;
+  allLessons: Array<{ courseSlug: string; slug: string; Component: React.ComponentType; frontmatter: Record<string, unknown> }>;
 }
 
 const components = {
@@ -42,7 +42,7 @@ export function CourseViewer({ allLessons }: CourseViewerProps) {
     children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
-      title: getTranslatedString(l.frontmatter?.title, 'en') || l.slug,
+      title: getTranslatedString(l.frontmatter?.title as any, 'en') || l.slug,
       slug: l.slug,
     }))
   }];

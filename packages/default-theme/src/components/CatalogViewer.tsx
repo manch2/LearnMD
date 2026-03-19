@@ -1,17 +1,17 @@
 import React from 'react';
-import { useLearnMD } from '@learnmd/core';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 
 export interface CatalogViewerProps {
-  courses: Array<{ courseSlug: string; slug: string; frontmatter: any }>;
+  courses: Array<{ courseSlug: string; slug: string; frontmatter: Record<string, unknown> }>;
 }
 
 export function CatalogViewer({ courses }: CatalogViewerProps) {
-  const { storage } = useLearnMD();
+  // Remove unused storage
+
 
   // Group lessons by courseSlug
-  const courseMap = new Map<string, any>();
+  const courseMap = new Map<string, { id: string; title: string; totalLessons: number }>();
   courses.forEach(lesson => {
     if (!courseMap.has(lesson.courseSlug)) {
       courseMap.set(lesson.courseSlug, {
@@ -20,7 +20,10 @@ export function CatalogViewer({ courses }: CatalogViewerProps) {
         totalLessons: 0,
       });
     }
-    courseMap.get(lesson.courseSlug).totalLessons += 1;
+    const course = courseMap.get(lesson.courseSlug);
+    if (course) {
+      course.totalLessons += 1;
+    }
   });
 
   const uniqueCourses = Array.from(courseMap.values());
@@ -40,7 +43,7 @@ export function CatalogViewer({ courses }: CatalogViewerProps) {
         
         {uniqueCourses.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            No courses available yet. Add some courses in the 'courses/' folder!
+            No courses available yet. Add some courses in the &apos;courses/&apos; folder!
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -126,56 +126,77 @@ console.log(!isAdult); // false (NOT)
     {
       id: 'q1',
       type: 'multiple-choice',
-      question: 'What is the result of: 10 % 3?',
+      question: {
+        en: 'What is the result of: 10 % 3?',
+        es: '¿Cuál es el resultado de: 10 % 3?'
+      },
       options: [
         { id: 'a', label: '3' },
         { id: 'b', label: '1' },
         { id: 'c', label: '3.33' },
       ],
       correctAnswer: 'b',
-      explanation:
-        'The modulo operator (%) returns the remainder. 10 divided by 3 is 3 with remainder 1.',
+      explanation: {
+        en: 'The modulo operator (%) returns the remainder. 10 divided by 3 is 3 with remainder 1.',
+        es: 'El operador de módulo (%) devuelve el resto. 10 dividido por 3 es 3 con resto 1.'
+      },
       points: 10,
     },
     {
       id: 'q2',
       type: 'multiple-choice',
-      question: 'What is the difference between == and ===?',
+      question: {
+        en: 'What is the difference between == and ===?',
+        es: '¿Cuál es la diferencia entre == y ===?'
+      },
       options: [
-        { id: 'a', label: 'They are exactly the same' },
-        { id: 'b', label: '=== checks type and value, == only checks value' },
-        { id: 'c', label: '== checks type and value, === only checks value' },
+        { id: 'a', label: { en: 'They are exactly the same', es: 'Son exactamente lo mismo' } },
+        { id: 'b', label: { en: '=== checks type and value, == only checks value', es: '=== verifica tipo y valor, == solo verifica valor' } },
+        { id: 'c', label: { en: '== checks type and value, === only checks value', es: '== verifica tipo y valor, === solo verifica valor' } },
       ],
       correctAnswer: 'b',
-      explanation:
-        '=== (strict equality) checks both type and value, while == (loose equality) only checks value with type coercion.',
+      explanation: {
+        en: '=== (strict equality) checks both type and value, while == (loose equality) only checks value with type coercion.',
+        es: '=== (igualdad estricta) verifica tanto el tipo como el valor, mientras que == (igualdad laxa) solo verifica el valor con conversión de tipos.'
+      },
       points: 10,
     },
     {
       id: 'q3',
       type: 'multiple-choice',
-      question: 'What is true && false?',
+      question: {
+        en: 'What is true && false?',
+        es: '¿Qué es true && false?'
+      },
       options: [
         { id: 'a', label: 'true' },
         { id: 'b', label: 'false' },
         { id: 'c', label: 'undefined' },
       ],
       correctAnswer: 'b',
-      explanation:
-        'The AND operator (&&) returns true only if BOTH operands are true. true && false = false.',
+      explanation: {
+        en: 'The AND operator (&&) returns true only if BOTH operands are true. true && false = false.',
+        es: 'El operador AND (&&) devuelve true solo si AMBOS operandos son true. true && false = false.'
+      },
       points: 10,
     },
     {
       id: 'q4',
       type: 'multiple-choice',
-      question: 'What is the result of: 2 + 3 * 4?',
+      question: {
+        en: 'What is the result of: 2 + 3 * 4?',
+        es: '¿Cuál es el resultado de: 2 + 3 * 4?'
+      },
       options: [
         { id: 'a', label: '20' },
         { id: 'b', label: '14' },
         { id: 'c', label: '24' },
       ],
       correctAnswer: 'b',
-      explanation: 'Multiplication has higher precedence than addition, so 3*4=12, then 2+12=14.',
+      explanation: {
+        en: 'Multiplication has higher precedence than addition, so 3*4=12, then 2+12=14.',
+        es: 'La multiplicación tiene mayor precedencia que la suma, por lo que 3*4=12, luego 2+12=14.'
+      },
       points: 10,
     },
   ]}
