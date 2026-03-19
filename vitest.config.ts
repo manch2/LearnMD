@@ -13,7 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@learnmd/core': resolve(__dirname, '../packages/core/src'),
+      '@learnmd/core': resolve(__dirname, 'packages/core/src'),
     },
   },
 });

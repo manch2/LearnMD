@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { writeFile, mkdir } from 'fs-extra';
+import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
 export async function initCommand() {

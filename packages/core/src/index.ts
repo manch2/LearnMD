@@ -49,11 +49,27 @@ export const VERSION = '0.0.1';
  * Initialize LearnMD core with default configuration
  */
 export interface LearnMDConfig {
+  title?: string;
+  description?: string;
   defaultLanguage?: string;
+  availableLanguages?: string[];
   basePath?: string;
   storagePrefix?: string;
   enableGamification?: boolean;
   enableAnalytics?: boolean;
+  theme?: {
+    primaryColor?: string;
+    darkMode?: boolean;
+  };
+  gamification?: {
+    pointsPerLesson?: number;
+    pointsPerQuiz?: number;
+    badges?: Array<{ id: string; name: string; icon: string }>;
+  };
+}
+
+export function defineConfig(config: LearnMDConfig): LearnMDConfig {
+  return config;
 }
 
 export function createLearnMD(config: LearnMDConfig = {}) {
@@ -95,6 +111,8 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   };
 }
 
+export { LearnMDProvider, useLearnMD } from './components/LearnMDProvider.js';
+
 /**
  * Default export
  */
@@ -102,3 +120,4 @@ export default {
   createLearnMD,
   VERSION,
 };
+

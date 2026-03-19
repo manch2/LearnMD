@@ -1,7 +1,8 @@
 import chalk from 'chalk';
 import { build } from 'vite';
 import { resolve } from 'path';
-import { readdir, writeFile, mkdir, readFile, copy, pathExists } from 'fs-extra';
+import { readdir, writeFile, mkdir, readFile } from 'fs/promises';
+import { existsSync, cpSync } from 'fs';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import MiniSearch from 'minisearch';
@@ -103,8 +104,8 @@ async function copyStaticFiles(outDir: string) {
 
   for (const dir of staticDirs) {
     const src = resolve(root, dir);
-    if (await pathExists(src)) {
-      await copy(src, resolve(outPath, dir));
+    if (existsSync(src)) {
+      cpSync(src, resolve(outPath, dir), { recursive: true });
     }
   }
 }

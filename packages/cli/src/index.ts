@@ -5,6 +5,7 @@ import { createCommand } from './commands/create.js';
 import { devCommand } from './commands/dev.js';
 import { buildCommand } from './commands/build.js';
 import { initCommand } from './commands/init.js';
+import { addCourseCommand, addLessonCommand } from './commands/add.js';
 
 const version = '0.0.1';
 
@@ -39,5 +40,20 @@ program
   .option('-o, --out <dir>', 'Output directory', 'dist')
   .option('--base <base>', 'Base path', '/')
   .action(buildCommand);
+
+program
+  .command('add')
+  .description('Add new resources (course or lesson)')
+  .argument('<type>', 'Type of resource (course, lesson)')
+  .argument('<name>', 'Name/Title of the resource')
+  .action((type, name) => {
+    if (type === 'course') {
+      addCourseCommand(name);
+    } else if (type === 'lesson') {
+      addLessonCommand(name);
+    } else {
+      console.error('Invalid resource type. Use "course" or "lesson".');
+    }
+  });
 
 program.parse();

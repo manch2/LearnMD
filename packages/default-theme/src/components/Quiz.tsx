@@ -115,17 +115,17 @@ export function Quiz({
 
   if (quizCompleted && results) {
     return (
-      <div className="card my-6">
-        <div className="text-center mb-6">
+      <div className="bg-white dark:bg-[#202124] shadow-md border border-gray-200 dark:border-gray-800 rounded-xl p-8 my-8 transition-colors">
+        <div className="text-center mb-8">
           <div
-            className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
+            className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${
               results.passed
-                ? 'bg-[rgb(var(--success))]/20 text-[rgb(var(--success))]'
-                : 'bg-[rgb(var(--error))]/20 text-[rgb(var(--error))]'
+                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400'
+                : 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400'
             }`}
           >
             {results.passed ? (
-              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -134,7 +134,7 @@ export function Quiz({
                 />
               </svg>
             ) : (
-              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -144,38 +144,38 @@ export function Quiz({
               </svg>
             )}
           </div>
-          <h3 className="text-2xl font-bold mb-2">
+          <h3 className="text-3xl font-extrabold mb-3 text-slate-900 dark:text-white">
             {results.passed ? 'Congratulations!' : 'Keep Trying!'}
           </h3>
-          <p className="text-4xl font-bold mb-2">{results.score}%</p>
-          <p className="text-[rgb(var(--text-secondary))]">
+          <p className="text-5xl font-black mb-3 text-emerald-600 dark:text-emerald-500">{results.score}%</p>
+          <p className="text-lg font-medium text-slate-500 dark:text-gray-400">
             {results.answers.filter((a) => a.correct).length} of {results.totalQuestions} correct
           </p>
         </div>
 
         {showCorrectAnswers && (
-          <div className="space-y-4 mb-6">
-            <h4 className="font-semibold">Review Answers</h4>
+          <div className="space-y-4 mb-8">
+            <h4 className="text-xl font-bold border-b border-gray-200 dark:border-gray-800 pb-2 mb-4 text-slate-800 dark:text-white">Review Answers</h4>
             {results.answers.map((answer, index) => {
               const question = questions.find((q) => q.id === answer.questionId);
               return (
                 <div
                   key={answer.questionId}
-                  className={`p-4 rounded-lg ${
+                  className={`p-5 rounded-lg border ${
                     answer.correct
-                      ? 'bg-[rgb(var(--success))]/10 border border-[rgb(var(--success))]/30'
-                      : 'bg-[rgb(var(--error))]/10 border border-[rgb(var(--error))]/30'
+                      ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800/50'
+                      : 'bg-rose-50 dark:bg-rose-900/10 border-rose-200 dark:border-rose-800/50'
                   }`}
                 >
-                  <p className="font-medium mb-2">Question {index + 1}</p>
-                  <p className="text-[rgb(var(--text-secondary))] mb-2">{question?.question}</p>
+                  <p className="text-sm font-semibold tracking-wide uppercase text-slate-500 dark:text-gray-400 mb-2">Question {index + 1}</p>
+                  <p className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-3">{question?.question}</p>
                   <p
-                    className={`text-sm ${answer.correct ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--error))]'}`}
+                    className={`font-semibold ${answer.correct ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}`}
                   >
                     Your answer: {answer.selectedAnswer}
                   </p>
                   {!answer.correct && (
-                    <p className="text-sm text-[rgb(var(--success))]">
+                    <p className="font-semibold text-emerald-700 dark:text-emerald-400 mt-2">
                       Correct answer:{' '}
                       {Array.isArray(question?.correctAnswer)
                         ? question?.correctAnswer[0]
@@ -189,7 +189,7 @@ export function Quiz({
         )}
 
         {allowRetry && !results.passed && (
-          <button onClick={handleRetry} className="btn-primary w-full">
+          <button onClick={handleRetry} className="w-full py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
             Try Again
           </button>
         )}
@@ -198,46 +198,46 @@ export function Quiz({
   }
 
   return (
-    <div className="card my-6">
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-[rgb(var(--text-secondary))]">
+    <div className="bg-white dark:bg-[#202124] shadow-sm border border-gray-200 dark:border-gray-800 rounded-xl p-6 lg:p-8 my-8 transition-colors">
+      <div className="mb-6">
+        <div className="flex justify-between items-end mb-3">
+          <span className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-gray-400">
             Question {currentQuestionIndex + 1} of {questions.length}
           </span>
           {currentQuestion.points && (
-            <span className="badge-primary">{currentQuestion.points} points</span>
+            <span className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">{currentQuestion.points} pts</span>
           )}
         </div>
-        <div className="progress-bar">
+        <div className="h-2 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
           <div
-            className="progress-bar-fill"
+            className="h-full bg-emerald-500 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
           />
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold mb-4">{currentQuestion.question}</h3>
+      <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white leading-snug">{currentQuestion.question}</h3>
 
-      <div className="space-y-3 mb-6">
+      <div className="space-y-3 mb-8">
         {currentQuestion.options?.map((option) => {
           const isSelected = selectedAnswer === option.id;
           const isCorrect = Array.isArray(currentQuestion.correctAnswer)
             ? currentQuestion.correctAnswer.includes(option.id)
             : currentQuestion.correctAnswer === option.id;
 
-          let className = 'p-4 rounded-lg border cursor-pointer transition-all';
+          let className = 'p-4 rounded-xl border-2 cursor-pointer transition-all duration-200';
           if (submitted) {
             if (isCorrect) {
-              className += ' bg-[rgb(var(--success))]/10 border-[rgb(var(--success))]';
+              className += ' bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500 dark:border-emerald-500 text-emerald-900 dark:text-emerald-100';
             } else if (isSelected && !isCorrect) {
-              className += ' bg-[rgb(var(--error))]/10 border-[rgb(var(--error))]';
+              className += ' bg-rose-50 dark:bg-rose-900/20 border-rose-500 dark:border-rose-500 text-rose-900 dark:text-rose-100';
             } else {
-              className += ' border-[rgb(var(--border-color))] opacity-50';
+              className += ' border-gray-200 dark:border-gray-800 opacity-50 text-slate-500 dark:text-gray-400';
             }
           } else {
             className += isSelected
-              ? ' border-[rgb(var(--color-primary-500))] bg-[rgb(var(--color-primary-50))]'
-              : ' border-[rgb(var(--border-color))] hover:border-[rgb(var(--color-primary-300))]';
+              ? ' border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-100 shadow-sm'
+              : ' border-gray-200 dark:border-gray-700 hover:border-emerald-400 hover:bg-gray-50 dark:hover:bg-gray-800 text-slate-700 dark:text-gray-200';
           }
 
           return (
@@ -246,17 +246,17 @@ export function Quiz({
               className={className}
               onClick={() => handleAnswerSelect(option.id)}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                     isSelected
-                      ? 'border-[rgb(var(--color-primary-500))] bg-[rgb(var(--color-primary-500))]'
-                      : 'border-[rgb(var(--border-color))]'
+                      ? 'border-emerald-500 bg-emerald-500'
+                      : 'border-gray-300 dark:border-gray-600'
                   }`}
                 >
-                  {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                  {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                 </div>
-                <span>{option.label}</span>
+                <span className="font-medium text-lg">{option.label}</span>
               </div>
             </div>
           );
@@ -264,24 +264,24 @@ export function Quiz({
       </div>
 
       {showExplanation && currentQuestion.explanation && (
-        <div className="bg-[rgb(var(--info))]/10 border border-[rgb(var(--info))]/30 rounded-lg p-4 mb-6">
-          <p className="text-sm text-[rgb(var(--info))]">
-            <strong>Explanation:</strong> {currentQuestion.explanation}
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded-r-lg p-5 mb-8">
+          <p className="text-blue-800 dark:text-blue-200">
+            <strong className="font-bold">Explanation:</strong> {currentQuestion.explanation}
           </p>
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         {!submitted ? (
           <button
             onClick={handleSubmitAnswer}
             disabled={!selectedAnswer}
-            className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 rounded-xl bg-emerald-600 text-white font-bold text-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
           >
             Submit Answer
           </button>
         ) : (
-          <button onClick={handleNextQuestion} className="btn-primary flex-1">
+          <button onClick={handleNextQuestion} className="w-full py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors shadow-sm">
             {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
           </button>
         )}

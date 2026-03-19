@@ -27,3 +27,5 @@ export type { BadgeProps } from './Gamification';
 
 export { ImageEmbed, ImageGallery } from './ImageEmbed';
 export type { ImageEmbedProps, ImageGalleryProps } from './ImageEmbed';
+
+export { CourseViewer } from './CourseViewer';

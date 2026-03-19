@@ -46,3 +46,14 @@ sonar-project.properties.local
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Local Dev Tools
+verdaccio/
+verdaccio-config.yaml
+.opencode/
+
+# Local Examples / Tests
+aws-sap-course/
+aws-sap-course.bak/
+test-course-verdaccio/
+
