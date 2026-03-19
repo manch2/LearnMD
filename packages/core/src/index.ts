@@ -47,7 +47,7 @@ import { RouterManager } from './router/index.js';
 /**
  * Core version
  */
-export const VERSION = '0.0.1';
+export const VERSION = '0.0.1-beta.1';
 
 /**
  * Initialize LearnMD core with default configuration

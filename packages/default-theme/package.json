@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/default-theme",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.1-beta.1",
   "description": "Default theme for LearnMD courses",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,7 +32,6 @@
     "@mdx-js/react": "^3.0.1",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0",
-    "react-router-dom": "^7.13.1",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
@@ -53,7 +52,8 @@
   },
   "peerDependencies": {
     "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
+    "react-dom": ">=18.0.0",
+    "react-router-dom": ">=6.4.0"
   },
   "keywords": [
     "learnmd",
