@@ -1,0 +1,10 @@
+{
+  "name": "@learnmd/example-course",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Example LearnMD course demonstrating features",
+  "devDependencies": {
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^4.0.0"
+  }
+}

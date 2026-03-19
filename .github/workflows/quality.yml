@@ -1,0 +1,81 @@
+name: Code Quality (SonarQube)
+
+on:
+  workflow_dispatch:
+    inputs:
+      sonar_token:
+        description: 'SonarQube Token'
+        required: false
+      sonar_host:
+        description: 'SonarQube Host URL'
+        required: false
+        default: 'https://sonarcloud.io'
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage || pnpm test
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN || github.event.inputs.sonar_token || '' }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || github.event.inputs.sonar_host || 'https://sonarcloud.io' }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=learnmd
+            -Dsonar.projectKey=learnmd
+            -Dsonar.sources=packages
+            -Dsonar.tests=packages
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
+            -Dsonar.exclusions=**/*.md,**/dist/**,**/node_modules/**
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sourceEncoding=UTF-8
+
+  sonarqube-local:
+    name: SonarQube Local Scan
+    runs-on: ubuntu-latest
+    container: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'http://localhost:9000' }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN || '' }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=learnmd \
+            -Dsonar.sources=packages \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.token=$SONAR_TOKEN
+        continue-on-error: true

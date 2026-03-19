@@ -1,0 +1,56 @@
+{
+  "name": "@learnmd/default-theme",
+  "version": "0.0.1",
+  "description": "Default theme for LearnMD courses",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./components": {
+      "import": "./dist/components/index.js",
+      "types": "./dist/components/index.d.ts"
+    },
+    "./styles": {
+      "import": "./dist/styles/index.css"
+    }
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && tailwindcss -i ./src/styles/input.css -o ./dist/styles/output.css",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@learnmd/core": "workspace:*",
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^4.0.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "keywords": [
+    "learnmd",
+    "theme",
+    "react",
+    "courses"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ]
+}

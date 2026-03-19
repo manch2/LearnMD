@@ -1,0 +1,48 @@
+{
+  "name": "@learnmd/cli",
+  "version": "0.0.1",
+  "description": "CLI for creating and building LearnMD courses",
+  "type": "module",
+  "bin": {
+    "learnmd": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "lint": "eslint src",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@learnmd/core": "workspace:*",
+    "@learnmd/default-theme": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "gray-matter": "^4.0.3",
+    "inquirer": "^9.2.0",
+    "listr2": "^8.0.0",
+    "marked": "^12.0.0",
+    "minisearch": "^6.3.0",
+    "vite": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^4.0.0",
+    "typescript": "^5.4.0"
+  },
+  "keywords": [
+    "learnmd",
+    "cli",
+    "courses"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ]
+}

@@ -1,0 +1,8 @@
+sonar.projectKey=learnmd
+sonar.projectName=LearnMD
+sonar.host.url=http://localhost:9000
+sonar.token=YOUR_SONARQUBE_TOKEN_HERE
+sonar.sources=packages/core/src,packages/default-theme/src,packages/cli/src
+sonar.tests=packages/core/src
+sonar.test.inclusions=**/*.test.ts
+sonar.exclusions=**/*.test.ts,**/dist/**,**/node_modules/**,**/*.md,**/examples/**,**/docs/**
