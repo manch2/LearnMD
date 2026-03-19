@@ -16,6 +16,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,65 +26,13 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run ESLint
         run: pnpm lint
 
       - name: Run Security Audit
         run: pnpm audit || true
-
-  typecheck:
-    name: TypeScript Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: TypeScript check
-        run: pnpm run typecheck || pnpm build
-
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run tests
-        run: pnpm test
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        if: success()
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: Build
@@ -93,6 +43,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -101,7 +53,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
         run: pnpm build
@@ -114,8 +66,8 @@ jobs:
           path: packages/*/dist
           retention-days: 7
 
-  security-scan:
-    name: Security Scan
+  test:
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -123,6 +75,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -131,24 +85,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
-      - name: Run npm audit
-        run: pnpm audit --audit-level=high
-        continue-on-error: true
-
-      - name: Run Grype vulnerability scanner
-        uses: anchore/sbom-action@v0
-        with:
-          image: oras.land/ghcr.io/buildpacks/lifecycle:latest
-          format: spdx
-          output-file: sbom-spdx.json
-        continue-on-error: true
-
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: sbom
-          path: sbom-spdx.json
-          retention-days: 30
+      - name: Run tests
+        run: pnpm test

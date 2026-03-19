@@ -1,133 +1,104 @@
 # LearnMD Documentation
 
-Welcome to the LearnMD documentation! LearnMD is an open-source framework for creating interactive courses from Markdown files.
+Welcome to the **LearnMD** documentation! This guide covers the architectural principles, component library, and CLI usage of the MDX-powered course framework.
 
-## Quick Start
+## 🚀 Getting Started
 
+To initialize a new LearnMD project, ensure you have `pnpm` and `Node.js >=18` installed.
+
+### Installation
 ```bash
-# Create a new project
-npm create learnmd@latest my-course
-
-# Navigate to project
-cd my-course
-
-# Start development
-npm run dev
+# Install the CLI locally (or via NPM when released)
+pnpm install
+pnpm build
 ```
 
-## Features
-
-- 📝 **Markdown-based** - Write courses in simple Markdown
-- 🌍 **i18n Ready** - Built-in internationalization
-- 🎨 **Themeable** - Customizable themes
-- 🔌 **Plugin System** - Extend functionality
-- 📊 **Progress Tracking** - LocalStorage-based
-- 🎮 **Gamification** - Points, badges, achievements
-- 🔍 **Full-text Search** - Instant search
-- 📱 **PWA Ready** - Offline support
-- 🎓 **Certificates** - PDF generation
-
-## Project Structure
-
-```
-my-course/
-├── courses/           # Your course content
-│   └── lesson-1.md
-├── public/           # Static assets
-├── src/              # React components
-├── learnmd.config.ts # Configuration
-└── package.json
+### Create a Workspace
+```bash
+node packages/cli/dist/index.js create my-onboarding-site
+cd my-onboarding-site
+pnpm install
+pnpm dev
 ```
 
-## Writing Lessons
-
-### Frontmatter
-
-```yaml
 ---
-title: 'Lesson Title'
-description: 'Optional description'
-duration: '15 minutes'
-difficulty: 'beginner|intermediate|advanced'
-points: 100
+
+## 🏗️ Architecture
+
+LearnMD is built as a **pnpm monorepo**:
+- **@learnmd/core**: The engine handling MDX parsing, i18n, and storage.
+- **@learnmd/default-theme**: The UI layer providing Docusaurus-style layouts and interactive React components.
+- **@learnmd/cli**: The developer tool for scaffolding and content generation.
+
 ---
+
+## 📝 Multi-Course Management
+
+LearnMD is uniquely flexible for hosting multiple courses within a single project. 
+
+### Adding a Course
+```bash
+learnmd add course employee-onboarding
 ```
 
-### Content
-
-```markdown
-# Lesson Title
-
-Your lesson content here...
-
-## Section
-
-More content...
+### Adding Lessons
+```bash
+learnmd add lesson "Company Culture"
 ```
 
-## Components
+Each course is an optimized Vite module that can be deployed independently or aggregated into a single corporate learning portal.
 
-### Quiz
+---
+
+## 🧩 Components
+
+Since LearnMD uses **MDX**, you can use these components directly in your Markdown files:
+
+### `<Quiz>`
+Interactive multiple-choice assessments.
+```jsx
+<Quiz 
+  id="q-01" 
+  questions={[{ id: "1", type: "multiple-choice", question: "...", options: [...], correctAnswer: "a" }]} 
+/>
+```
+
+### `<Callout>`
+Visual alerts for important information.
+```jsx
+<Callout type="tip">
+  Guido van Rossum renamed Python after Monty Python!
+</Callout>
+```
+
+### `<VideoEmbed>`
+Fluid video embeds from YouTube, Vimeo, and more.
+```jsx
+<VideoEmbed provider="youtube" id="VIDEO_ID" title="Lesson Video" />
+```
+
+---
+
+## 🌍 Internationalization (i18n)
+
+LearnMD supports deep translations at the paragraph level:
 
 ```jsx
-<Quiz question="What is LearnMD?" options={['A', 'B', 'C', 'D']} correctAnswer="b" points={10} />
-```
-
-### Video Embed
-
-```jsx
-<VideoEmbed provider="youtube" id="dQw4w9WgXcQ" title="Tutorial" />
-```
-
-### Callout
-
-```jsx
-<Callout type="info|tip|warning|danger">Your message here...</Callout>
-```
-
-## Internationalization
-
-### Paragraph-level translations
-
-```jsx
-<Paragraph i18n="intro-text">
-  <en>English text here...</en>
-  <es>Texto en español aquí...</es>
+<Paragraph i18n="p-intro">
+  <en>Welcome to the course!</en>
+  <es>¡Bienvenido al curso!</es>
 </Paragraph>
 ```
 
-### Language Switcher
+The rendering engine automatically detects the user's preference and displays the correct language.
 
-```jsx
-<LanguageSwitcher variant="dropdown|buttons|flags" />
-```
+---
 
-## Configuration
+## 🛠️ Deployment
 
-```typescript
-// learnmd.config.ts
-export default defineConfig({
-  title: 'My Course',
-  defaultLanguage: 'en',
-  availableLanguages: ['en', 'es'],
-  theme: {
-    primaryColor: '#3b82f6',
-    darkMode: true,
-  },
-  plugins: [],
-});
-```
-
-## Deployment
-
+Build your course for production:
 ```bash
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+pnpm build
 ```
 
-## License
-
-MIT
+The resulting `dist/` folder is a standard static site ready for hostings like Vercel, Netlify, or AWS S3.

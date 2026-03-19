@@ -1,72 +1,109 @@
-# LearnMD
+# 📚 LearnMD
 
-**Create interactive courses from Markdown files**
+**Create interactive, stunning courses from Markdown/MDX files.**
 
-LearnMD is an open-source framework for building interactive courses using Markdown. Powered by AI-friendly file structures and featuring a robust plugin system, themes, and native components for quizzes, video embeds, and more.
+[![CI](https://github.com/manch2/LearnMD/actions/workflows/ci.yml/badge.svg)](https://github.com/manch2/LearnMD/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+LearnMD is an open-source framework designed for building modern, interactive educational content. Inspired by **Docusaurus**, it brings the power of **Vite**, **React**, and **MDX** to course creation, allowing you to embed interactive quizzes, rich media, and complex logic directly into your lessons.
 
-- 📝 **Markdown-based** - Write courses in simple Markdown with frontmatter metadata
-- 🌍 **i18n Ready** - Built-in internationalization with paragraph-level translations
-- 🎨 **Themeable** - Customizable themes with dark/light mode support
-- 🔌 **Plugin System** - Extend functionality with plugins
-- 📊 **Progress Tracking** - LocalStorage-based progress tracking
-- 🎮 **Gamification** - Points, badges, and achievements
-- 🔍 **Full-text Search** - Instant search across all course content
-- 📱 **PWA Ready** - Offline support with IndexedDB caching
-- 🎓 **Certificates** - Generate PDF certificates on course completion
-- 📹 **Rich Media** - Embed videos from YouTube, Vimeo, OneDrive, Google Drive
+---
 
-## Quick Start
+## ✨ Features
 
-```bash
-# Create a new LearnMD project
-npm create learnmd@latest my-course
+- 💎 **Docusaurus Aesthetic** - Beautiful, modern UI with high-quality typography and spacing.
+- 🌓 **Native Dark Mode** - Seamless transition between light and dark themes.
+- 🚀 **MDX Powered** - Use React components (Quizzes, Callouts, Videos) directly in your Markdown.
+- 🏗️ **Multi-Course Architecture** - Support for N courses within a single project, perfect for onboarding and enterprise training.
+- 📟 **Powerful CLI** - Scaffold projects and add courses or lessons with ease.
+- 🌍 **Deep i18n** - Paragraph-level translations and full support for multilingual content.
+- 🎮 **Gamification** - Built-in point systems, badges, and progress tracking.
+- 📦 **Monorepo Ecosystem** - Clean separation of `core`, `default-theme`, and `cli`.
 
-# Navigate to project
-cd my-course
+---
 
-# Start development server
-npm run dev
-```
+## 🚀 Quick Start
 
-## Project Structure
-
-```
-packages/
-├── core/           # Core framework (parser, router, i18n, storage)
-├── default-theme/  # Default theme with components
-└── cli/            # CLI for scaffolding and building
-
-docs/               # Documentation
-examples/           # Example courses
-```
-
-## Installation
+### 1. Installation
+Ensure you have [pnpm](https://pnpm.io/) installed:
 
 ```bash
-# Install pnpm (required)
 npm install -g pnpm
+```
 
-# Install dependencies
+### 2. Scaffold a Project
+Use the LearnMD CLI to create your course workspace:
+
+```bash
+# Clone or use the local CLI for now (NPM release coming soon)
+git clone https://github.com/manch2/LearnMD.git
+cd LearnMD
 pnpm install
-
-# Build all packages
 pnpm build
 
-# Run development
+# Create your project
+node packages/cli/dist/index.js create my-workspace
+cd my-workspace
+pnpm install
 pnpm dev
 ```
 
-## Documentation
+### 3. Add Courses and Lessons
+Within your project, you can generate content dynamically:
 
-Visit our [documentation](./docs/) for detailed guides on:
+```bash
+# Add a new course
+learnmd add course python-101
 
-- Creating courses
-- Customizing themes
-- Building plugins
-- Deployment
+# Add a new lesson
+learnmd add lesson "Intro to Loops"
+```
 
-## License
+---
 
-MIT © [LearnMD Contributors](https://github.com/learnmd/learnmd/graphs/contributors)
+## 📂 Project Structure
+
+```text
+learnmd/
+├── packages/
+│   ├── core/           # Engine: Parser, i18n, Storage, Types
+│   ├── default-theme/  # UI: Docusaurus Layout, Quiz, Callouts, Tailwind context
+│   └── cli/            # Scaffolder: Creation and Add commands
+├── docs/               # Technical Documentation
+└── examples/           # Pre-built course examples
+```
+
+---
+
+## 🛠️ Development
+
+We use `turbo` for an optimized monorepo workflow:
+
+```bash
+pnpm install
+pnpm build    # Build all packages
+pnpm dev      # Start development on all packages
+pnpm test     # Run the test suite
+pnpm lint     # Check code quality
+```
+
+---
+
+## 📖 Documentation
+
+Visit the [docs/](./docs/index.md) folder for comprehensive guides on:
+- [Component Reference](./docs/components.md)
+- [Managing Multiple Courses](./docs/multi-course.md)
+- [Theming & Branding](./docs/theming.md)
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  Built with ❤️ for Educators and Developers.
+</p>

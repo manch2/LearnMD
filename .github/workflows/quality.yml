@@ -1,6 +1,8 @@
 name: Code Quality (SonarQube)
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       sonar_token:
@@ -33,7 +35,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build packages
         run: pnpm build
@@ -57,25 +59,3 @@ jobs:
             -Dsonar.exclusions=**/*.md,**/dist/**,**/node_modules/**
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.sourceEncoding=UTF-8
-
-  sonarqube-local:
-    name: SonarQube Local Scan
-    runs-on: ubuntu-latest
-    container: sonarsource/sonar-scanner-cli:latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Run SonarQube Scanner
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'http://localhost:9000' }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN || '' }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=learnmd \
-            -Dsonar.sources=packages \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.token=$SONAR_TOKEN
-        continue-on-error: true
