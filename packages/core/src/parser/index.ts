@@ -37,7 +37,7 @@ export function markdownToHtml(markdown: string): string {
  */
 export function extractSections(markdown: string): LessonSection[] {
   const sections: LessonSection[] = [];
-  const headingRegex = /^(#{1,6})\s+([^\n\r]+)$/gm;
+  const headingRegex = /^(#{1,6})\s+([^\s\n\r][^\n\r]*?)\s*$/gm;
   let match;
 
   while ((match = headingRegex.exec(markdown)) !== null) {
@@ -181,7 +181,7 @@ export function extractEmbeddedMedia(markdown: string): Array<{
   const media: Array<{ type: 'video' | 'image' | 'audio'; url: string; provider?: string }> = [];
 
   // Extract video embeds
-  const videoRegex = /<VideoEmbed\s+[^>]*url=["']([^"']+)["'][^>]*>/g;
+  const videoRegex = /<VideoEmbed\s+[^>]*?url=["']([^"']+)["'][^>]*>/g;
   let match;
 
   const isDomain = (urlStr: string, domains: string[]): boolean => {
