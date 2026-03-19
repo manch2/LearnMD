@@ -88,4 +88,23 @@ describe('I18nManager', () => {
     expect(extracted[0].translations.en).toBe('Hello');
     expect(extracted[0].translations.es).toBe('Hola');
   });
+
+  it('should handle nested tags and multi-line content in paragraphs', () => {
+    const content = `
+      <Paragraph i18n="p2">
+        <en>Hello <b>World</b>!</en>
+        <es>
+          Hola <i>Mundo</i>!
+        </es>
+      </Paragraph>
+    `;
+    const processed = i18n.processContent(content);
+    
+    expect(processed).toContain('data-i18n="p2"');
+    expect(processed).toContain('Hello <b>World</b>!');
+    
+    i18n.setLanguage('es');
+    const processedEs = i18n.processContent(content);
+    expect(processedEs).toContain('Hola <i>Mundo</i>!');
+  });
 });

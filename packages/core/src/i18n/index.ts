@@ -126,10 +126,8 @@ export class I18nManager implements I18nAdapter {
    * Format: <Paragraph i18n="key"><en>Text</en><es>Texto</es></Paragraph>
    */
   getParagraphTranslation(paragraphContent: string): string {
-    const langRegex = new RegExp(
-      `<${this._currentLanguage}>([\\s\\S]*?)<\\/${this._currentLanguage}>`,
-      'g'
-    );
+    const tagContents = `[^<]*(?:<(?!<\\/${this._currentLanguage}>)[^<]*)*`;
+    const langRegex = new RegExp(`<${this._currentLanguage}>(${tagContents})<\\/${this._currentLanguage}>`, "g");
     const match = langRegex.exec(paragraphContent);
 
     if (match) {
@@ -137,7 +135,7 @@ export class I18nManager implements I18nAdapter {
     }
 
     // Fallback to first available language
-    const fallbackRegex = /<(\w{2})>([\s\S]*?)<\/\1>/;
+    const fallbackRegex = /<(\w{2})>([^<]*(?:<(?!<\/\1>)[^<]*)*)<\/\1>/;
     const fallbackMatch = fallbackRegex.exec(paragraphContent);
 
     if (fallbackMatch) {
@@ -154,7 +152,7 @@ export class I18nManager implements I18nAdapter {
     content: string
   ): Array<{ key: string; translations: Record<string, string> }> {
     const paragraphs: Array<{ key: string; translations: Record<string, string> }> = [];
-    const paragraphRegex = /<Paragraph\s+i18n=["']([^"']+)["']>([\s\S]*?)<\/Paragraph>/g;
+    const paragraphRegex = /<Paragraph\s+i18n=["']([^"']*)["']\s*>([^<]*(?:<(?!<\/Paragraph>)[^<]*)*)<\/Paragraph>/g;
     let match;
 
     while ((match = paragraphRegex.exec(content)) !== null) {
@@ -180,7 +178,7 @@ export class I18nManager implements I18nAdapter {
    */
   processContent(content: string): string {
     return content.replace(
-      /<Paragraph\s+i18n=["']([^"']+)["']>([\s\S]*?)<\/Paragraph>/g,
+      /<Paragraph\s+i18n=["']([^"']*)["']\s*>([^<]*(?:<(?!<\/Paragraph>)[^<]*)*)<\/Paragraph>/g,
       (_match, key, content_) => {
         const translated = this.getParagraphTranslation(content_);
         return `<p data-i18n="${key}">${translated}</p>`;
