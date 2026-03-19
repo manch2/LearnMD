@@ -26,7 +26,7 @@ export function Paragraph({ children }: ParagraphProps) {
     matchedChild = children;
   }
 
-  return <p className="mb-4">{matchedChild}</p>;
+  return <div className="mb-4">{matchedChild}</div>;
 }
 
 export default Paragraph;

@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from 'react';
+import { getTranslatedString } from '@learnmd/core';
+import { useI18n } from '../hooks';
 
 export interface QuizQuestion {
   id: string;
@@ -39,6 +41,7 @@ export function Quiz({
   showCorrectAnswers = true,
   onComplete,
 }: QuizProps) {
+  const { currentLanguage } = useI18n();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -216,7 +219,9 @@ export function Quiz({
         </div>
       </div>
 
-      <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white leading-snug">{currentQuestion.question}</h3>
+      <h3 className="text-2xl font-bold mb-6 text-slate-900 dark:text-white leading-snug">
+        {getTranslatedString(currentQuestion.question, currentLanguage)}
+      </h3>
 
       <div className="space-y-3 mb-8">
         {currentQuestion.options?.map((option) => {
@@ -224,6 +229,7 @@ export function Quiz({
           const isCorrect = Array.isArray(currentQuestion.correctAnswer)
             ? currentQuestion.correctAnswer.includes(option.id)
             : currentQuestion.correctAnswer === option.id;
+          const label = getTranslatedString(option.label, currentLanguage);
 
           let className = 'p-4 rounded-xl border-2 cursor-pointer transition-all duration-200';
           if (submitted) {
@@ -256,7 +262,7 @@ export function Quiz({
                 >
                   {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                 </div>
-                <span className="font-medium text-lg">{option.label}</span>
+                <span className="font-medium text-lg">{label}</span>
               </div>
             </div>
           );
@@ -266,7 +272,7 @@ export function Quiz({
       {showExplanation && currentQuestion.explanation && (
         <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 rounded-r-lg p-5 mb-8">
           <p className="text-blue-800 dark:text-blue-200">
-            <strong className="font-bold">Explanation:</strong> {currentQuestion.explanation}
+            <strong className="font-bold">Explanation:</strong> {getTranslatedString(currentQuestion.explanation, currentLanguage)}
           </p>
         </div>
       )}

@@ -184,6 +184,7 @@ function getViteConfig(): string {
   return `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from '@mdx-js/rollup';
+import remarkGfm from 'remark-gfm';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { resolve } from 'path';
@@ -193,7 +194,7 @@ export default defineConfig({
     {
       enforce: 'pre',
       ...mdx({
-        remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+        remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
         providerImportSource: '@mdx-js/react'
       })
     },
@@ -277,6 +278,7 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
     '@types/react-dom': '^18.2.0',
     '@vitejs/plugin-react': '^4.2.0',
     '@mdx-js/rollup': '^3.0.1',
+    'remark-gfm': '^4.0.0',
     'remark-frontmatter': '^5.0.0',
     'remark-mdx-frontmatter': '^4.0.0',
     typescript: '^5.4.0',

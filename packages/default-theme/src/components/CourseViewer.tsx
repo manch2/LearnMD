@@ -61,7 +61,7 @@ export function CourseViewer({ allLessons }: CourseViewerProps) {
         progress={0}
         onNavigate={handleNavigate}
       >
-        <div className="markdown-body px-8 py-4">
+        <div className="prose px-8 py-4">
           {Component ? (
             <MDXProvider components={components}>
               <Component />
