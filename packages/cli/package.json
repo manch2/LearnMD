@@ -13,6 +13,8 @@
     "dev": "tsc --watch",
     "build": "tsc",
     "lint": "eslint src",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -34,7 +36,9 @@
     "@types/node": "^20.11.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-security": "^4.0.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^1.3.0",
+    "@vitest/coverage-v8": "^1.3.0"
   },
   "keywords": [
     "learnmd",

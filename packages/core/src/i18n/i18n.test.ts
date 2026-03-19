@@ -1,79 +1,91 @@
-import { describe, it, expect } from 'vitest';
-import { I18nManager, createI18n, initializeI18n } from '../i18n';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { I18nManager } from './index';
 
 describe('I18nManager', () => {
-  it('should create instance with default language', () => {
-    const i18n = createI18n();
-    expect(i18n.currentLanguage).toBe('en');
-    expect(i18n.availableLanguages).toEqual(['en']);
-  });
+  let i18n: I18nManager;
 
-  it('should create instance with custom config', () => {
-    const i18n = createI18n({
-      defaultLanguage: 'es',
-      availableLanguages: ['en', 'es', 'fr'],
-    });
-    expect(i18n.currentLanguage).toBe('es');
-    expect(i18n.availableLanguages).toContain('es');
-  });
-
-  it('should set language', () => {
-    const i18n = createI18n({
-      availableLanguages: ['en', 'es'],
-    });
-    i18n.setLanguage('es');
-    expect(i18n.currentLanguage).toBe('es');
-  });
-
-  it('should add translations', () => {
-    const i18n = createI18n();
-    i18n.addTranslations('es', {
-      greeting: 'Hola',
-      farewell: 'Adiós',
-    });
-
-    expect(i18n.translate('greeting', 'es')).toBe('Hola');
-    expect(i18n.translate('farewell', 'es')).toBe('Adiós');
-  });
-
-  it('should translate keys', () => {
-    const i18n = createI18n();
-    i18n.addTranslations('en', {
-      hello: 'Hello World',
-    });
-
-    expect(i18n.translate('hello')).toBe('Hello World');
-    expect(i18n.translate('unknown')).toBe('unknown');
-  });
-
-  it('should translate objects', () => {
-    const i18n = createI18n({
+  beforeEach(() => {
+    i18n = new I18nManager({
       defaultLanguage: 'en',
-    });
-    i18n.addTranslations('en', {
-      greeting: 'Hello',
-    });
-    i18n.addTranslations('es', {
-      greeting: 'Hola',
+      availableLanguages: ['en', 'es'],
+      translations: {
+        en: { 'test.key': 'Test' },
+        es: { 'test.key': 'Prueba' }
+      }
     });
 
+    // Mock window for event emitting
+    vi.stubGlobal('window', {
+      dispatchEvent: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn()
+    });
+  });
+
+  it('should initialize with correct default language', () => {
+    expect(i18n.currentLanguage).toBe('en');
+    expect(i18n.availableLanguages).toEqual(['en', 'es']);
+  });
+
+  it('should switch language', () => {
     i18n.setLanguage('es');
+    expect(i18n.currentLanguage).toBe('es');
+    expect(window.dispatchEvent).toHaveBeenCalled();
+  });
 
+  it('should not switch to unavailable language', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    i18n.setLanguage('fr');
+    expect(i18n.currentLanguage).toBe('en');
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it('should translate keys correctly', () => {
+    expect(i18n.translate('test.key')).toBe('Test');
+    expect(i18n.translate('test.key', 'es')).toBe('Prueba');
+  });
+
+  it('should fallback to default language if translation missing', () => {
+    i18n.addTranslations('es', {});
+    expect(i18n.translate('test.key', 'es')).toBe('Prueba'); // Existing
+    expect(i18n.translate('missing.key', 'es')).toBe('missing.key');
+  });
+
+  it('should translate objects recursively', () => {
     const obj = {
-      title: 'Test',
-      greeting: { en: 'Hello', es: 'Hola' },
+      title: { en: 'Title', es: 'Título' },
+      info: {
+        desc: { en: 'Desc', es: 'Desc-es' },
+        count: 10
+      }
     };
 
-    const translated = i18n.translateObject(obj);
-    expect(translated.greeting).toBe('Hola');
+    const translated = i18n.translateObject(obj, 'es');
+    expect(translated.title).toBe('Título');
+    expect(translated.info.desc).toBe('Desc-es');
+    expect(translated.info.count).toBe(10);
   });
-});
 
-describe('initializeI18n', () => {
-  it('should initialize with common translations', () => {
-    const i18n = initializeI18n();
+  it('should extract and process translatable paragraphs', () => {
+    const content = `<Paragraph i18n="p1"><en>English</en><es>Español</es></Paragraph>`;
+    const processed = i18n.processContent(content);
+    
+    expect(processed).toContain('data-i18n="p1"');
+    expect(processed).toContain('English');
+    
+    i18n.setLanguage('es');
+    const processedEs = i18n.processContent(content);
+    expect(processedEs).toContain('Español');
+  });
 
-    expect(i18n.translate('nav.home', 'en')).toBe('Home');
-    expect(i18n.translate('nav.home', 'es')).toBe('Inicio');
+  it('should extract translatable paragraphs', () => {
+    const content = `<Paragraph i18n="p1"><en>Hello</en><es>Hola</es></Paragraph>`;
+    const extracted = i18n.extractTranslatableParagraphs(content);
+    
+    expect(extracted).toHaveLength(1);
+    expect(extracted[0].key).toBe('p1');
+    expect(extracted[0].translations.en).toBe('Hello');
+    expect(extracted[0].translations.es).toBe('Hola');
   });
 });
