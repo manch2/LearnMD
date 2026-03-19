@@ -159,6 +159,8 @@ export interface CourseProgress {
  */
 export interface UserProfile {
   id: string;
+  name?: string;
+  email?: string;
   totalPoints: number;
   badges: Badge[];
   coursesProgress: Record<string, CourseProgress>;

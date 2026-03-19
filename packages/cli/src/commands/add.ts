@@ -1,18 +1,45 @@
 import chalk from 'chalk';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { createCommand } from './create.js';
+
+async function checkIfInLearnMDWorkspace(): Promise<boolean> {
+  try {
+    const cwd = process.cwd();
+    const rootPackageJson = await readFile(join(cwd, 'package.json'), 'utf-8');
+    const pkg = JSON.parse(rootPackageJson);
+    return pkg.name === 'learnmd' || pkg.dependencies?.['@learnmd/core'] || pkg.devDependencies?.['@learnmd/core'];
+  } catch {
+    return false;
+  }
+}
 
 export async function addCourseCommand(name: string) {
   console.log(chalk.blue(`\n📚 Adding new course: ${name}\n`));
-  // A course in LearnMD root architecture is essentially a new project
-  await createCommand(name);
+  
+  const isLearnMD = await checkIfInLearnMDWorkspace();
+  if (!isLearnMD) {
+    console.warn(chalk.yellow('⚠️ Warning: This doesn\'t look like a LearnMD project. Ensure you are running this inside a LearnMD workspace.'));
+  }
+
+  const slug = name.toLowerCase().replace(/\s+/g, '-');
+  const coursePath = join(process.cwd(), 'courses', slug, 'lessons');
+  
+  try {
+    await mkdir(coursePath, { recursive: true });
+    
+    // Add an initial lesson
+    await addLessonCommand('Introduction', slug);
+    console.log(chalk.green(`✅ Course '${name}' created successfully in courses/${slug}/`));
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to create course directory.'));
+    console.error(error);
+  }
 }
 
-export async function addLessonCommand(title: string) {
-  console.log(chalk.blue(`\n📝 Adding new lesson: ${title}\n`));
+export async function addLessonCommand(title: string, courseSlug: string = 'demo-course') {
+  console.log(chalk.blue(`\n📝 Adding new lesson: ${title} to ${courseSlug}\n`));
   const slug = title.toLowerCase().replace(/\s+/g, '-');
-  const filePath = join(process.cwd(), 'lessons', `${slug}.mdx`);
+  const filePath = join(process.cwd(), 'courses', courseSlug, 'lessons', `${slug}.mdx`);
 
   const content = `---
 title:
@@ -61,11 +88,11 @@ difficulty: 'beginner'
 `;
 
   try {
-    await mkdir(join(process.cwd(), 'lessons'), { recursive: true });
+    await mkdir(join(process.cwd(), 'courses', courseSlug, 'lessons'), { recursive: true });
     await writeFile(filePath, content);
-    console.log(chalk.green(`✅ Lesson created at: lessons/${slug}.mdx`));
+    console.log(chalk.green(`✅ Lesson created at: courses/${courseSlug}/lessons/${slug}.mdx`));
   } catch (error) {
-    console.error(chalk.red('❌ Failed to create lesson. Ensure you are in a LearnMD project directory!'));
+    console.error(chalk.red('❌ Failed to create lesson. Ensure you have permissions.'));
     console.error(error);
   }
 }

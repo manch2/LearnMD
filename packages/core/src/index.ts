@@ -7,6 +7,9 @@ export * from './parser/index.js';
 // i18n
 export * from './i18n/index.js';
 
+// Router
+export * from './router/index.js';
+
 // Storage
 export * from './storage/index.js';
 
@@ -15,9 +18,10 @@ export * from './gamification/index.js';
 
 // Plugins
 export * from './plugins/index.js';
+export * from './plugins/pdf/index.js';
 
-// Router
-export * from './router/index.js';
+// LearnMD Context
+export * from './components/LearnMDProvider.js';
 
 // Import class implementations for createLearnMD
 import { I18nManager } from './i18n/index.js';

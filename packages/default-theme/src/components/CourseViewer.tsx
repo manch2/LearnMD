@@ -11,8 +11,10 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
 import { getTranslatedString } from '@learnmd/core';
 
+import { useParams, useNavigate } from 'react-router-dom';
+
 export interface CourseViewerProps {
-  lessons: Array<{ slug: string; Component: React.ComponentType; frontmatter: any }>;
+  allLessons: Array<{ courseSlug: string; slug: string; Component: React.ComponentType; frontmatter: any }>;
 }
 
 const components = {
@@ -24,14 +26,20 @@ const components = {
   Paragraph,
 };
 
-export function CourseViewer({ lessons }: CourseViewerProps) {
-  const [currentSlug, setCurrentSlug] = useState(lessons[0]?.slug);
+export function CourseViewer({ allLessons }: CourseViewerProps) {
+  const { courseId, '*': pathLessonSlug } = useParams();
+  const navigate = useNavigate();
+  
+  const courseLessons = allLessons.filter(l => l.courseSlug === courseId);
+  const currentSlug = pathLessonSlug || courseLessons[0]?.slug;
+  const currentLesson = courseLessons.find(l => l.slug === currentSlug) || courseLessons[0];
+  const Component = currentLesson?.Component;
   
   const navigation = [{
     type: 'module' as const,
-    id: 'module-default',
-    title: 'Course Lessons',
-    children: lessons.map(l => ({
+    id: `module-${courseId}`,
+    title: String(courseId).replace(/-/g, ' ').toUpperCase(),
+    children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
       title: getTranslatedString(l.frontmatter?.title, 'en') || l.slug,
@@ -39,18 +47,19 @@ export function CourseViewer({ lessons }: CourseViewerProps) {
     }))
   }];
 
-  const currentLesson = lessons.find(l => l.slug === currentSlug) || lessons[0];
-  const Component = currentLesson?.Component;
+  const handleNavigate = (slug: string) => {
+    navigate(`/courses/${courseId}/${slug}`);
+  };
 
   return (
     <ThemeProvider>
       <CourseLayout
-        courseTitle="Interactive Course"
+        courseTitle={String(courseId).replace(/-/g, ' ').toUpperCase()}
         navigation={navigation}
         currentLessonSlug={currentSlug}
         completedLessons={[]}
         progress={0}
-        onNavigate={(slug) => setCurrentSlug(slug)}
+        onNavigate={handleNavigate}
       >
         <div className="markdown-body px-8 py-4">
           {Component ? (
