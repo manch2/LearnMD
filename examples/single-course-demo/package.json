@@ -1,5 +1,5 @@
 {
-  "name": "demo-course",
+  "name": "single-course-demo",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -11,6 +11,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
     "@mdx-js/react": "^3.0.1"
   },
   "devDependencies": {

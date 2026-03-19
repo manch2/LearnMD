@@ -13,7 +13,7 @@ export function ProfileViewer() {
 
   useEffect(() => {
     async function loadProfile() {
-      const p = await storage.getUserProfile() || { id: '1', name: '', joinedAt: new Date(), lastActive: new Date(), preferences: { theme: 'light', language: 'en', emailNotifications: false } };
+      const p = await storage.getUserProfile() || { id: '1', name: '', email: '', totalPoints: 0, badges: [], coursesProgress: {}, streak: { current: 0, longest: 0, lastActiveDate: '' }, achievements: [], createdAt: Date.now(), updatedAt: Date.now() };
       setName(p.name || '');
       setEmail(p.email || '');
     }
@@ -24,7 +24,7 @@ export function ProfileViewer() {
     e.preventDefault();
     setIsSaving(true);
     
-    const p = await storage.getUserProfile() || { id: '1', name: '', joinedAt: new Date(), lastActive: new Date(), preferences: { theme: 'light', language: 'en', emailNotifications: false } };
+    const p = await storage.getUserProfile() || { id: '1', name: '', email: '', totalPoints: 0, badges: [], coursesProgress: {}, streak: { current: 0, longest: 0, lastActiveDate: '' }, achievements: [], createdAt: Date.now(), updatedAt: Date.now() };
     await storage.saveUserProfile({ ...p, name, email });
     
     setIsSaving(false);

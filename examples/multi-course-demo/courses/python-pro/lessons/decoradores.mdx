@@ -1,0 +1,52 @@
+---
+title:
+  en: 'Decorators'
+  es: 'Decoradores'
+description:
+  en: 'Advanced Python functions'
+  es: 'Funciones avanzadas en Python'
+duration: '20 minutes'
+difficulty: 'advanced'
+points: 150
+learningObjectives:
+  - en:
+      - 'Wrapper functions'
+  - es:
+      - 'Funciones envoltorio'
+---
+
+# Decoradores
+
+<Callout type="warning">
+  Este tema requiere un buen entendimiento sobre cómo tratar funciones como objetos de primera clase.
+</Callout>
+
+<Paragraph i18n="intro">
+  <en>
+    Decorators allow us to wrap another function in order to extend the behavior of the wrapped function.
+  </en>
+  <es>
+    Los decoradores nos permiten envolver una función para extender el comportamiento de la misma.
+  </es>
+</Paragraph>
+
+<Quiz
+  id="python-decorator-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "¿Qué símbolo se utiliza para aplicar un decorador a una función?",
+      options: [
+        { id: "a", label: "#" },
+        { id: "b", label: "@" },
+        { id: "c", label: "$" }
+      ],
+      correctAnswer: "b",
+      explanation: "El símbolo '@' se usa justo encima de la definición de la función.",
+      points: 20
+    }
+  ]}
+/>
+
+<Progress value={100} showPercentage label="Lesson Progress" />
