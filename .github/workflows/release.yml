@@ -74,7 +74,11 @@ jobs:
             if [ -f "$pkg/package.json" ]; then
               echo "Publishing $pkg"
               cd "$pkg"
-              npm publish --access public
+              TAG_FLAG=""
+              if [[ "${GITHUB_REF_NAME}" == *"beta"* ]]; then
+                TAG_FLAG="--tag beta"
+              fi
+              pnpm publish --access public --no-git-checks $TAG_FLAG
               cd ../..
             fi
           done
