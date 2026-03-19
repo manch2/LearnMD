@@ -36,7 +36,16 @@ jobs:
         run: pnpm -r --if-present test:coverage
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarcloud-github-action@v5
+        with:
+          args: >
+            -Dsonar.organization=manch2
+            -Dsonar.projectKey=manch2_LearnMD
+            -Dsonar.sources=packages
+            -Dsonar.tests=packages
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx
+            -Dsonar.typescript.lcov.reportPaths=packages/core/coverage/lcov.info,packages/default-theme/coverage/lcov.info,packages/cli/coverage/lcov.info
+            -Dsonar.exclusions=**/dist/**,**/node_modules/**,**/examples/**,**/docs/**,**/*.md,**/*.css
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
