@@ -1,0 +1,32 @@
+{
+  "name": "@learnmd/plugin-pdf",
+  "version": "0.0.1-beta.1",
+  "description": "PDF certification plugin for LearnMD",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "@learnmd/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "license": "MIT"
+}

@@ -18,7 +18,6 @@ export * from './gamification/index.js';
 
 // Plugins
 export * from './plugins/index.js';
-export * from './plugins/pdf/index.js';
 
 // LearnMD Context
 export * from './components/LearnMDProvider.js';

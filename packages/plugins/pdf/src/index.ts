@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import type { UserProfile } from '../../types';
+import type { UserProfile } from '@learnmd/core';
 
 export interface CertificateOptions {
   courseTitle: string;
@@ -8,6 +8,11 @@ export interface CertificateOptions {
 }
 
 export async function generateCertificate(profile: UserProfile, options: CertificateOptions): Promise<void> {
+  if (typeof window === 'undefined') {
+    console.warn('generateCertificate must be called in a browser environment');
+    return;
+  }
+
   const doc = new jsPDF({
     orientation: 'landscape',
     unit: 'in',

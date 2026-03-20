@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { mkdir, writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 import { createRequire } from 'module';
+import { intro, text, isCancel, cancel, outro } from '@clack/prompts';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
@@ -13,10 +14,13 @@ interface CreateOptions {
 }
 
 export async function createCommand(name?: string, _options?: CreateOptions) {
+  intro(chalk.bgBlue(' 📚 Create LearnMD Project '));
+  
   const projectName = name || (await askForProjectName());
-  const isInWorkspace = await checkIfInLearnMDWorkspace();
+  
+  if (!projectName) return; // Cancelled
 
-  console.log(chalk.blue(`\n📚 Creating LearnMD project: ${projectName}\n`));
+  const isInWorkspace = await checkIfInLearnMDWorkspace();
 
   try {
     await mkdir(projectName, { recursive: true });
@@ -24,7 +28,7 @@ export async function createCommand(name?: string, _options?: CreateOptions) {
     await updatePackageJson(projectName, projectName, isInWorkspace);
     await createEssentialFiles(projectName, isInWorkspace);
 
-    console.log(chalk.green('\n✅ LearnMD project created successfully!\n'));
+    outro(chalk.green('✅ LearnMD project created successfully!'));
     console.log(chalk.blue('Next steps:'));
     console.log(`  cd ${projectName}`);
     console.log('  pnpm install');
@@ -46,21 +50,24 @@ async function checkIfInLearnMDWorkspace(): Promise<boolean> {
   }
 }
 
-async function askForProjectName(): Promise<string> {
-  const inquirer = await import('inquirer');
-  const { projectName } = await inquirer.default.prompt([
-    {
-      type: 'input',
-      name: 'projectName',
-      message: 'What is your project name?',
-      default: 'my-course',
-      validate: (input: string) => {
-        if (/^[a-z0-9-]+$/.test(input)) return true;
+async function askForProjectName(): Promise<string | undefined> {
+  const result = await text({
+    message: 'What is your project name?',
+    defaultValue: 'my-course',
+    placeholder: 'my-course',
+    validate: (value) => {
+      if (!value || !/^[a-z0-9-]+$/.test(value)) {
         return 'Project name must contain only lowercase letters, numbers, and hyphens';
-      },
+      }
     },
-  ]);
-  return projectName;
+  });
+
+  if (isCancel(result)) {
+    cancel('Operation cancelled.');
+    return undefined;
+  }
+
+  return result as string;
 }
 
 async function createBasicStructure(projectPath: string) {
@@ -82,6 +89,17 @@ async function createBasicStructure(projectPath: string) {
 
   // Course config for the demo course
   await writeFile(join(projectPath, 'courses/demo-course/learnmd.json'), getCourseConfig('Demo Course'));
+  
+  // Overview MDX
+  await writeFile(join(projectPath, 'courses/demo-course/overview.mdx'), `---
+title: Demo Course Overview
+---
+
+# Welcome to Demo Course!
+
+This is the overview page. Configure your course description and welcome message here.
+`);
+
   await writeFile(join(projectPath, 'courses/demo-course/lessons/.gitkeep'), '');
 }
 
@@ -98,8 +116,9 @@ export function getCourseConfig(courseName: string): string {
     author: '',
     version: '1.0.0',
     difficulty: 'beginner',
+    estimatedTime: '1 hour',
     tags: [],
-    lessonOrder: [],
+    lessons: [],
   }, null, 2);
 }
 
