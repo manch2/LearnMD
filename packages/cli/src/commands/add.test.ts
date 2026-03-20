@@ -1,13 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { addLessonCommand } from './add';
-import { writeFile, mkdir } from 'fs/promises';
+import { addLessonCommand, addCourseCommand } from './add';
+import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 
-// Mock fs/promises
-vi.mock('fs/promises', () => ({
-  writeFile: vi.fn().mockResolvedValue(undefined),
-  mkdir: vi.fn().mockResolvedValue(undefined),
-}));
+vi.mock('fs/promises', () => {
+  const mockFs = {
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    readFile: vi.fn().mockResolvedValue(JSON.stringify({ name: 'test-project', dependencies: { '@learnmd/core': '1.0.0' } })),
+  };
+  return {
+    ...mockFs,
+    default: mockFs,
+  };
+});
 
 describe('addLessonCommand', () => {
   beforeEach(() => {
@@ -15,6 +21,7 @@ describe('addLessonCommand', () => {
     vi.stubGlobal('console', {
       log: vi.fn(),
       error: vi.fn(),
+      warn: vi.fn(),
     });
   });
 
@@ -44,5 +51,48 @@ describe('addLessonCommand', () => {
     await addLessonCommand('Fail Test');
     
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create lesson'));
+  });
+});
+
+describe('addCourseCommand', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal('console', {
+      log: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+    });
+  });
+
+  it('should create a course directory and learnmd.json', async () => {
+    const name = 'New Course';
+    const slug = 'new-course';
+    const expectedCoursePath = join(process.cwd(), 'courses', slug, 'lessons');
+    const expectedConfigPath = join(process.cwd(), 'courses', slug, 'learnmd.json');
+
+    await addCourseCommand(name);
+
+    expect(mkdir).toHaveBeenCalledWith(expectedCoursePath, { recursive: true });
+    expect(writeFile).toHaveBeenCalledWith(
+      expectedConfigPath,
+      expect.stringContaining(name),
+    );
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('created successfully'));
+  });
+
+  it('should show warning if skip workspace check fails', async () => {
+    vi.mocked(readFile).mockRejectedValueOnce(new Error('no package.json'));
+    
+    await addCourseCommand('No Workspace');
+    
+    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Warning: This doesn\'t look like a LearnMD project'));
+  });
+
+  it('should handle errors during course creation', async () => {
+    vi.mocked(mkdir).mockRejectedValueOnce(new Error('Mkdir failed'));
+    
+    await addCourseCommand('Fail Course');
+    
+    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create course directory'));
   });
 });
