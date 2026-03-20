@@ -1,10 +1,23 @@
 import chalk from 'chalk';
 import { createServer } from 'vite';
 import { resolve } from 'path';
+import { readFile } from 'fs/promises';
 
 interface DevOptions {
   port: string;
   host: string;
+}
+
+async function checkIfInLearnMDWorkspace(): Promise<boolean> {
+  try {
+    const cwd = process.cwd();
+    const packageJsonPath = resolve(cwd, 'package.json');
+    const content = await readFile(packageJsonPath, 'utf-8');
+    const pkg = JSON.parse(content);
+    return pkg.name === 'learnmd' || pkg.workspaces !== undefined;
+  } catch {
+    return false;
+  }
 }
 
 export async function devCommand(options?: DevOptions) {
@@ -13,9 +26,12 @@ export async function devCommand(options?: DevOptions) {
 
   console.log(chalk.blue('\n🚀 Starting LearnMD development server...\n'));
 
+  const isInWorkspace = await checkIfInLearnMDWorkspace();
+
   try {
     const server = await createServer({
       root: process.cwd(),
+      configFile: resolve(process.cwd(), 'vite.config.ts'),
       server: {
         port,
         host,
@@ -33,10 +49,10 @@ export async function devCommand(options?: DevOptions) {
         },
       ],
       resolve: {
-        alias: {
-          '@learnmd/core': resolve(process.cwd(), '../packages/core/src'),
-          '@learnmd/default-theme': resolve(process.cwd(), '../packages/default-theme/src'),
-        },
+        alias: isInWorkspace ? {
+          '@learnmd/core': resolve(process.cwd(), '../core/src'),
+          '@learnmd/default-theme': resolve(process.cwd(), '../default-theme/src'),
+        } : {},
       },
     });
 

@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
+import { getCourseConfig } from './create.js';
 
 async function checkIfInLearnMDWorkspace(): Promise<boolean> {
   try {
@@ -26,6 +27,11 @@ export async function addCourseCommand(name: string) {
   
   try {
     await mkdir(coursePath, { recursive: true });
+    
+    // Generate course configuration
+    const courseDir = join(process.cwd(), 'courses', slug);
+    await writeFile(join(courseDir, 'learnmd.json'), getCourseConfig(name));
+    console.log(chalk.gray(`  Created: courses/${slug}/learnmd.json`));
     
     // Add an initial lesson
     await addLessonCommand('Introduction', slug);

@@ -1,6 +1,11 @@
 import chalk from 'chalk';
 import { mkdir, writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../../package.json');
+const version = pkg.version;
 
 interface CreateOptions {
   template: string;
@@ -75,8 +80,29 @@ async function createBasicStructure(projectPath: string) {
   await writeFile(join(projectPath, 'learnmd.config.ts'), getLearnMdConfig());
   await writeFile(join(projectPath, '.gitignore'), getGitIgnore());
 
+  // Course config for the demo course
+  await writeFile(join(projectPath, 'courses/demo-course/learnmd.json'), getCourseConfig('Demo Course'));
   await writeFile(join(projectPath, 'courses/demo-course/lessons/.gitkeep'), '');
 }
+
+export function getCourseConfig(courseName: string): string {
+  return JSON.stringify({
+    title: {
+      en: courseName,
+      es: `${courseName} (ES)`,
+    },
+    description: {
+      en: `An interactive course: ${courseName}`,
+      es: `Un curso interactivo: ${courseName}`,
+    },
+    author: '',
+    version: '1.0.0',
+    difficulty: 'beginner',
+    tags: [],
+    lessonOrder: [],
+  }, null, 2);
+}
+
 
 async function createEssentialFiles(projectPath: string, _isInWorkspace: boolean) {
   await writeFile(join(projectPath, '.npmrc'), 'auto-install-peers=true\n');
@@ -283,10 +309,10 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
     'remark-mdx-frontmatter': '^4.0.0',
     typescript: '^5.4.0',
     vite: '^5.1.0',
-    '@learnmd/core': isInWorkspace ? 'file:../packages/core' : '^0.0.1',
+    '@learnmd/core': isInWorkspace ? 'file:../packages/core' : `^${version}`,
     '@learnmd/default-theme': isInWorkspace
       ? 'file:../packages/default-theme'
-      : '^0.0.1',
+      : `^${version}`,
   };
 
   const packageJson = {

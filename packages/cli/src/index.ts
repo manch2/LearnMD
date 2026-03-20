@@ -7,7 +7,10 @@ import { buildCommand } from './commands/build.js';
 import { initCommand } from './commands/init.js';
 import { addCourseCommand, addLessonCommand } from './commands/add.js';
 
-const version = '0.0.1';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
+const version = pkg.version;
 
 program
   .name('learnmd')
