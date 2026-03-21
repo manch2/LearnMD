@@ -224,6 +224,29 @@ export class StorageManager {
   }
 
   /**
+   * Raw access via adapter (for Plugin compatibility)
+   */
+  async get<T>(key: string): Promise<T | null> {
+    return this.localStorage.get<T>(key);
+  }
+
+  async set<T>(key: string, value: T): Promise<void> {
+    return this.localStorage.set<T>(key, value);
+  }
+
+  async remove(key: string): Promise<void> {
+    return this.localStorage.remove(key);
+  }
+
+  async clear(): Promise<void> {
+    return this.localStorage.clear();
+  }
+
+  async keys(): Promise<string[]> {
+    return this.localStorage.keys();
+  }
+
+  /**
    * Get user profile
    */
   async getUserProfile(): Promise<UserProfile | null> {
