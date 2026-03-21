@@ -47,7 +47,7 @@ import { PluginRegistry, createDefaultPluginContext, HOOKS } from './plugins/ind
 /**
  * Core version
  */
-export const VERSION = '0.0.1-beta.1';
+export const VERSION = '0.0.2-beta.0';
 
 /**
  * Initialize LearnMD core with default configuration
