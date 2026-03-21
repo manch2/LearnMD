@@ -23,7 +23,7 @@ export * from './plugins/index.js';
 export * from './components/LearnMDProvider.js';
 
 // Import class implementations for createLearnMD
-import { I18nManager } from './i18n/index.js';
+import { initializeI18n } from './i18n/index.js';
 import { StorageManager } from './storage/index.js';
 import { GamificationManager, GamificationPlugin } from './gamification/index.js';
 import { RouterManager } from './router/index.js';
@@ -92,10 +92,7 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   } = config;
 
   // Initialize i18n
-  const i18n = new I18nManager({
-    defaultLanguage,
-    availableLanguages: [defaultLanguage],
-  });
+  const i18n = initializeI18n(defaultLanguage, config.availableLanguages);
 
   // Initialize storage
   const storage = new StorageManager();

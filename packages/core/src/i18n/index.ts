@@ -319,10 +319,10 @@ export const COMMON_TRANSLATIONS = {
 /**
  * Initialize i18n with common translations
  */
-export function initializeI18n(defaultLanguage = 'en'): I18nManager {
+export function initializeI18n(defaultLanguage = 'en', availableLanguages?: string[]): I18nManager {
   const i18n = createI18n({
     defaultLanguage,
-    availableLanguages: ['en', 'es'],
+    availableLanguages: availableLanguages || ['en', 'es'],
   });
 
   // Add common translations
