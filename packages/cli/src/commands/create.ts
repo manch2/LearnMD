@@ -206,6 +206,9 @@ const coursesConfig = Object.entries(courseConfigsRaw).reduce((acc, [path, mod])
 const homeModule = import.meta.glob('../home.mdx', { eager: true });
 const HomeComponent = Object.values(homeModule)[0] ? (Object.values(homeModule)[0] as any).default : undefined;
 
+// Load Custom Pages dynamically
+const pageModules = import.meta.glob('../pages/*.mdx', { eager: true });
+
 function App() {
   return (
     <LearnMDProvider config={config}>
@@ -218,6 +221,22 @@ function App() {
             </MainLayout>
           } />
           <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />} />
+          
+          {config.customPages?.map((page, idx) => {
+             // Map standard pages path to dynamic import
+             const modKey = \`../\${page.componentPath}\`;
+             const mod = pageModules[modKey];
+             const Component = mod ? (mod as any).default : () => <div>Page not found</div>;
+             return (
+               <Route key={idx} path={page.path} element={
+                 <MainLayout>
+                   <div className="prose dark:prose-invert max-w-4xl mx-auto py-12 px-6">
+                     <Component />
+                   </div>
+                 </MainLayout>
+               } />
+             );
+          })}
         </Routes>
       </BrowserRouter>
     </LearnMDProvider>

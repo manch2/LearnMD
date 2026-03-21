@@ -48,20 +48,23 @@ program
 
 program
   .command('add')
-  .description('Add new resources (course or lesson)')
-  .argument('<type>', 'Type of resource (course, lesson)')
+  .description('Add new resources (course, lesson, or page)')
+  .argument('<type>', 'Type of resource (course, lesson, page)')
   .argument('<name>', 'Name/Title of the resource')
   .option('-c, --course <courseName>', 'Course name to add the lesson to (defaults to demo-course)')
   .option('-n, --non-interactive', 'Run without interactive prompts')
   .option('-d, --difficulty <difficulty>', 'Difficulty level for course')
   .option('-t, --time <time>', 'Estimated completion time for course')
-  .action((type, name, options) => {
+  .action(async (type, name, options) => {
     if (type === 'course') {
-      addCourseCommand(name, options);
+      await addCourseCommand(name, options);
     } else if (type === 'lesson') {
-      addLessonCommand(name, options);
+      await addLessonCommand(name, options);
+    } else if (type === 'page') {
+      const { addPageCommand } = await import('./commands/add.js');
+      await addPageCommand(name, options);
     } else {
-      console.error('Invalid resource type. Use "course" or "lesson".');
+      console.error('Invalid resource type. Use "course", "lesson", or "page".');
     }
   });
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { ThemeProvider } from '../hooks';
 import { CourseLayout } from '../layouts';
 // @ts-ignore
@@ -9,7 +9,7 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
-import { getTranslatedString, Course } from '@learnmd/core';
+import { getTranslatedString, Course, useLearnMD } from '@learnmd/core';
 import { CourseOverview } from './CourseOverview';
 
 import { useParams, useNavigate } from 'react-router-dom';
@@ -19,18 +19,13 @@ export interface CourseViewerProps {
   coursesConfig?: Record<string, Course>;
 }
 
-const components = {
-  Callout,
-  Quiz,
-  VideoEmbed,
-  Progress,
-  LanguageSwitcher,
-  Paragraph,
-};
-
 export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerProps) {
   const { courseId, '*': pathLessonSlug } = useParams();
   const navigate = useNavigate();
+  const { storage } = useLearnMD();
+  
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [courseProgress, setCourseProgress] = useState<number>(0);
   
   const courseLessons = useMemo(() => allLessons.filter(l => l.courseSlug === courseId), [allLessons, courseId]);
   
@@ -41,6 +36,41 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
   const currentLesson = courseLessons.find(l => l.slug === currentSlug);
   const Component = currentLesson?.Component;
   
+  const currentIndex = courseLessons.findIndex(l => l.slug === currentSlug);
+  const prevLesson = currentIndex > 0 ? courseLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < courseLessons.length - 1 ? courseLessons[currentIndex + 1] : null;
+  
+  useEffect(() => {
+    if (!courseId) return;
+    storage.getCourseProgress(courseId).then(progress => {
+      if (progress) {
+        setCompletedLessons(progress.completedLessons || []);
+        const pct = courseLessons.length > 0 ? ((progress.completedLessons?.length || 0) / courseLessons.length) * 100 : 0;
+        setCourseProgress(Math.min(100, Math.round(pct)));
+      }
+    });
+  }, [courseId, currentSlug, storage, courseLessons.length]);
+
+  const handleNavigate = (slug: string) => {
+    navigate(`/courses/${courseId}/${slug}`);
+  };
+
+  const handleCompleteAndNext = async () => {
+    if (courseId && currentSlug) {
+      await storage.completeLesson(courseId, currentSlug);
+      if (nextLesson) {
+        handleNavigate(nextLesson.slug);
+      } else {
+        // Force refresh progress if it's the last lesson
+        const progress = await storage.getCourseProgress(courseId);
+        if (progress) {
+          setCompletedLessons(progress.completedLessons || []);
+          setCourseProgress(100);
+        }
+      }
+    }
+  };
+
   const navigation = [{
     type: 'module' as const,
     id: `module-${courseId}`,
@@ -50,12 +80,9 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
       id: l.slug,
       title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug,
       slug: l.slug,
+      completed: completedLessons.includes(l.slug)
     }))
   }];
-
-  const handleNavigate = (slug: string) => {
-    navigate(`/courses/${courseId}/${slug}`);
-  };
 
   const courseData = coursesConfig[courseId || ''] || {
     id: courseId || '',
@@ -66,17 +93,50 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     basePath: `/courses/${courseId}`
   };
 
+  // Inject props into Quiz to handle completion
+  const components = {
+    Callout,
+    Quiz: (props: any) => {
+      const isCompleted = completedLessons.includes(currentSlug);
+      // We don't have the exact score in completedLessons array, but we can assume 100 or fetch it
+      // For now, if the lesson is completed, we pass initialCompleted=true
+      return (
+        <Quiz 
+          {...props} 
+          initialCompleted={isCompleted}
+          initialScore={100}
+          onComplete={async (results: any) => {
+            if (props.onComplete) props.onComplete(results);
+            if (results.passed && courseId && currentSlug) {
+              await storage.completeLesson(courseId, currentSlug, results.score, true);
+              const progress = await storage.getCourseProgress(courseId);
+              if (progress) {
+                setCompletedLessons(progress.completedLessons || []);
+                const pct = courseLessons.length > 0 ? ((progress.completedLessons?.length || 0) / courseLessons.length) * 100 : 0;
+                setCourseProgress(Math.min(100, Math.round(pct)));
+              }
+            }
+          }} 
+        />
+      );
+    },
+    VideoEmbed,
+    Progress,
+    LanguageSwitcher,
+    Paragraph,
+  };
+
   return (
     <ThemeProvider>
       <CourseLayout
         courseTitle={String(courseId).replace(/-/g, ' ').toUpperCase()}
         navigation={navigation}
         currentLessonSlug={currentSlug}
-        completedLessons={[]}
-        progress={0}
+        completedLessons={completedLessons}
+        progress={courseProgress}
         onNavigate={handleNavigate}
       >
-        <div className="prose px-8 py-4 max-w-4xl mx-auto">
+        <div className="prose px-8 py-4 max-w-4xl mx-auto pb-24">
           {isOverview ? (
              <CourseOverview 
                course={courseData} 
@@ -84,9 +144,43 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                onStartCourse={() => handleNavigate(courseLessons[0]?.slug || '')} 
              />
           ) : Component ? (
-            <MDXProvider components={components}>
-              <Component />
-            </MDXProvider>
+            <>
+              <MDXProvider components={components}>
+                <Component />
+              </MDXProvider>
+              
+              <div className="mt-16 pt-8 border-t border-[rgb(var(--border-color))] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="w-full sm:w-auto">
+                  {prevLesson && (
+                    <button 
+                      onClick={() => handleNavigate(prevLesson.slug)}
+                      className="w-full px-6 py-3 border border-[rgb(var(--border-color))] hover:bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      <span>←</span> Previous
+                    </button>
+                  )}
+                </div>
+                
+                <div className="w-full sm:w-auto flex flex-col sm:flex-row gap-4 ml-auto">
+                  {!completedLessons.includes(currentSlug) && (
+                    <button 
+                      onClick={handleCompleteAndNext}
+                      className="w-full px-6 py-3 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-bold rounded-lg transition-colors shadow-sm"
+                    >
+                      {nextLesson ? 'Mark Complete & Next' : 'Finish Course'}
+                    </button>
+                  )}
+                  {completedLessons.includes(currentSlug) && nextLesson && (
+                    <button 
+                      onClick={() => handleNavigate(nextLesson.slug)}
+                      className="w-full px-6 py-3 bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--border-color))] text-[rgb(var(--text-primary))] font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
+                    >
+                      Next <span>→</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
           ) : (
             <div className="text-center p-8">
               <p className="text-lg text-[rgb(var(--text-muted))]">Lesson not found.</p>

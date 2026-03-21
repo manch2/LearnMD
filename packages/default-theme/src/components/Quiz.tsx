@@ -19,6 +19,8 @@ export interface QuizProps {
   allowRetry?: boolean;
   showCorrectAnswers?: boolean;
   onComplete?: (results: QuizResults) => void;
+  initialCompleted?: boolean;
+  initialScore?: number;
 }
 
 export interface QuizResults {
@@ -40,6 +42,8 @@ export function Quiz({
   allowRetry = true,
   showCorrectAnswers = true,
   onComplete,
+  initialCompleted = false,
+  initialScore = 100,
 }: QuizProps) {
   const { currentLanguage } = useI18n();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -47,8 +51,12 @@ export function Quiz({
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const [results, setResults] = useState<QuizResults | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(initialCompleted);
+  const [results, setResults] = useState<QuizResults | null>(
+    initialCompleted 
+      ? { score: initialScore, totalQuestions: questions.length, passed: initialScore >= passingScore, answers: [] } 
+      : null
+  );
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;

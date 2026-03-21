@@ -302,6 +302,7 @@ export interface ThemeConfig {
     textColor: string;
   };
   navigation?: { label: string | TranslatedString; path: string }[];
+  customPages?: { path: string; componentPath: string }[];
 }
 
 /**
@@ -323,4 +324,5 @@ export interface Config {
     badges?: Array<{ id: string; name: string; icon: string }>;
   };
   navigation?: { label: string | TranslatedString; path: string }[];
+  customPages?: { path: string; componentPath: string }[];
 }
