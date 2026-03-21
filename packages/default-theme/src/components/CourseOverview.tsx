@@ -99,7 +99,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse }: Cours
           
           {course.expectedSkills && course.expectedSkills.length > 0 && (
             <div className="bg-[rgb(var(--bg-secondary))] p-6 rounded-lg border border-[rgb(var(--border-color))]">
-              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">What You'll Learn</h3>
+              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">What You&apos;ll Learn</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-[rgb(var(--text-secondary))]">
                 {course.expectedSkills.map((skill, i) => (
                   <li key={i}>{skill}</li>

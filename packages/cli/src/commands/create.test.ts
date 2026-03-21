@@ -62,6 +62,6 @@ describe('getCourseConfig', () => {
     expect(config.title.en).toBe(courseName);
     expect(config.title.es).toBe(`${courseName} (ES)`);
     expect(config.difficulty).toBe('beginner');
-    expect(Array.isArray(config.lessonOrder)).toBe(true);
+    expect(Array.isArray(config.lessons)).toBe(true);
   });
 });

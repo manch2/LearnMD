@@ -48,7 +48,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
-      title: getTranslatedString(l.frontmatter?.title as any, 'en') || l.slug,
+      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug,
       slug: l.slug,
     }))
   }];
@@ -61,7 +61,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     id: courseId || '',
     title: String(courseId).replace(/-/g, ' ').toUpperCase(),
     modules: [],
-    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as any, 'en') || l.slug }) as any),
+    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug })),
     frontmatter: {},
     basePath: `/courses/${courseId}`
   };
