@@ -28,7 +28,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@learnmd/core": "0.0.2-beta.1",
+    "@learnmd/core": "workspace:*",
     "@learnmd/plugin-pdf": "workspace:*",
     "@mdx-js/react": "^3.0.1",
     "react": ">=18.0.0",

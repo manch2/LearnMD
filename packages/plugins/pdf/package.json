@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "jspdf": "^4.2.1",
-    "@learnmd/core": "0.0.2-beta.1"
+    "@learnmd/core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
