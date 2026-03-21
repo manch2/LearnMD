@@ -18,7 +18,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "jspdf": "^2.5.1",
+    "jspdf": "^4.2.1",
     "@learnmd/core": "workspace:*"
   },
   "devDependencies": {
