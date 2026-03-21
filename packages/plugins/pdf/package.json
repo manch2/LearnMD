@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/plugin-pdf",
-  "version": "0.0.2-beta.0",
+  "version": "0.0.2-beta.1",
   "description": "PDF certification plugin for LearnMD",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "jspdf": "^4.2.1",
-    "@learnmd/core": "workspace:*"
+    "@learnmd/core": "0.0.2-beta.1"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

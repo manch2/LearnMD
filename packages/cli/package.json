@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/cli",
-  "version": "0.0.2-beta.0",
+  "version": "0.0.2-beta.1",
   "description": "CLI for creating and building LearnMD courses",
   "type": "module",
   "bin": {
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@clack/prompts": "^1.1.0",
-    "@learnmd/core": "workspace:*",
+    "@learnmd/core": "0.0.2-beta.1",
     "@learnmd/default-theme": "workspace:*",
     "chalk": "^5.3.0",
     "commander": "^12.0.0",
