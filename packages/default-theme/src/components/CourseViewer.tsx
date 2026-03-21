@@ -129,7 +129,10 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
       );
     },
     VideoEmbed,
-    Progress,
+    Progress: (props: any) => {
+      // If the label hints at "Lesson", compute lesson progress. For now we use the core courseProgress.
+      return <Progress {...props} value={props.label?.toLowerCase().includes('lesson') ? 100 : courseProgress} />;
+    },
     LanguageSwitcher,
     Paragraph,
   };
