@@ -48,16 +48,9 @@ export function ProfileViewer() {
   };
 
   return (
-    <MainLayout>
-      <Header 
-        title="User Profile" 
-        actions={
-          <Link to="/" className="text-sm font-medium hover:text-[rgb(var(--color-primary-500))]">
-            &laquo; Back to Catalog
-          </Link>
-        }
-      />
-      <div className="container mx-auto px-4 py-8 max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+    <div className="container mx-auto px-4 py-8 max-w-4xl text-left">
+      <Link to="/" className="inline-block mb-6 text-sm font-medium text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--color-primary-500))] transition-colors">&laquo; Back to Catalog</Link>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))] h-fit">
           <div className="flex items-center gap-4 mb-8 border-b border-[rgb(var(--border-color))] pb-6">
             <div className="w-16 h-16 rounded-full bg-[rgb(var(--color-primary-100))] dark:bg-[rgb(var(--color-primary-900))] flex items-center justify-center text-[rgb(var(--color-primary-600))] dark:text-[rgb(var(--color-primary-400))] text-2xl font-bold">
@@ -172,6 +165,6 @@ export function ProfileViewer() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 }

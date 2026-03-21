@@ -22,7 +22,7 @@ export interface CourseViewerProps {
 export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerProps) {
   const { courseId, '*': pathLessonSlug } = useParams();
   const navigate = useNavigate();
-  const { storage, gamification } = useLearnMD();
+  const { storage, completeLesson } = useLearnMD() as any;
   
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [courseProgress, setCourseProgress] = useState<number>(0);
@@ -42,7 +42,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
   
   useEffect(() => {
     if (!courseId) return;
-    storage.getCourseProgress(courseId).then(progress => {
+    storage.getCourseProgress(courseId).then((progress: any) => {
       if (progress) {
         setCompletedLessons(progress.completedLessons || []);
         const pct = courseLessons.length > 0 ? ((progress.completedLessons?.length || 0) / courseLessons.length) * 100 : 0;
@@ -57,18 +57,9 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
 
   const handleCompleteAndNext = async () => {
     if (courseId && currentSlug) {
-      const points = gamification ? gamification.calculateLessonPoints() : 10;
-      await (storage as any).completeLesson(courseId, currentSlug, undefined, undefined, points);
+      await completeLesson(courseId, currentSlug, { totalLessons: courseLessons.length });
       
       const progress = await storage.getCourseProgress(courseId);
-      if (progress) {
-        (progress as any).progressPercentage = Math.min(100, Math.round((Math.max(1, progress.completedLessons.length) / courseLessons.length) * 100));
-        (progress as any).totalLessons = courseLessons.length;
-        if (progress.completedLessons.length >= courseLessons.length && !progress.completedAt) {
-           progress.completedAt = Date.now();
-        }
-        await storage.saveCourseProgress(progress);
-      }
 
       if (nextLesson) {
         handleNavigate(nextLesson.slug);
@@ -120,16 +111,14 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
           onComplete={async (results: any) => {
             if (props.onComplete) props.onComplete(results);
             if (results.passed && courseId && currentSlug) {
-              const points = gamification ? gamification.calculateLessonPoints(results.score, results.passed) : 30;
-              await (storage as any).completeLesson(courseId, currentSlug, results.score, true, points);
+              await completeLesson(courseId, currentSlug, { 
+                totalLessons: courseLessons.length, 
+                score: results.score, 
+                passed: results.passed 
+              });
+              
               const progress = await storage.getCourseProgress(courseId);
               if (progress) {
-                (progress as any).progressPercentage = Math.min(100, Math.round((Math.max(1, progress.completedLessons.length) / courseLessons.length) * 100));
-                (progress as any).totalLessons = courseLessons.length;
-                if (progress.completedLessons.length >= courseLessons.length && !progress.completedAt) {
-                   progress.completedAt = Date.now();
-                }
-                await storage.saveCourseProgress(progress);
                 setCompletedLessons(progress.completedLessons || []);
                 const pct = courseLessons.length > 0 ? ((progress.completedLessons?.length || 0) / courseLessons.length) * 100 : 0;
                 setCourseProgress(Math.min(100, Math.round(pct)));
