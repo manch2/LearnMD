@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLearnMD } from '@learnmd/core';
+import { useLearnMD, getTranslatedString } from '@learnmd/core';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 import { generateCertificate } from '@learnmd/plugin-pdf';
 import type { UserProfile, CourseProgress } from '@learnmd/core';
 
 export function ProfileViewer() {
-  const { storage } = useLearnMD();
+  const { storage, i18n } = useLearnMD();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [progressData, setProgressData] = useState<Record<string, CourseProgress>>({});
@@ -155,7 +155,7 @@ export function ProfileViewer() {
                 {profile.badges.map((badge) => (
                   <div key={badge.id} className="flex flex-col items-center p-4 bg-[rgb(var(--bg-primary))] rounded-lg text-center border border-[rgb(var(--border-color))]">
                     <span className="text-3xl mb-2">{badge.icon || '🏆'}</span>
-                    <span className="text-sm font-semibold text-[rgb(var(--text-primary))]">{badge.name as string}</span>
+                    <span className="text-sm font-semibold text-[rgb(var(--text-primary))]">{getTranslatedString(badge.name as Record<string, string>, i18n?.currentLanguage || 'en')}</span>
                   </div>
                 ))}
               </div>
