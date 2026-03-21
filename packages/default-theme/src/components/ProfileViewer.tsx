@@ -132,7 +132,7 @@ export function ProfileViewer() {
                       </div>
                       <div className="mb-2">
                         <div className="h-2 w-full bg-[rgb(var(--bg-tertiary))] rounded-full overflow-hidden">
-                           <div className="h-full bg-[rgb(var(--color-primary-500))]" style={{ width: `${Math.min(100, Math.max(10, progress.completedLessons.length * 20))}%` }} />
+                           <div className="h-full bg-[rgb(var(--color-primary-500))]" style={{ width: `${Math.min(100, Math.max(10, (progress as any).progressPercentage || (progress.completedAt ? 100 : (progress.completedLessons.length * 20))))}%` }} />
                         </div>
                       </div>
                       <div className="flex justify-between items-center mt-3">

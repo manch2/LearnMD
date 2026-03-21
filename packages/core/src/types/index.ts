@@ -156,6 +156,8 @@ export interface CourseProgress {
   startedAt: number;
   completedAt?: number;
   lastAccessedAt: number;
+  progressPercentage?: number;
+  totalLessons?: number;
 }
 
 /**

@@ -317,13 +317,15 @@ export class StorageManager {
     courseId: string,
     lessonSlug: string,
     quizScore?: number,
-    quizPassed?: boolean
+    quizPassed?: boolean,
+    points?: number
   ): Promise<void> {
     await this.updateLessonProgress(courseId, lessonSlug, {
       completed: true,
       completedAt: Date.now(),
       quizScore,
       quizPassed,
+      points,
     });
   }
 
