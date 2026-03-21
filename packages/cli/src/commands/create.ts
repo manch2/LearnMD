@@ -176,9 +176,19 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function getAppTsx(): string {
   return `/// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
+
+const components = {
+  Callout,
+  Quiz,
+  VideoEmbed,
+  Progress,
+  LanguageSwitcher,
+  Paragraph,
+};
 
 // Glob all markdown files dynamically across all courses
 const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });
@@ -217,6 +227,7 @@ function App() {
           <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
           <Route path="/profile" element={
             <MainLayout title="Profile">
+              <Header title="User Profile" />
               <ProfileViewer />
             </MainLayout>
           } />
@@ -230,8 +241,11 @@ function App() {
              return (
                <Route key={idx} path={page.path} element={
                  <MainLayout>
+                   <Header />
                    <div className="prose dark:prose-invert max-w-4xl mx-auto py-12 px-6">
-                     <Component />
+                     <MDXProvider components={components}>
+                       <Component />
+                     </MDXProvider>
                    </div>
                  </MainLayout>
                } />

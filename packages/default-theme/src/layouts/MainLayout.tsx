@@ -1,6 +1,7 @@
 import React, { type ReactNode, useState } from 'react';
 import { ThemeProvider, useTheme, useI18n } from '../hooks';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { useLearnMD } from '@learnmd/core';
 
 export interface LayoutProps {
   children: ReactNode;
@@ -32,10 +33,13 @@ export function Header({
   showThemeToggle = true,
   showLanguageSwitcher = true,
   actions,
-  navigation = [],
+  navigation: manualNavigation,
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { currentLanguage } = useI18n();
+  const { config } = useLearnMD();
+
+  const navigation = manualNavigation || config.navigation || [];
 
   return (
     <header className="sticky top-0 z-40 bg-[rgb(var(--bg-primary))]/95 backdrop-blur border-b border-[rgb(var(--border-color))]">
@@ -53,7 +57,7 @@ export function Header({
             )}
             {navigation.length > 0 && (
               <nav className="hidden md:flex items-center gap-6 ml-6 text-sm font-medium">
-                {navigation.map((item, idx) => {
+                {navigation.map((item: any, idx: number) => {
                   const label = typeof item.label === 'string' 
                     ? item.label 
                     : item.label[currentLanguage] || Object.values(item.label)[0];
@@ -104,7 +108,7 @@ export function Header({
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-[rgb(var(--border-color))]">
           <nav className="px-4 py-4 space-y-2">
-            {navigation.map((item, idx) => {
+            {navigation.map((item: any, idx: number) => {
               const label = typeof item.label === 'string' 
                 ? item.label 
                 : item.label[currentLanguage] || Object.values(item.label)[0];

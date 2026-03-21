@@ -69,6 +69,8 @@ export interface LearnMDConfig {
     pointsPerQuiz?: number;
     badges?: Array<{ id: string; name: string; icon: string }>;
   };
+  navigation?: Array<{ label: string | Record<string, string>; path: string }>;
+  customPages?: Array<{ path: string; componentPath: string }>;
 }
 
 export function defineConfig(config: LearnMDConfig): LearnMDConfig {
@@ -82,6 +84,8 @@ export function createLearnMD(config: LearnMDConfig = {}) {
     storagePrefix = 'learnmd',
     enableGamification = true,
     enableAnalytics = false,
+    navigation = [],
+    customPages = [],
   } = config;
 
   // Initialize i18n
@@ -110,6 +114,8 @@ export function createLearnMD(config: LearnMDConfig = {}) {
       storagePrefix,
       enableGamification,
       enableAnalytics,
+      navigation,
+      customPages,
     },
   };
 }
