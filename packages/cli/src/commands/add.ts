@@ -206,3 +206,40 @@ duration: '10 minutes'
     console.error(error);
   }
 }
+
+export async function addPageCommand(title: string, options?: AddOptions) {
+  const isNonInteractive = options?.nonInteractive;
+  const slug = title.toLowerCase().replace(/\s+/g, '-');
+  const pathUrl = `/${slug}`;
+  
+  if (!isNonInteractive) {
+    console.log(chalk.blue(`\n📄 Adding new custom page: ${title} at ${pathUrl}\n`));
+  }
+  
+  const filePath = join(process.cwd(), 'pages', `${slug}.mdx`);
+
+  const content = `---
+title: '${title}'
+---
+
+# ${title}
+
+This is a custom dynamic page. You can add MDX components here.
+`;
+
+  try {
+    await mkdir(join(process.cwd(), 'pages'), { recursive: true });
+    await writeFile(filePath, content);
+    console.log(chalk.gray(`  Created page file: pages/${slug}.mdx`));
+    console.log(chalk.yellow(`  ⚠️  Remember to add this page to your learnmd.config.ts:`));
+    console.log(chalk.cyan(`
+      customPages: [
+        { path: '${pathUrl}', componentPath: 'pages/${slug}.mdx' }
+      ]
+    `));
+  } catch (error) {
+    console.error(chalk.red('❌ Failed to create page. Ensure you have permissions.'));
+    console.error(error);
+  }
+}
+

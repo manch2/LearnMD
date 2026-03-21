@@ -1,6 +1,8 @@
 import React, { type ReactNode, useState } from 'react';
 import { ThemeProvider, useTheme, useI18n } from '../hooks';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
+import { useLearnMD } from '@learnmd/core';
+import { Link } from 'react-router-dom';
 
 export interface LayoutProps {
   children: ReactNode;
@@ -32,10 +34,13 @@ export function Header({
   showThemeToggle = true,
   showLanguageSwitcher = true,
   actions,
-  navigation = [],
+  navigation: manualNavigation,
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { currentLanguage } = useI18n();
+  const { config } = useLearnMD();
+
+  const navigation = manualNavigation || config.navigation || [];
 
   return (
     <header className="sticky top-0 z-40 bg-[rgb(var(--bg-primary))]/95 backdrop-blur border-b border-[rgb(var(--border-color))]">
@@ -43,32 +48,41 @@ export function Header({
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {logo || (
-              <a href="/" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <span className="text-2xl">📚</span>
                 <span className="font-bold text-xl">LearnMD</span>
-              </a>
+              </Link>
             )}
             {title && (
               <span className="hidden md:block text-[rgb(var(--text-secondary))]">/ {title}</span>
             )}
             {navigation.length > 0 && (
               <nav className="hidden md:flex items-center gap-6 ml-6 text-sm font-medium">
-                {navigation.map((item, idx) => {
+                {navigation.map((item: any, idx: number) => {
                   const label = typeof item.label === 'string' 
                     ? item.label 
                     : item.label[currentLanguage] || Object.values(item.label)[0];
                   return (
-                    <a key={idx} href={item.path} className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors">
+                    <Link key={idx} to={item.path} className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors">
                       {label}
-                    </a>
+                    </Link>
                   );
                 })}
               </nav>
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {actions}
+            <Link
+              to="/profile"
+              className="p-2 rounded-lg flex items-center justify-center hover:bg-[rgb(var(--bg-tertiary))] text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors"
+              title="User Profile"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </Link>
             {showLanguageSwitcher && (
               <div className="hidden md:block">
                 <LanguageSwitcher />
@@ -104,14 +118,14 @@ export function Header({
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-[rgb(var(--border-color))]">
           <nav className="px-4 py-4 space-y-2">
-            {navigation.map((item, idx) => {
+            {navigation.map((item: any, idx: number) => {
               const label = typeof item.label === 'string' 
                 ? item.label 
                 : item.label[currentLanguage] || Object.values(item.label)[0];
               return (
-                <a key={idx} href={item.path} className="block py-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]">
+                <Link key={idx} to={item.path} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]">
                   {label}
-                </a>
+                </Link>
               );
             })}
           </nav>

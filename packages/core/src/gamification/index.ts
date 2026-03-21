@@ -1,4 +1,5 @@
-import type { Badge, Achievement, UserProfile, CourseProgress, LessonProgress } from '../types';
+import type { Badge, Achievement, UserProfile, CourseProgress, LessonProgress, PluginContext } from '../types';
+import { BasePlugin, HOOKS } from '../plugins/index.js';
 
 /**
  * Default badges configuration
@@ -444,6 +445,65 @@ export class GamificationManager {
    */
   getAchievement(id: string): Omit<Achievement, 'unlockedAt'> | undefined {
     return this.achievements.get(id);
+  }
+}
+
+/**
+ * Gamification Plugin
+ * Bridges the physical GamificationManager to the internal LearnMD hooks architecture.
+ */
+export class GamificationPlugin extends BasePlugin {
+  public manager: GamificationManager;
+
+  constructor(config?: any) {
+    super('gamification', '1.0.0', config);
+    this.manager = new GamificationManager();
+  }
+
+  onLoad(ctx: PluginContext): void {
+    ctx.registerHook(HOOKS.LESSON_COMPLETE, async (data: any) => {
+      const { courseId, lessonSlug, score, passed } = data;
+      const points = this.manager.calculateLessonPoints(score, passed);
+      
+      // Update points directly into the lesson progress which increments the total points automatically
+      await (ctx.storage as any).updateLessonProgress(courseId, lessonSlug, { points });
+      
+      const progress = await (ctx.storage as any).getCourseProgress(courseId);
+      const profile = await (ctx.storage as any).getUserProfile();
+      
+      if (progress && profile) {
+        const lp = progress.lessons[lessonSlug];
+        if (lp) {
+           let profileUpdated = false;
+
+           const earnedBadges = this.manager.checkBadges(progress, lp, profile);
+           if (earnedBadges.length > 0) {
+             profile.badges.push(...earnedBadges);
+             profileUpdated = true;
+           }
+
+           const earnedAchievements = this.manager.checkAchievements(profile);
+           if (earnedAchievements.length > 0) {
+             profile.achievements.push(...earnedAchievements);
+             profileUpdated = true;
+           }
+
+           if (profileUpdated) {
+             await (ctx.storage as any).saveUserProfile(profile);
+             // Fire a gamification update hook if necessary
+             (ctx as any).registerHook?.('gamification:update', profile); 
+           }
+        }
+      }
+    });
+
+    ctx.registerHook('app:init', async () => {
+      const profile = await (ctx.storage as any).getUserProfile();
+      if (profile) {
+        const updatedProfile = this.manager.updateStreak(profile);
+        await (ctx.storage as any).saveUserProfile(updatedProfile);
+      }
+    });
   }
 }
 

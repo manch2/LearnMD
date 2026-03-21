@@ -2,13 +2,17 @@ import React from 'react';
 import type { Course } from '@learnmd/core';
 import { useI18n } from '../hooks';
 
+import { Link } from 'react-router-dom';
+
 export interface CourseOverviewProps {
   course: Course;
   overviewContent?: React.ReactNode;
   onStartCourse?: () => void;
+  completedLessons?: string[];
+  courseProgress?: number;
 }
 
-export function CourseOverview({ course, overviewContent, onStartCourse }: CourseOverviewProps) {
+export function CourseOverview({ course, overviewContent, onStartCourse, completedLessons = [], courseProgress = 0 }: CourseOverviewProps) {
   const { currentLanguage } = useI18n();
 
   const title = typeof course.title === 'string' 
@@ -49,7 +53,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse }: Cours
             onClick={onStartCourse}
             className="px-6 py-3 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-bold rounded-lg transition-colors shadow-sm"
           >
-            Start Course
+            {completedLessons.length > 0 ? (completedLessons.length >= (course.lessons?.length || 0) ? 'Review Course' : 'Continue Course') : 'Start Course'}
           </button>
         )}
       </header>
@@ -71,11 +75,17 @@ export function CourseOverview({ course, overviewContent, onStartCourse }: Cours
                   : (typeof lesson.frontmatter.title === 'string' ? lesson.frontmatter.title : 'Lesson');
                 const slug = typeof lesson === 'string' ? lesson : lesson.slug;
                 
+                const isCompleted = completedLessons.includes(slug);
                 return (
-                  <div key={idx} className="p-4 border border-[rgb(var(--border-color))] rounded-lg hover:border-[rgb(var(--color-primary-500))] transition-colors bg-[rgb(var(--bg-secondary))]">
-                    <a href={`${course.basePath}/${slug}`} className="text-lg font-medium text-[rgb(var(--text-primary))] hover:text-[rgb(var(--color-primary-500))] transition-colors block">
+                  <div key={idx} className="p-4 border border-[rgb(var(--border-color))] rounded-lg hover:border-[rgb(var(--color-primary-500))] transition-colors bg-[rgb(var(--bg-secondary))] flex justify-between items-center">
+                    <Link to={`${course.basePath}/${slug}`} className="text-lg font-medium text-[rgb(var(--text-primary))] hover:text-[rgb(var(--color-primary-500))] transition-colors block">
                       <span className="text-[rgb(var(--text-secondary))] mr-2">{idx + 1}.</span> {lessonTitle}
-                    </a>
+                    </Link>
+                    {isCompleted && (
+                       <span className="text-sm text-emerald-500 font-semibold flex items-center gap-1">
+                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> Completed
+                       </span>
+                    )}
                   </div>
                 );
               })

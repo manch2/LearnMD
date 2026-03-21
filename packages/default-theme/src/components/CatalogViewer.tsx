@@ -1,7 +1,23 @@
 import React from 'react';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
+// @ts-ignore
 import { MDXProvider } from '@mdx-js/react';
+import { Callout } from './Callout';
+import { Quiz } from './Quiz';
+import { VideoEmbed } from './VideoEmbed';
+import { Progress } from './Progress';
+import { LanguageSwitcher } from './LanguageSwitcher';
+import { Paragraph } from './Paragraph';
+
+const components = {
+  Callout,
+  Quiz,
+  VideoEmbed,
+  Progress,
+  LanguageSwitcher,
+  Paragraph,
+};
 
 export interface CatalogViewerProps {
   courses: Array<{ courseSlug: string; slug: string; frontmatter: Record<string, unknown> }>;
@@ -9,9 +25,6 @@ export interface CatalogViewerProps {
 }
 
 export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
-  // Remove unused storage
-
-
   // Group lessons by courseSlug
   const courseMap = new Map<string, { id: string; title: string; totalLessons: number }>();
   courses.forEach(lesson => {
@@ -34,22 +47,17 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
     <MainLayout>
       <Header 
         title="Course Catalog" 
-        actions={
-          <Link to="/profile" className="text-sm font-medium hover:text-emerald-500">
-            Profile
-          </Link>
-        }
       />
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {HomeComponent && (
           <div className="prose dark:prose-invert max-w-none mb-12">
-            <MDXProvider>
+            <MDXProvider components={components}>
               <HomeComponent />
             </MDXProvider>
           </div>
         )}
-        <h1 className="text-3xl font-bold mb-8">Available Courses</h1>
-        
+        <h1 className="text-3xl font-bold mb-8 text-[rgb(var(--text-primary))]">Available Courses</h1>
+...
         {uniqueCourses.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             No courses available yet. Add some courses in the &apos;courses/&apos; folder!

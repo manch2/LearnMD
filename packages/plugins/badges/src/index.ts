@@ -28,11 +28,20 @@ export class BadgesPlugin extends BasePlugin {
   }
 
   private async evaluateBadges(ctx: PluginContext) {
-    const profile = await ctx.storage.get<UserProfile>('profile');
+    const profile = await ctx.storage.get<UserProfile>('userProfile');
     if (!profile) return;
 
     const awardedBadges = profile.badges || [];
     let updated = false;
+
+    // We need all courses progress to evaluate correctly.
+    const keys = await ctx.storage.keys();
+    const progressKeys = keys.filter(k => k.startsWith('progress:'));
+    const allProgress: Record<string, CourseProgress> = {};
+    for (const k of progressKeys) {
+      const prog = await ctx.storage.get<CourseProgress>(k);
+      if (prog) allProgress[k.replace('progress:', '')] = prog;
+    }
 
     for (const badge of this.badges) {
       if (awardedBadges.find((b: { id: string }) => b.id === badge.id)) continue;
@@ -40,16 +49,17 @@ export class BadgesPlugin extends BasePlugin {
       let shouldAward = false;
 
       if (badge.criteria.type === 'courses_completed') {
-        const completedCourses = Object.values(profile.coursesProgress || {}).filter((p: CourseProgress) => !!p.completedAt).length;
+        const completedCourses = Object.values(allProgress).filter((p: CourseProgress) => !!p.completedAt).length;
         if (badge.criteria.count && completedCourses >= badge.criteria.count) {
           shouldAward = true;
         }
       } else if (badge.criteria.type === 'course_progress') {
         const { courseId, percentage } = badge.criteria;
         if (courseId && percentage !== undefined) {
-          const courseProg = profile.coursesProgress?.[courseId];
-          const progress = courseProg?.completedAt ? 100 : (courseProg?.completedLessons?.length ? 50 : 0); // basic fallback, you may want to fetch total lessons
-          if (progress >= percentage) {
+          const courseProg = allProgress[courseId];
+          // Determine percentage (CourseViewer saves progressPercentage in points check, but we can compute rough fallback if missing)
+          const courseProgressValue = courseProg?.completedAt ? 100 : (courseProg?.completedLessons?.length ? (courseProg as any).progressPercentage || Math.min(99, courseProg.completedLessons.length * 20) : 0);
+          if (courseProgressValue >= percentage) {
             shouldAward = true;
           }
         }
