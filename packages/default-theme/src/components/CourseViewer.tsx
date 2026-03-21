@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ThemeProvider } from '../hooks';
 import { CourseLayout } from '../layouts';
 // @ts-ignore
@@ -9,12 +9,14 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
-import { getTranslatedString } from '@learnmd/core';
+import { getTranslatedString, Course } from '@learnmd/core';
+import { CourseOverview } from './CourseOverview';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
 export interface CourseViewerProps {
   allLessons: Array<{ courseSlug: string; slug: string; Component: React.ComponentType; frontmatter: Record<string, unknown> }>;
+  coursesConfig?: Record<string, Course>;
 }
 
 const components = {
@@ -26,13 +28,17 @@ const components = {
   Paragraph,
 };
 
-export function CourseViewer({ allLessons }: CourseViewerProps) {
+export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerProps) {
   const { courseId, '*': pathLessonSlug } = useParams();
   const navigate = useNavigate();
   
-  const courseLessons = allLessons.filter(l => l.courseSlug === courseId);
-  const currentSlug = pathLessonSlug || courseLessons[0]?.slug;
-  const currentLesson = courseLessons.find(l => l.slug === currentSlug) || courseLessons[0];
+  const courseLessons = useMemo(() => allLessons.filter(l => l.courseSlug === courseId), [allLessons, courseId]);
+  
+  // If no specific lesson slug is provided, we are at the course root -> show overview
+  const isOverview = !pathLessonSlug;
+  const currentSlug = pathLessonSlug || '';
+  
+  const currentLesson = courseLessons.find(l => l.slug === currentSlug);
   const Component = currentLesson?.Component;
   
   const navigation = [{
@@ -42,13 +48,22 @@ export function CourseViewer({ allLessons }: CourseViewerProps) {
     children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
-      title: getTranslatedString(l.frontmatter?.title as any, 'en') || l.slug,
+      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug,
       slug: l.slug,
     }))
   }];
 
   const handleNavigate = (slug: string) => {
     navigate(`/courses/${courseId}/${slug}`);
+  };
+
+  const courseData = coursesConfig[courseId || ''] || {
+    id: courseId || '',
+    title: String(courseId).replace(/-/g, ' ').toUpperCase(),
+    modules: [],
+    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug })),
+    frontmatter: {},
+    basePath: `/courses/${courseId}`
   };
 
   return (
@@ -61,14 +76,20 @@ export function CourseViewer({ allLessons }: CourseViewerProps) {
         progress={0}
         onNavigate={handleNavigate}
       >
-        <div className="prose px-8 py-4">
-          {Component ? (
+        <div className="prose px-8 py-4 max-w-4xl mx-auto">
+          {isOverview ? (
+             <CourseOverview 
+               course={courseData} 
+               overviewContent={undefined} 
+               onStartCourse={() => handleNavigate(courseLessons[0]?.slug || '')} 
+             />
+          ) : Component ? (
             <MDXProvider components={components}>
               <Component />
             </MDXProvider>
           ) : (
             <div className="text-center p-8">
-              <p className="text-lg text-[rgb(var(--text-muted))]">Add markdown lessons in the \`lessons/\` folder to get started.</p>
+              <p className="text-lg text-[rgb(var(--text-muted))]">Lesson not found.</p>
             </div>
           )}
         </div>

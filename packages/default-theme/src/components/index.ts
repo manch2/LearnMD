@@ -17,3 +17,4 @@ export * from './LanguageSwitcher';
 export * from './CourseViewer';
 export * from './CatalogViewer';
 export * from './ProfileViewer';
+export * from './CourseOverview';

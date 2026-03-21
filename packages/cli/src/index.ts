@@ -6,6 +6,7 @@ import { devCommand } from './commands/dev.js';
 import { buildCommand } from './commands/build.js';
 import { initCommand } from './commands/init.js';
 import { addCourseCommand, addLessonCommand } from './commands/add.js';
+import { syncCommand } from './commands/sync.js';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -23,6 +24,7 @@ program
   .argument('[name]', 'Project name')
   .option('-t, --template <template>', 'Template to use', 'default')
   .option('-l, --language <language>', 'Default language', 'en')
+  .option('-n, --non-interactive', 'Run without interactive prompts')
   .action(createCommand);
 
 program
@@ -50,14 +52,26 @@ program
   .argument('<type>', 'Type of resource (course, lesson)')
   .argument('<name>', 'Name/Title of the resource')
   .option('-c, --course <courseName>', 'Course name to add the lesson to (defaults to demo-course)')
+  .option('-n, --non-interactive', 'Run without interactive prompts')
+  .option('-d, --difficulty <difficulty>', 'Difficulty level for course')
+  .option('-t, --time <time>', 'Estimated completion time for course')
   .action((type, name, options) => {
     if (type === 'course') {
-      addCourseCommand(name);
+      addCourseCommand(name, options);
     } else if (type === 'lesson') {
-      addLessonCommand(name, options.course || 'demo-course');
+      addLessonCommand(name, options);
     } else {
       console.error('Invalid resource type. Use "course" or "lesson".');
     }
+  });
+
+program
+  .command('sync')
+  .description('Sync a directory of MDX files to update the learnmd.json lessons array')
+  .argument('<course>', 'Course name to sync')
+  .option('-n, --non-interactive', 'Run without interactive prompts')
+  .action((course, options) => {
+    syncCommand(course, options);
   });
 
 program.parse();

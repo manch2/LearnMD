@@ -1,5 +1,6 @@
 import React, { type ReactNode, useState } from 'react';
-import { ThemeProvider, useTheme } from '../hooks';
+import { ThemeProvider, useTheme, useI18n } from '../hooks';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 export interface LayoutProps {
   children: ReactNode;
@@ -22,16 +23,19 @@ export interface HeaderProps {
   showSearch?: boolean;
   showLanguageSwitcher?: boolean;
   actions?: ReactNode;
+  navigation?: { label: string | Record<string, string>; path: string }[];
 }
 
 export function Header({
   logo,
   title,
   showThemeToggle = true,
-  showLanguageSwitcher = false,
+  showLanguageSwitcher = true,
   actions,
+  navigation = [],
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { currentLanguage } = useI18n();
 
   return (
     <header className="sticky top-0 z-40 bg-[rgb(var(--bg-primary))]/95 backdrop-blur border-b border-[rgb(var(--border-color))]">
@@ -47,13 +51,27 @@ export function Header({
             {title && (
               <span className="hidden md:block text-[rgb(var(--text-secondary))]">/ {title}</span>
             )}
+            {navigation.length > 0 && (
+              <nav className="hidden md:flex items-center gap-6 ml-6 text-sm font-medium">
+                {navigation.map((item, idx) => {
+                  const label = typeof item.label === 'string' 
+                    ? item.label 
+                    : item.label[currentLanguage] || Object.values(item.label)[0];
+                  return (
+                    <a key={idx} href={item.path} className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors">
+                      {label}
+                    </a>
+                  );
+                })}
+              </nav>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
             {actions}
             {showLanguageSwitcher && (
               <div className="hidden md:block">
-                {/* LanguageSwitcher will be imported separately */}
+                <LanguageSwitcher />
               </div>
             )}
             {showThemeToggle && <ThemeToggle />}
@@ -85,7 +103,18 @@ export function Header({
 
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-[rgb(var(--border-color))]">
-          <nav className="px-4 py-4 space-y-2">{/* Mobile menu content */}</nav>
+          <nav className="px-4 py-4 space-y-2">
+            {navigation.map((item, idx) => {
+              const label = typeof item.label === 'string' 
+                ? item.label 
+                : item.label[currentLanguage] || Object.values(item.label)[0];
+              return (
+                <a key={idx} href={item.path} className="block py-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]">
+                  {label}
+                </a>
+              );
+            })}
+          </nav>
         </div>
       )}
     </header>

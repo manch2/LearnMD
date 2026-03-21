@@ -109,10 +109,14 @@ export interface Course {
   id: string;
   title: string | TranslatedString;
   description?: string | TranslatedString;
-  modules: CourseModule[];
-  lessons: Lesson[];
+  modules: CourseModule[] | string[];
+  lessons: Lesson[] | string[];
   frontmatter: CourseFrontmatter;
   basePath: string;
+  difficulty?: string;
+  estimatedTime?: string;
+  prerequisites?: string[];
+  expectedSkills?: string[];
 }
 
 /**
@@ -297,4 +301,26 @@ export interface ThemeConfig {
     backgroundColor: string;
     textColor: string;
   };
+  navigation?: { label: string | TranslatedString; path: string }[];
+}
+
+/**
+ * Root configuration
+ */
+export interface Config {
+  title?: string;
+  description?: string;
+  defaultLanguage?: string;
+  availableLanguages?: string[];
+  basePath?: string;
+  storagePrefix?: string;
+  enableGamification?: boolean;
+  enableAnalytics?: boolean;
+  theme?: ThemeConfig;
+  gamification?: {
+    pointsPerLesson?: number;
+    pointsPerQuiz?: number;
+    badges?: Array<{ id: string; name: string; icon: string }>;
+  };
+  navigation?: { label: string | TranslatedString; path: string }[];
 }

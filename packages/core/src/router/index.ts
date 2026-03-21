@@ -28,7 +28,7 @@ export interface NavigationItem {
  * Router manager for course navigation
  */
 export class RouterManager {
-  private course: Course | null = null;
+  private course: (Course & { lessons: Lesson[]; modules: CourseModule[] }) | null = null;
   private state: RouterState = {
     currentCourse: null,
     currentLesson: null,
@@ -41,7 +41,7 @@ export class RouterManager {
    * Set the current course
    */
   setCourse(course: Course): void {
-    this.course = course;
+    this.course = course as Course & { lessons: Lesson[]; modules: CourseModule[] };
     this.state.currentCourse = course.id;
     this.notifyListeners();
   }
@@ -303,7 +303,7 @@ export function parseUrl(path: string): { courseSlug?: string; lessonSlug?: stri
  * Get lesson order number
  */
 export function getLessonOrder(course: Course, lessonSlug: string): number {
-  const index = course.lessons.findIndex((l) => l.slug === lessonSlug);
+  const index = (course.lessons as Lesson[]).findIndex((l) => l.slug === lessonSlug);
   return index + 1;
 }
 

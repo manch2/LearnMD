@@ -31,7 +31,7 @@ describe('addLessonCommand', () => {
     const courseSlug = 'demo-course';
     const expectedPath = join(process.cwd(), 'courses', courseSlug, 'lessons', `${slug}.mdx`);
 
-    await addLessonCommand(title);
+    await addLessonCommand(title, { nonInteractive: true });
 
     expect(mkdir).toHaveBeenCalledWith(expect.stringContaining(join('courses', courseSlug, 'lessons')), { recursive: true });
     expect(writeFile).toHaveBeenCalledWith(
@@ -42,13 +42,13 @@ describe('addLessonCommand', () => {
       expectedPath,
       expect.stringContaining(title),
     );
-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Lesson created'));
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Created lesson'));
   });
 
   it('should handle errors during creation', async () => {
     vi.mocked(writeFile).mockRejectedValueOnce(new Error('Write failed'));
     
-    await addLessonCommand('Fail Test');
+    await addLessonCommand('Fail Test', { nonInteractive: true });
     
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create lesson'));
   });
@@ -70,7 +70,7 @@ describe('addCourseCommand', () => {
     const expectedCoursePath = join(process.cwd(), 'courses', slug, 'lessons');
     const expectedConfigPath = join(process.cwd(), 'courses', slug, 'learnmd.json');
 
-    await addCourseCommand(name);
+    await addCourseCommand(name, { nonInteractive: true });
 
     expect(mkdir).toHaveBeenCalledWith(expectedCoursePath, { recursive: true });
     expect(writeFile).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('addCourseCommand', () => {
   it('should show warning if skip workspace check fails', async () => {
     vi.mocked(readFile).mockRejectedValueOnce(new Error('no package.json'));
     
-    await addCourseCommand('No Workspace');
+    await addCourseCommand('No Workspace', { nonInteractive: true });
     
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Warning: This doesn\'t look like a LearnMD project'));
   });
@@ -91,7 +91,7 @@ describe('addCourseCommand', () => {
   it('should handle errors during course creation', async () => {
     vi.mocked(mkdir).mockRejectedValueOnce(new Error('Mkdir failed'));
     
-    await addCourseCommand('Fail Course');
+    await addCourseCommand('Fail Course', { nonInteractive: true });
     
     expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create course directory'));
   });
