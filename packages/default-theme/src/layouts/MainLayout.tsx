@@ -2,6 +2,7 @@ import React, { type ReactNode, useState } from 'react';
 import { ThemeProvider, useTheme, useI18n } from '../hooks';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useLearnMD } from '@learnmd/core';
+import { Link } from 'react-router-dom';
 
 export interface LayoutProps {
   children: ReactNode;
@@ -47,10 +48,10 @@ export function Header({
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {logo || (
-              <a href="/" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <span className="text-2xl">📚</span>
                 <span className="font-bold text-xl">LearnMD</span>
-              </a>
+              </Link>
             )}
             {title && (
               <span className="hidden md:block text-[rgb(var(--text-secondary))]">/ {title}</span>
@@ -62,9 +63,9 @@ export function Header({
                     ? item.label 
                     : item.label[currentLanguage] || Object.values(item.label)[0];
                   return (
-                    <a key={idx} href={item.path} className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors">
+                    <Link key={idx} to={item.path} className="text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors">
                       {label}
-                    </a>
+                    </Link>
                   );
                 })}
               </nav>
@@ -113,9 +114,9 @@ export function Header({
                 ? item.label 
                 : item.label[currentLanguage] || Object.values(item.label)[0];
               return (
-                <a key={idx} href={item.path} className="block py-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]">
+                <Link key={idx} to={item.path} onClick={() => setIsMobileMenuOpen(false)} className="block py-2 text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))]">
                   {label}
-                </a>
+                </Link>
               );
             })}
           </nav>

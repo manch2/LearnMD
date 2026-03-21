@@ -57,7 +57,7 @@ export function ProfileViewer() {
           </Link>
         }
       />
-      <div className="container mx-auto px-4 py-8 max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="container mx-auto px-4 py-8 max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
         <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))] h-fit">
           <div className="flex items-center gap-4 mb-8 border-b border-[rgb(var(--border-color))] pb-6">
             <div className="w-16 h-16 rounded-full bg-[rgb(var(--color-primary-100))] dark:bg-[rgb(var(--color-primary-900))] flex items-center justify-center text-[rgb(var(--color-primary-600))] dark:text-[rgb(var(--color-primary-400))] text-2xl font-bold">
@@ -121,7 +121,7 @@ export function ProfileViewer() {
             <div className="space-y-6">
               {Object.keys(progressData || {}).length > 0 ? (
                 Object.entries(progressData).map(([courseId, progress]) => {
-                  const isCompleted = !!progress.completedAt || progress.completedLessons.length > 0; // Simplified completed check
+                  const isCompleted = !!progress.completedAt;
                   return (
                     <div key={courseId} className="border-b border-[rgb(var(--border-color))] pb-4 last:border-0 last:pb-0">
                       <div className="flex justify-between items-center mb-2">

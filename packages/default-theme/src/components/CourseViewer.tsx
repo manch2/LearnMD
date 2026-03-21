@@ -58,15 +58,22 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
   const handleCompleteAndNext = async () => {
     if (courseId && currentSlug) {
       await storage.completeLesson(courseId, currentSlug);
+      
+      const progress = await storage.getCourseProgress(courseId);
+      if (progress && progress.completedLessons.length >= courseLessons.length && !progress.completedAt) {
+         progress.completedAt = Date.now();
+         await storage.saveCourseProgress(progress);
+      }
+
       if (nextLesson) {
         handleNavigate(nextLesson.slug);
       } else {
         // Force refresh progress if it's the last lesson
-        const progress = await storage.getCourseProgress(courseId);
         if (progress) {
           setCompletedLessons(progress.completedLessons || []);
           setCourseProgress(100);
         }
+        handleNavigate(''); // Go back to overview
       }
     }
   };
@@ -111,6 +118,10 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
               await storage.completeLesson(courseId, currentSlug, results.score, true);
               const progress = await storage.getCourseProgress(courseId);
               if (progress) {
+                if (progress.completedLessons.length >= courseLessons.length && !progress.completedAt) {
+                   progress.completedAt = Date.now();
+                   await storage.saveCourseProgress(progress);
+                }
                 setCompletedLessons(progress.completedLessons || []);
                 const pct = courseLessons.length > 0 ? ((progress.completedLessons?.length || 0) / courseLessons.length) * 100 : 0;
                 setCourseProgress(Math.min(100, Math.round(pct)));
@@ -141,7 +152,12 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
              <CourseOverview 
                course={courseData} 
                overviewContent={undefined} 
-               onStartCourse={() => handleNavigate(courseLessons[0]?.slug || '')} 
+               onStartCourse={() => {
+                 const firstUncompleted = courseLessons.find(l => !completedLessons.includes(l.slug));
+                 handleNavigate(firstUncompleted?.slug || courseLessons[0]?.slug || '');
+               }}
+               completedLessons={completedLessons}
+               courseProgress={courseProgress}
              />
           ) : Component ? (
             <>
@@ -176,6 +192,14 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                       className="w-full px-6 py-3 bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--border-color))] text-[rgb(var(--text-primary))] font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
                     >
                       Next <span>→</span>
+                    </button>
+                  )}
+                  {completedLessons.includes(currentSlug) && !nextLesson && (
+                    <button 
+                      onClick={() => handleNavigate('')}
+                      className="w-full px-6 py-3 bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--border-color))] text-[rgb(var(--text-primary))] font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
+                    >
+                      Return to Overview <span>→</span>
                     </button>
                   )}
                 </div>
