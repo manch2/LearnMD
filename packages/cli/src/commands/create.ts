@@ -9,14 +9,23 @@ const pkg = require('../../package.json');
 const version = pkg.version;
 
 interface CreateOptions {
-  template: string;
-  language: string;
+  template?: string;
+  language?: string;
+  nonInteractive?: boolean;
 }
 
-export async function createCommand(name?: string, _options?: CreateOptions) {
-  intro(chalk.bgBlue(' 📚 Create LearnMD Project '));
+export async function createCommand(name?: string, options?: CreateOptions) {
+  const isNonInteractive = options?.nonInteractive;
+  if (!isNonInteractive) {
+    intro(chalk.bgBlue(' 📚 Create LearnMD Project '));
+  }
   
-  const projectName = name || (await askForProjectName());
+  let projectName = name;
+  if (!projectName && !isNonInteractive) {
+    projectName = await askForProjectName();
+  } else if (!projectName && isNonInteractive) {
+    projectName = 'my-course';
+  }
   
   if (!projectName) return; // Cancelled
 
@@ -28,8 +37,13 @@ export async function createCommand(name?: string, _options?: CreateOptions) {
     await updatePackageJson(projectName, projectName, isInWorkspace);
     await createEssentialFiles(projectName, isInWorkspace);
 
-    outro(chalk.green('✅ LearnMD project created successfully!'));
-    console.log(chalk.blue('Next steps:'));
+    if (!isNonInteractive) {
+      outro(chalk.green('✅ LearnMD project created successfully!'));
+      console.log(chalk.blue('Next steps:'));
+    } else {
+      console.log(chalk.green('✅ LearnMD project created successfully!'));
+      console.log('Next steps:');
+    }
     console.log(`  cd ${projectName}`);
     console.log('  pnpm install');
     console.log('  pnpm dev\n');
@@ -162,7 +176,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function getAppTsx(): string {
   return `/// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import config from '../learnmd.config';
 
@@ -180,14 +194,30 @@ const allLessons = Object.entries(lessonModules).map(([path, mod]) => {
   };
 });
 
+// Load Course Configurations (learnmd.json)
+const courseConfigsRaw = import.meta.glob('../courses/*/learnmd.json', { eager: true });
+const coursesConfig = Object.entries(courseConfigsRaw).reduce((acc, [path, mod]) => {
+  const courseSlug = path.split('/')[2];
+  acc[courseSlug] = { id: courseSlug, ...(mod as any).default || mod };
+  return acc;
+}, {} as Record<string, any>);
+
+// Optional: Load Home Page MDX
+const homeModule = import.meta.glob('../home.mdx', { eager: true });
+const HomeComponent = Object.values(homeModule)[0] ? (Object.values(homeModule)[0] as any).default : undefined;
+
 function App() {
   return (
     <LearnMDProvider config={config}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<CatalogViewer courses={allLessons} />} />
-          <Route path="/profile" element={<ProfileViewer />} />
-          <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} />} />
+          <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
+          <Route path="/profile" element={
+            <MainLayout title="Profile">
+              <ProfileViewer />
+            </MainLayout>
+          } />
+          <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />} />
         </Routes>
       </BrowserRouter>
     </LearnMDProvider>

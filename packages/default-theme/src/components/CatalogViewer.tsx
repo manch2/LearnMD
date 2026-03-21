@@ -1,12 +1,14 @@
 import React from 'react';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
+import { MDXProvider } from '@mdx-js/react';
 
 export interface CatalogViewerProps {
   courses: Array<{ courseSlug: string; slug: string; frontmatter: Record<string, unknown> }>;
+  HomeComponent?: React.ComponentType;
 }
 
-export function CatalogViewer({ courses }: CatalogViewerProps) {
+export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
   // Remove unused storage
 
 
@@ -39,6 +41,13 @@ export function CatalogViewer({ courses }: CatalogViewerProps) {
         }
       />
       <div className="container mx-auto px-4 py-8 max-w-5xl">
+        {HomeComponent && (
+          <div className="prose dark:prose-invert max-w-none mb-12">
+            <MDXProvider>
+              <HomeComponent />
+            </MDXProvider>
+          </div>
+        )}
         <h1 className="text-3xl font-bold mb-8">Available Courses</h1>
         
         {uniqueCourses.length === 0 ? (

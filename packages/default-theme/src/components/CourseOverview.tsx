@@ -5,9 +5,10 @@ import { useI18n } from '../hooks';
 export interface CourseOverviewProps {
   course: Course;
   overviewContent?: React.ReactNode;
+  onStartCourse?: () => void;
 }
 
-export function CourseOverview({ course, overviewContent }: CourseOverviewProps) {
+export function CourseOverview({ course, overviewContent, onStartCourse }: CourseOverviewProps) {
   const { currentLanguage } = useI18n();
 
   const title = typeof course.title === 'string' 
@@ -30,7 +31,7 @@ export function CourseOverview({ course, overviewContent }: CourseOverviewProps)
           </p>
         )}
         
-        <div className="flex flex-wrap gap-4 text-sm">
+        <div className="flex flex-wrap gap-4 text-sm mb-6">
           {course.difficulty && (
             <span className="px-3 py-1 bg-[rgb(var(--bg-tertiary))] text-[rgb(var(--text-primary))] rounded-full">
               Difficulty: <span className="font-semibold capitalize">{course.difficulty}</span>
@@ -42,6 +43,15 @@ export function CourseOverview({ course, overviewContent }: CourseOverviewProps)
             </span>
           )}
         </div>
+
+        {onStartCourse && (
+          <button 
+            onClick={onStartCourse}
+            className="px-6 py-3 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-bold rounded-lg transition-colors shadow-sm"
+          >
+            Start Course
+          </button>
+        )}
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -62,8 +72,8 @@ export function CourseOverview({ course, overviewContent }: CourseOverviewProps)
                 const slug = typeof lesson === 'string' ? lesson : lesson.slug;
                 
                 return (
-                  <div key={idx} className="p-4 border border-[rgb(var(--border-color))] rounded-lg hover:border-[rgb(var(--primary-color))] transition-colors bg-[rgb(var(--bg-secondary))]">
-                    <a href={`${course.basePath}/${slug}`} className="text-lg font-medium text-[rgb(var(--text-primary))] hover:text-[rgb(var(--primary-color))] transition-colors block">
+                  <div key={idx} className="p-4 border border-[rgb(var(--border-color))] rounded-lg hover:border-[rgb(var(--color-primary-500))] transition-colors bg-[rgb(var(--bg-secondary))]">
+                    <a href={`${course.basePath}/${slug}`} className="text-lg font-medium text-[rgb(var(--text-primary))] hover:text-[rgb(var(--color-primary-500))] transition-colors block">
                       <span className="text-[rgb(var(--text-secondary))] mr-2">{idx + 1}.</span> {lessonTitle}
                     </a>
                   </div>
