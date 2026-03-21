@@ -23,7 +23,7 @@ export * from './plugins/index.js';
 export * from './components/LearnMDProvider.js';
 
 // Import class implementations for createLearnMD
-import { I18nManager } from './i18n/index.js';
+import { initializeI18n } from './i18n/index.js';
 import { StorageManager } from './storage/index.js';
 import { GamificationManager, GamificationPlugin } from './gamification/index.js';
 import { RouterManager } from './router/index.js';
@@ -47,7 +47,7 @@ import { PluginRegistry, createDefaultPluginContext, HOOKS } from './plugins/ind
 /**
  * Core version
  */
-export const VERSION = '0.0.1-beta.1';
+export const VERSION = '0.0.2-beta.0';
 
 /**
  * Initialize LearnMD core with default configuration
@@ -92,10 +92,7 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   } = config;
 
   // Initialize i18n
-  const i18n = new I18nManager({
-    defaultLanguage,
-    availableLanguages: [defaultLanguage],
-  });
+  const i18n = initializeI18n(defaultLanguage, config.availableLanguages);
 
   // Initialize storage
   const storage = new StorageManager();
@@ -116,7 +113,7 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   }
 
   if (activePlugins.length > 0) {
-    const ctx = createDefaultPluginContext({} as any, (storage as any).localStorage, i18n);
+    const ctx = createDefaultPluginContext({} as any, storage as any, i18n);
     // Bind context hooks to the actual registry so plugins can fire local hooks natively
     ctx.registerHook = (hook, fn) => pluginsRegistry.registerHook(hook, fn);
     (ctx as any).executeHook = (hook: string, ...args: any[]) => pluginsRegistry.executeHook(hook, ...args);

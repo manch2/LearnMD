@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
+import { useLearnMD } from '@learnmd/core';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 // @ts-ignore
@@ -25,14 +26,20 @@ export interface CatalogViewerProps {
 }
 
 export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
+  const { i18n } = useLearnMD();
+
   // Group lessons by courseSlug
-  const courseMap = new Map<string, { id: string; title: string; totalLessons: number }>();
+  const courseMap = new Map<string, { id: string; title: string; totalLessons: number; difficulty?: string; duration?: string; category?: string; frontmatter: any }>();
   courses.forEach(lesson => {
     if (!courseMap.has(lesson.courseSlug)) {
       courseMap.set(lesson.courseSlug, {
         id: lesson.courseSlug,
         title: lesson.courseSlug.replace(/-/g, ' ').toUpperCase(),
         totalLessons: 0,
+        difficulty: lesson.frontmatter.difficulty as string | undefined,
+        duration: lesson.frontmatter.duration as string | undefined,
+        category: lesson.frontmatter.category as string | undefined,
+        frontmatter: lesson.frontmatter
       });
     }
     const course = courseMap.get(lesson.courseSlug);
@@ -43,41 +50,105 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
 
   const uniqueCourses = Array.from(courseMap.values());
 
+  const categories = useMemo(() => Array.from(new Set(uniqueCourses.map(c => c.category).filter(Boolean))) as string[], [uniqueCourses]);
+  const difficulties = useMemo(() => Array.from(new Set(uniqueCourses.map(c => c.difficulty).filter(Boolean))) as string[], [uniqueCourses]);
+  const durations = useMemo(() => Array.from(new Set(uniqueCourses.map(c => c.duration).filter(Boolean))) as string[], [uniqueCourses]);
+
+  const [filterCategory, setFilterCategory] = useState<string>('');
+  const [filterDifficulty, setFilterDifficulty] = useState<string>('');
+  const [filterDuration, setFilterDuration] = useState<string>('');
+
+  const filteredCourses = useMemo(() => {
+    return uniqueCourses.filter(course => {
+      if (filterCategory && course.category !== filterCategory) return false;
+      if (filterDifficulty && course.difficulty !== filterDifficulty) return false;
+      if (filterDuration && course.duration !== filterDuration) return false;
+      return true;
+    });
+  }, [uniqueCourses, filterCategory, filterDifficulty, filterDuration]);
+
   return (
     <MainLayout>
       <Header 
-        title="Course Catalog" 
+        title={i18n.translate('catalog.title')} 
       />
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {HomeComponent && (
-          <div className="prose dark:prose-invert max-w-none mb-12">
+          <div className="prose dark:prose-invert max-w-4xl mb-12">
             <MDXProvider components={components}>
               <HomeComponent />
             </MDXProvider>
           </div>
         )}
-        <h1 className="text-3xl font-bold mb-8 text-[rgb(var(--text-primary))]">Available Courses</h1>
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <h1 className="text-3xl font-bold text-[rgb(var(--text-primary))]">{i18n.translate('catalog.available')}</h1>
+          
+          <div className="flex flex-wrap gap-2 text-sm">
+            {categories.length > 0 && (
+              <select 
+                value={filterCategory} 
+                onChange={e => setFilterCategory(e.target.value)}
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
+              >
+                <option value="">All Categories</option>
+                {categories.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            )}
+            
+            {difficulties.length > 0 && (
+              <select 
+                value={filterDifficulty} 
+                onChange={e => setFilterDifficulty(e.target.value)}
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
+              >
+                <option value="">All Difficulties</option>
+                {difficulties.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            )}
+
+            {durations.length > 0 && (
+              <select 
+                value={filterDuration} 
+                onChange={e => setFilterDuration(e.target.value)}
+                className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
+              >
+                <option value="">All Durations</option>
+                {durations.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            )}
+          </div>
+        </div>
+
 ...
-        {uniqueCourses.length === 0 ? (
+        {filteredCourses.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            No courses available yet. Add some courses in the &apos;courses/&apos; folder!
+            {i18n.translate('catalog.empty')}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {uniqueCourses.map(course => (
+            {filteredCourses.map(course => (
               <Link 
                 key={course.id} 
                 to={`/courses/${course.id}`}
-                className="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-emerald-500 transition-all group"
+                className="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-[rgb(var(--color-primary-500))] transition-all group flex flex-col h-full items-start"
               >
-                <h2 className="text-xl font-semibold mb-2 group-hover:text-emerald-500 transition-colors">
+                <h2 className="text-xl font-semibold mb-2 group-hover:text-[rgb(var(--color-primary-500))] transition-colors text-left text-[rgb(var(--text-primary))]">
                   {course.title}
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  {course.totalLessons} lessons inside
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {course.category && <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">{course.category}</span>}
+                  {course.difficulty && <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 rounded-full">{course.difficulty}</span>}
+                  {course.duration && <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 rounded-full">{course.duration}</span>}
+                </div>
+
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-1 text-left">
+                  {course.totalLessons} {i18n.translate('catalog.lessons_inside')}
                 </p>
-                <div className="text-emerald-600 dark:text-emerald-400 text-sm font-medium flex items-center">
-                  Start Course
+
+                <div className="text-[rgb(var(--color-primary-600))] dark:text-[rgb(var(--color-primary-400))] text-sm font-medium flex items-center mt-auto w-full">
+                  {i18n.translate('course.start')}
                   <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>

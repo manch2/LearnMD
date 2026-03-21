@@ -6,6 +6,7 @@ export interface CourseFrontmatter {
   description?: string | TranslatedString;
   duration?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  category?: string;
   badge?: string;
   points?: number;
   cover?: string;
