@@ -1,0 +1,16 @@
+{
+  "title": {
+    "en": "Demo Course",
+    "es": "Demo Course (ES)"
+  },
+  "description": {
+    "en": "An interactive course: Demo Course",
+    "es": "Un curso interactivo: Demo Course"
+  },
+  "author": "",
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "estimatedTime": "1 hour",
+  "tags": [],
+  "lessons": []
+}
