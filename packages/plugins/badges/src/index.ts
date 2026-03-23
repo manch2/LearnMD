@@ -79,7 +79,7 @@ export class BadgesPlugin extends BasePlugin {
 
     if (updated) {
       profile.badges = awardedBadges;
-      await ctx.storage.set('profile', profile);
+      await ctx.storage.set('userProfile', profile);
     }
   }
 
