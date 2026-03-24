@@ -10,6 +10,7 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
+import { useI18n } from '../hooks/useI18n';
 
 const components = {
   Callout,
@@ -26,7 +27,7 @@ export interface CatalogViewerProps {
 }
 
 export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
-  const { i18n } = useLearnMD();
+  const { translate } = useI18n();
 
   // Group lessons by courseSlug
   const courseMap = new Map<string, { id: string; title: string; totalLessons: number; difficulty?: string; duration?: string; category?: string; frontmatter: any }>();
@@ -70,7 +71,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
   return (
     <MainLayout>
       <Header 
-        title={i18n.translate('catalog.title')} 
+        title={translate('catalog.title')} 
       />
       {HomeComponent ? (
         <div className="hero bg-gradient-to-b from-[rgb(var(--color-primary-50))] to-transparent dark:from-[rgb(var(--color-primary-900))/20 dark:to-transparent border-b border-[rgb(var(--border-color))] py-12 md:py-20 mb-8 md:mb-12">
@@ -84,7 +85,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
         <div className="hero bg-gradient-to-b from-[rgb(var(--color-primary-50))] to-transparent dark:from-[rgb(var(--color-primary-900))/20 dark:to-transparent border-b border-[rgb(var(--border-color))] py-12 md:py-20 mb-8 md:mb-12 text-center">
           <div className="container mx-auto px-4 max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--text-primary))] mb-4 tracking-tight">
-              {i18n.translate('catalog.title') || 'Course Catalog'}
+              {translate('catalog.title') || 'Course Catalog'}
             </h1>
             <p className="text-lg md:text-xl text-[rgb(var(--text-secondary))] max-w-2xl mx-auto">
               Ready to learn? Choose from our interactive courses below and start your journey.
@@ -95,7 +96,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
 
       <div className="container mx-auto px-4 pb-16 max-w-6xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <h1 className="text-3xl font-bold text-[rgb(var(--text-primary))]">{i18n.translate('catalog.available')}</h1>
+          <h1 className="text-3xl font-bold text-[rgb(var(--text-primary))]">{translate('catalog.available')}</h1>
           
           <div className="flex flex-wrap gap-2 text-sm">
             {categories.length > 0 && (
@@ -136,7 +137,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
 ...
         {filteredCourses.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
-            {i18n.translate('catalog.empty')}
+            {translate('catalog.empty')}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,11 +161,11 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
                 </div>
 
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-1 text-left">
-                  {course.totalLessons} {i18n.translate('catalog.lessons_inside')}
+                  {course.totalLessons} {translate('catalog.lessons_inside')}
                 </p>
 
                 <div className="text-[rgb(var(--color-primary-600))] dark:text-[rgb(var(--color-primary-400))] text-sm font-medium flex items-center mt-auto w-full">
-                  {i18n.translate('course.start')}
+                  {translate('course.start')}
                   <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>

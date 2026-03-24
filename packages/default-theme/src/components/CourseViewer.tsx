@@ -11,6 +11,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
 import { getTranslatedString, Course, useLearnMD } from '@learnmd/core';
 import { CourseOverview } from './CourseOverview';
+import { useI18n } from '../hooks/useI18n';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -23,7 +24,8 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
   const { courseId, '*': pathLessonSlug } = useParams();
   const navigate = useNavigate();
   const { storage, completeLesson } = useLearnMD() as any;
-  
+  const { currentLanguage, translate } = useI18n();
+
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [courseProgress, setCourseProgress] = useState<number>(0);
   
@@ -81,7 +83,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
-      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug,
+      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, currentLanguage) || l.slug,
       slug: l.slug,
       completed: completedLessons.includes(l.slug)
     }))
@@ -91,7 +93,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     id: courseId || '',
     title: String(courseId).replace(/-/g, ' ').toUpperCase(),
     modules: [],
-    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug })),
+    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, currentLanguage) || l.slug })),
     frontmatter: {},
     basePath: `/courses/${courseId}`
   };

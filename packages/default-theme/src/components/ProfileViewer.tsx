@@ -4,9 +4,11 @@ import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
 import { generateCertificate } from '@learnmd/plugin-pdf';
 import type { UserProfile, CourseProgress } from '@learnmd/core';
+import { useI18n } from '../hooks/useI18n';
 
 export function ProfileViewer() {
-  const { storage, i18n } = useLearnMD();
+  const { storage } = useLearnMD();
+  const { translate, currentLanguage } = useI18n();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [progressData, setProgressData] = useState<Record<string, CourseProgress>>({});
@@ -49,7 +51,7 @@ export function ProfileViewer() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl text-left">
-      <Link to="/" className="inline-block mb-6 text-sm font-medium text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--color-primary-500))] transition-colors">{i18n.translate('profile.back')}</Link>
+      <Link to="/" className="inline-block mb-6 text-sm font-medium text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--color-primary-500))] transition-colors">{translate('profile.back')}</Link>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))] h-fit">
           <div className="flex items-center gap-4 mb-8 border-b border-[rgb(var(--border-color))] pb-6">
@@ -57,15 +59,15 @@ export function ProfileViewer() {
               {name ? name.charAt(0).toUpperCase() : '?'}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{i18n.translate('profile.account')}</h1>
-              <p className="text-[rgb(var(--text-secondary))] text-sm">{i18n.translate('profile.update_info')}</p>
+              <h1 className="text-2xl font-bold text-[rgb(var(--text-primary))]">{translate('profile.account')}</h1>
+              <p className="text-[rgb(var(--text-secondary))] text-sm">{translate('profile.update_info')}</p>
             </div>
           </div>
 
           <form onSubmit={handleSave} className="space-y-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-[rgb(var(--text-primary))] mb-2">
-                {i18n.translate('profile.full_name')}
+                {translate('profile.full_name')}
               </label>
               <input
                 type="text"
@@ -80,7 +82,7 @@ export function ProfileViewer() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[rgb(var(--text-primary))] mb-2">
-                {i18n.translate('profile.email')}
+                {translate('profile.email')}
               </label>
               <input
                 type="email"
@@ -94,14 +96,14 @@ export function ProfileViewer() {
 
             <div className="flex items-center justify-between pt-4">
               <span className={`text-sm font-medium text-[rgb(var(--color-primary-500))] transition-opacity duration-300 ${saved ? 'opacity-100' : 'opacity-0'}`}>
-                {i18n.translate('profile.saved')}
+                {translate('profile.saved')}
               </span>
               <button
                 type="submit"
                 disabled={isSaving}
                 className="px-6 py-2 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-medium rounded-md shadow-sm transition-colors disabled:opacity-50"
               >
-                {isSaving ? i18n.translate('profile.saving') : i18n.translate('profile.save')}
+                {isSaving ? translate('profile.saving') : translate('profile.save')}
               </button>
             </div>
           </form>
@@ -110,7 +112,7 @@ export function ProfileViewer() {
         {/* Metrics & History Section */}
         <div className="space-y-8">
           <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))]">
-            <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{i18n.translate('profile.history')}</h2>
+            <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{translate('profile.history')}</h2>
             <div className="space-y-6">
               {Object.keys(progressData || {}).length > 0 ? (
                 Object.entries(progressData).map(([courseId, progress]) => {
@@ -120,9 +122,9 @@ export function ProfileViewer() {
                       <div className="flex justify-between items-center mb-4">
                         <span className="font-bold text-[rgb(var(--text-primary))]">{courseId}</span>
                         {!isCompleted ? (
-                          <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 rounded-full font-semibold tracking-wide uppercase">{i18n.translate('profile.in_progress') || 'In Progress'}</span>
+                          <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 rounded-full font-semibold tracking-wide uppercase">{translate('profile.in_progress') || 'In Progress'}</span>
                         ) : (
-                          <span className="text-xs px-2.5 py-1 bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-800))] dark:bg-[rgb(var(--color-primary-900))/50 dark:text-[rgb(var(--color-primary-300))] rounded-full font-semibold tracking-wide uppercase">{i18n.translate('profile.completed') || 'Completed'}</span>
+                          <span className="text-xs px-2.5 py-1 bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-800))] dark:bg-[rgb(var(--color-primary-900))/50 dark:text-[rgb(var(--color-primary-300))] rounded-full font-semibold tracking-wide uppercase">{translate('profile.completed') || 'Completed'}</span>
                         )}
                       </div>
                       <div className="mb-4">
@@ -131,13 +133,13 @@ export function ProfileViewer() {
                         </div>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-[rgb(var(--text-secondary))]">{i18n.translate('profile.points')}: {progress.totalPoints || 0}</span>
+                        <span className="text-sm font-medium text-[rgb(var(--text-secondary))]">{translate('profile.points')}: {progress.totalPoints || 0}</span>
                         {isCompleted && (
                           <button
                             onClick={() => handleDownloadCertificate(courseId)}
                             className="text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-500))] hover:text-white rounded transition-colors"
                           >
-                            {i18n.translate('profile.download') || 'Download Cert'}
+                            {translate('profile.download') || 'Download Cert'}
                           </button>
                         )}
                       </div>
@@ -145,24 +147,24 @@ export function ProfileViewer() {
                   );
                 })
               ) : (
-                <p className="text-[rgb(var(--text-secondary))] text-sm">{i18n.translate('profile.no_progress')}</p>
+                <p className="text-[rgb(var(--text-secondary))] text-sm">{translate('profile.no_progress')}</p>
               )}
             </div>
           </div>
 
           <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))]">
-            <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{i18n.translate('profile.badges')}</h2>
+            <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{translate('profile.badges')}</h2>
             {profile?.badges && profile.badges.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-72 overflow-y-auto pr-2">
                 {profile.badges.map((badge) => (
                   <div key={badge.id} className="flex flex-col items-center p-4 bg-[rgb(var(--bg-primary))] rounded-lg text-center border border-[rgb(var(--border-color))]">
                     <span className="text-3xl mb-2">{badge.icon || '🏆'}</span>
-                    <span className="text-sm font-semibold text-[rgb(var(--text-primary))]">{getTranslatedString(badge.name as Record<string, string>, i18n?.currentLanguage || 'en')}</span>
+                    <span className="text-sm font-semibold text-[rgb(var(--text-primary))]">{getTranslatedString(badge.name as Record<string, string>, currentLanguage || 'en')}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[rgb(var(--text-secondary))] text-sm">{i18n.translate('profile.no_badges')}</p>
+              <p className="text-[rgb(var(--text-secondary))] text-sm">{translate('profile.no_badges')}</p>
             )}
           </div>
         </div>
