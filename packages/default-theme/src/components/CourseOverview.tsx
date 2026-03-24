@@ -13,7 +13,7 @@ export interface CourseOverviewProps {
 }
 
 export function CourseOverview({ course, overviewContent, onStartCourse, completedLessons = [], courseProgress = 0 }: CourseOverviewProps) {
-  const { currentLanguage } = useI18n();
+  const { currentLanguage, translate } = useI18n();
 
   const title = typeof course.title === 'string' 
     ? course.title 
@@ -38,12 +38,12 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
         <div className="flex flex-wrap gap-4 text-sm mb-6">
           {course.difficulty && (
             <span className="px-3 py-1 bg-[rgb(var(--bg-tertiary))] text-[rgb(var(--text-primary))] rounded-full">
-              Difficulty: <span className="font-semibold capitalize">{course.difficulty}</span>
+              {translate('course.difficulty') || 'Difficulty'}: <span className="font-semibold capitalize">{course.difficulty}</span>
             </span>
           )}
           {course.estimatedTime && (
             <span className="px-3 py-1 bg-[rgb(var(--bg-tertiary))] text-[rgb(var(--text-primary))] rounded-full">
-              Time: <span className="font-semibold">{course.estimatedTime}</span>
+              {translate('course.duration') || 'Time'}: <span className="font-semibold">{course.estimatedTime}</span>
             </span>
           )}
         </div>
@@ -53,7 +53,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
             onClick={onStartCourse}
             className="px-6 py-3 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-bold rounded-lg transition-colors shadow-sm"
           >
-            {completedLessons.length > 0 ? (completedLessons.length >= (course.lessons?.length || 0) ? 'Review Course' : 'Continue Course') : 'Start Course'}
+            {completedLessons.length > 0 ? (completedLessons.length >= (course.lessons?.length || 0) ? translate('course.review') || 'Review Course' : translate('course.continue') || 'Continue Course') : translate('course.start') || 'Start Course'}
           </button>
         )}
       </header>
@@ -66,7 +66,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
             </div>
           )}
           
-          <h2 className="text-2xl font-bold mb-4 text-[rgb(var(--text-primary))]">Syllabus</h2>
+          <h2 className="text-2xl font-bold mb-4 text-[rgb(var(--text-primary))]">{translate('course.syllabus') || 'Syllabus'}</h2>
           <div className="space-y-4">
             {course.lessons && course.lessons.length > 0 ? (
               course.lessons.map((lesson, idx) => {
@@ -83,14 +83,14 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
                     </Link>
                     {isCompleted && (
                        <span className="text-sm text-emerald-500 font-semibold flex items-center gap-1">
-                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> Completed
+                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg> {translate('course.completed') || 'Completed'}
                        </span>
                     )}
                   </div>
                 );
               })
             ) : (
-              <p className="text-[rgb(var(--text-secondary))]">No lessons available yet.</p>
+              <p className="text-[rgb(var(--text-secondary))]">{translate('course.no_lessons') || 'No lessons available yet.'}</p>
             )}
           </div>
         </div>
@@ -98,7 +98,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
         <div className="md:col-span-1 space-y-6">
           {course.prerequisites && course.prerequisites.length > 0 && (
             <div className="bg-[rgb(var(--bg-secondary))] p-6 rounded-lg border border-[rgb(var(--border-color))]">
-              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">Prerequisites</h3>
+              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">{translate('course.prerequisites') || 'Prerequisites'}</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-[rgb(var(--text-secondary))]">
                 {course.prerequisites.map((prereq, i) => (
                   <li key={i}>{prereq}</li>
@@ -109,7 +109,7 @@ export function CourseOverview({ course, overviewContent, onStartCourse, complet
           
           {course.expectedSkills && course.expectedSkills.length > 0 && (
             <div className="bg-[rgb(var(--bg-secondary))] p-6 rounded-lg border border-[rgb(var(--border-color))]">
-              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">What You&apos;ll Learn</h3>
+              <h3 className="font-bold mb-3 text-[rgb(var(--text-primary))]">{translate('course.what_learn') || "What You'll Learn"}</h3>
               <ul className="list-disc list-inside space-y-2 text-sm text-[rgb(var(--text-secondary))]">
                 {course.expectedSkills.map((skill, i) => (
                   <li key={i}>{skill}</li>
