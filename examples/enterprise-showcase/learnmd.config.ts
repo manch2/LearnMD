@@ -14,8 +14,7 @@ export default defineConfig({
   navigation: [
     { label: { en: 'Catalog', es: 'Catálogo' }, path: '/' },
     { label: { en: 'About Us', es: 'Nosotros' }, path: '/about' },
-    { label: { en: 'Support', es: 'Soporte' }, path: '/support' },
-    { label: { en: 'Account', es: 'Mi Cuenta' }, path: '/profile' }
+    { label: { en: 'Support', es: 'Soporte' }, path: '/support' }
   ],
   customPages: [
     { path: '/about', componentPath: 'pages/about.mdx' },

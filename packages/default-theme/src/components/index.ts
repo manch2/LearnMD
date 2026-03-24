@@ -8,6 +8,7 @@ export {
 
 export * from './Callout';
 export * from './Paragraph';
+export * from './Title';
 export * from './Quiz';
 export * from './Progress';
 export * from './VideoEmbed';

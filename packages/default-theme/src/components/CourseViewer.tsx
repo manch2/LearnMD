@@ -9,6 +9,7 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
+import { Title } from './Title';
 import { getTranslatedString, Course, useLearnMD } from '@learnmd/core';
 import { CourseOverview } from './CourseOverview';
 import { useI18n } from '../hooks/useI18n';
@@ -137,6 +138,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     },
     LanguageSwitcher,
     Paragraph,
+    Title,
   };
 
   return (

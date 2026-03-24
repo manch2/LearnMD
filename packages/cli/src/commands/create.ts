@@ -109,9 +109,39 @@ async function createBasicStructure(projectPath: string) {
 title: Demo Course Overview
 ---
 
-# Welcome to Demo Course!
+<Title i18n="title">
+  <en>Welcome to Demo Course!</en>
+  <es>¡Bienvenido a Demo Course!</es>
+</Title>
 
-This is the overview page. Configure your course description and welcome message here.
+<Paragraph i18n="intro">
+  <en>
+    This is the overview page. Configure your course description and welcome message here.
+  </en>
+  <es>
+    Esta es la página de descripción general. Configura la descripción de tu curso y el mensaje de bienvenida aquí.
+  </es>
+</Paragraph>
+`);
+
+  // Home MDX
+  await writeFile(join(projectPath, 'home.mdx'), `---
+title: Home
+---
+
+<Title i18n="title">
+  <en>Welcome to LearnMD!</en>
+  <es>¡Bienvenido a LearnMD!</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    This is the default home page for your LearnMD project. You can customize this page or remove it.
+  </en>
+  <es>
+    Esta es la página de inicio predeterminada para tu proyecto LearnMD. Puedes personalizar esta página o eliminarla.
+  </es>
+</Paragraph>
 `);
 
   await writeFile(join(projectPath, 'courses/demo-course/lessons/.gitkeep'), '');
@@ -176,7 +206,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function getAppTsx(): string {
   return `/// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph, Title } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
@@ -188,6 +218,7 @@ const components = {
   Progress,
   LanguageSwitcher,
   Paragraph,
+  Title,
 };
 
 // Glob all markdown files dynamically across all courses
@@ -242,7 +273,7 @@ function App() {
                <Route key={idx} path={page.path} element={
                  <MainLayout>
                    <Header />
-                   <div className="prose dark:prose-invert max-w-4xl mx-auto py-12 px-6">
+                   <div className="prose dark:prose-invert container mx-auto px-4 py-8 max-w-4xl">
                      <MDXProvider components={components}>
                        <Component />
                      </MDXProvider>
