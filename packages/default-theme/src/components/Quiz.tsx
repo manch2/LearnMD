@@ -45,7 +45,7 @@ export function Quiz({
   initialCompleted = false,
   initialScore = 100,
 }: QuizProps) {
-  const { currentLanguage } = useI18n();
+  const { currentLanguage, translate } = useI18n();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -53,8 +53,8 @@ export function Quiz({
   const [submitted, setSubmitted] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(initialCompleted);
   const [results, setResults] = useState<QuizResults | null>(
-    initialCompleted 
-      ? { score: initialScore, totalQuestions: questions.length, passed: initialScore >= passingScore, answers: [] } 
+    initialCompleted
+      ? { score: initialScore, totalQuestions: questions.length, passed: initialScore >= passingScore, answers: [] }
       : null
   );
 
@@ -129,11 +129,10 @@ export function Quiz({
       <div className="bg-white dark:bg-[#202124] shadow-md border border-gray-200 dark:border-gray-800 rounded-xl p-8 my-8 transition-colors">
         <div className="text-center mb-8">
           <div
-            className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${
-              results.passed
+            className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${results.passed
                 ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400'
                 : 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400'
-            }`}
+              }`}
           >
             {results.passed ? (
               <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -172,11 +171,10 @@ export function Quiz({
               return (
                 <div
                   key={answer.questionId}
-                  className={`p-5 rounded-lg border ${
-                    answer.correct
+                  className={`p-5 rounded-lg border ${answer.correct
                       ? 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800/50'
                       : 'bg-rose-50 dark:bg-rose-900/10 border-rose-200 dark:border-rose-800/50'
-                  }`}
+                    }`}
                 >
                   <p className="text-sm font-semibold tracking-wide uppercase text-slate-500 dark:text-gray-400 mb-2">{translate('quiz.question')} {index + 1}</p>
                   <p className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-3">{question?.question}</p>
@@ -262,11 +260,10 @@ export function Quiz({
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    isSelected
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected
                       ? 'border-emerald-500 bg-emerald-500'
                       : 'border-gray-300 dark:border-gray-600'
-                  }`}
+                    }`}
                 >
                   {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                 </div>
