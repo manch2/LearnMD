@@ -88,7 +88,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
               {translate('catalog.title') || 'Course Catalog'}
             </h1>
             <p className="text-lg md:text-xl text-[rgb(var(--text-secondary))] max-w-2xl mx-auto">
-              Ready to learn? Choose from our interactive courses below and start your journey.
+              {translate('catalog.hero_subtitle') || 'Ready to learn? Choose from our interactive courses below and start your journey.'}
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
                 onChange={e => setFilterCategory(e.target.value)}
                 className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
               >
-                <option value="">All Categories</option>
+                <option value="">{translate('catalog.filter_all_categories') || 'All Categories'}</option>
                 {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             )}
@@ -116,7 +116,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
                 onChange={e => setFilterDifficulty(e.target.value)}
                 className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
               >
-                <option value="">All Difficulties</option>
+                <option value="">{translate('catalog.filter_all_difficulties') || 'All Difficulties'}</option>
                 {difficulties.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             )}
@@ -127,7 +127,7 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
                 onChange={e => setFilterDuration(e.target.value)}
                 className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md outline-none focus:ring-2 focus:ring-emerald-500 text-[rgb(var(--text-primary))]"
               >
-                <option value="">All Durations</option>
+                <option value="">{translate('catalog.filter_all_durations') || 'All Durations'}</option>
                 {durations.map(d => <option key={d} value={d}>{d}</option>)}
               </select>
             )}
