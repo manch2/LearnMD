@@ -1,5 +1,6 @@
 import React, { type ReactNode, useState } from 'react';
 import { Progress } from '../components';
+import { TableOfContents } from '../components/TableOfContents';
 import { Header } from './MainLayout';
 
 export interface NavigationItem {
@@ -119,6 +120,13 @@ export function CourseLayout({
             )}
           </div>
         </main>
+
+        {/* Right Sidebar (Table of Contents) */}
+        <aside className="hidden xl:block w-64 flex-shrink-0 overflow-y-auto p-6 bg-transparent">
+          <div className="sticky top-6">
+            <TableOfContents />
+          </div>
+        </aside>
       </div>
     </div>
   );

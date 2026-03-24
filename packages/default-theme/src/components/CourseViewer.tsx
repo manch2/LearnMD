@@ -9,8 +9,10 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
+import { Title } from './Title';
 import { getTranslatedString, Course, useLearnMD } from '@learnmd/core';
 import { CourseOverview } from './CourseOverview';
+import { useI18n } from '../hooks/useI18n';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -23,7 +25,8 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
   const { courseId, '*': pathLessonSlug } = useParams();
   const navigate = useNavigate();
   const { storage, completeLesson } = useLearnMD() as any;
-  
+  const { currentLanguage, translate } = useI18n();
+
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [courseProgress, setCourseProgress] = useState<number>(0);
   
@@ -81,7 +84,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     children: courseLessons.map(l => ({
       type: 'lesson' as const,
       id: l.slug,
-      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug,
+      title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, currentLanguage) || l.slug,
       slug: l.slug,
       completed: completedLessons.includes(l.slug)
     }))
@@ -91,7 +94,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     id: courseId || '',
     title: String(courseId).replace(/-/g, ' ').toUpperCase(),
     modules: [],
-    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, 'en') || l.slug })),
+    lessons: courseLessons.map(l => ({ slug: l.slug, title: getTranslatedString(l.frontmatter?.title as unknown as Record<string, string>, currentLanguage) || l.slug })),
     frontmatter: {},
     basePath: `/courses/${courseId}`
   };
@@ -135,6 +138,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
     },
     LanguageSwitcher,
     Paragraph,
+    Title,
   };
 
   return (
@@ -147,7 +151,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
         progress={courseProgress}
         onNavigate={handleNavigate}
       >
-        <div className="prose px-8 py-4 max-w-4xl mx-auto pb-24">
+        <div className="prose dark:prose-invert prose-lg px-4 sm:px-8 py-6 max-w-3xl mx-auto pb-24">
           {isOverview ? (
              <CourseOverview 
                course={courseData} 

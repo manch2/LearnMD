@@ -119,9 +119,19 @@ export async function addCourseCommand(initialName?: string, options?: AddOption
 title: Overview
 ---
 
-# Welcome to ${name as string}!
+<Title i18n="title">
+  <en>Welcome to ${name as string}!</en>
+  <es>¡Bienvenido a ${name as string}!</es>
+</Title>
 
-This is the overview page for your new course. You can add extended descriptions, images, and custom salutations here.
+<Paragraph i18n="intro">
+  <en>
+    This is the overview page for your new course. You can add extended descriptions, images, and custom salutations here.
+  </en>
+  <es>
+    Esta es la página de descripción general de tu nuevo curso. Puedes agregar descripciones extendidas, imágenes y saludos personalizados aquí.
+  </es>
+</Paragraph>
 `;
     await writeFile(join(courseDir, 'overview.mdx'), overviewContent);
 
@@ -162,7 +172,10 @@ description:
 duration: '10 minutes'
 ---
 
-# ${title}
+<Title i18n="title">
+  <en>${title}</en>
+  <es>${title} (ES)</es>
+</Title>
 
 <Callout type="info">
   Welcome to the new lesson: **${title}**!
@@ -222,21 +235,50 @@ export async function addPageCommand(title: string, options?: AddOptions) {
 title: '${title}'
 ---
 
-# ${title}
+<Title i18n="title">
+  <en>${title}</en>
+  <es>${title} (ES)</es>
+</Title>
 
-This is a custom dynamic page. You can add MDX components here.
+<Paragraph i18n="intro">
+  <en>
+    This is a custom dynamic page. You can add MDX components here.
+  </en>
+  <es>
+    Esta es una página dinámica personalizada. Puedes agregar componentes MDX aquí.
+  </es>
+</Paragraph>
 `;
 
   try {
     await mkdir(join(process.cwd(), 'pages'), { recursive: true });
     await writeFile(filePath, content);
     console.log(chalk.gray(`  Created page file: pages/${slug}.mdx`));
-    console.log(chalk.yellow(`  ⚠️  Remember to add this page to your learnmd.config.ts:`));
-    console.log(chalk.cyan(`
+    
+    // Auto-inject into learnmd.config.ts
+    const configPath = join(process.cwd(), 'learnmd.config.ts');
+    try {
+      let configContent = await readFile(configPath, 'utf-8');
+      const pageEntry = `\n    { path: '${pathUrl}', componentPath: 'pages/${slug}.mdx' }`;
+
+      if (configContent.includes('customPages: [')) {
+        configContent = configContent.replace(/customPages:\s*\[/, `customPages: [${pageEntry},`);
+      } else {
+        // Find end of config object
+        configContent = configContent.replace(/}\);?\s*$/, `  customPages: [${pageEntry}\n  ],\n});\n`);
+      }
+
+      await writeFile(configPath, configContent);
+      console.log(chalk.green(`✅ Injected ${pathUrl} route into learnmd.config.ts`));
+    } catch (e) {
+      console.log(chalk.yellow(`  ⚠️  Remember to add this page to your learnmd.config.ts:`));
+      console.log(chalk.cyan(`
       customPages: [
         { path: '${pathUrl}', componentPath: 'pages/${slug}.mdx' }
       ]
-    `));
+      `));
+    }
+
   } catch (error) {
     console.error(chalk.red('❌ Failed to create page. Ensure you have permissions.'));
     console.error(error);
