@@ -147,7 +147,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
         progress={courseProgress}
         onNavigate={handleNavigate}
       >
-        <div className="prose px-8 py-4 max-w-4xl mx-auto pb-24">
+        <div className="prose dark:prose-invert prose-lg px-4 sm:px-8 py-6 max-w-3xl mx-auto pb-24">
           {isOverview ? (
              <CourseOverview 
                course={courseData} 

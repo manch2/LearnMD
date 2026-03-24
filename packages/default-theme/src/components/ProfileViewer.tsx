@@ -116,26 +116,28 @@ export function ProfileViewer() {
                 Object.entries(progressData).map(([courseId, progress]) => {
                   const isCompleted = !!progress.completedAt;
                   return (
-                    <div key={courseId} className="border-b border-[rgb(var(--border-color))] pb-4 last:border-0 last:pb-0">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold text-[rgb(var(--text-primary))]">{courseId}</span>
-                        {isCompleted && (
-                          <span className="text-xs px-2 py-1 bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-800))] dark:text-white dark:bg-[rgb(var(--color-primary-900))] rounded-full font-medium">{i18n.translate('profile.in_progress')}</span>
+                    <div key={courseId} className="border border-[rgb(var(--border-color))] bg-[rgb(var(--bg-primary))] p-4 rounded-lg mb-4 last:mb-0">
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="font-bold text-[rgb(var(--text-primary))]">{courseId}</span>
+                        {!isCompleted ? (
+                          <span className="text-xs px-2.5 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 rounded-full font-semibold tracking-wide uppercase">{i18n.translate('profile.in_progress') || 'In Progress'}</span>
+                        ) : (
+                          <span className="text-xs px-2.5 py-1 bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-800))] dark:bg-[rgb(var(--color-primary-900))/50 dark:text-[rgb(var(--color-primary-300))] rounded-full font-semibold tracking-wide uppercase">{i18n.translate('profile.completed') || 'Completed'}</span>
                         )}
                       </div>
-                      <div className="mb-2">
+                      <div className="mb-4">
                         <div className="h-2 w-full bg-[rgb(var(--bg-tertiary))] rounded-full overflow-hidden">
-                           <div className="h-full bg-[rgb(var(--color-primary-500))]" style={{ width: `${Math.min(100, Math.max(10, (progress as any).progressPercentage || (progress.completedAt ? 100 : (progress.completedLessons.length * 20))))}%` }} />
+                           <div className="h-full bg-[rgb(var(--color-primary-500))] transition-all duration-500" style={{ width: `${Math.min(100, Math.max(10, (progress as any).progressPercentage || (progress.completedAt ? 100 : (progress.completedLessons.length * 20))))}%` }} />
                         </div>
                       </div>
-                      <div className="flex justify-between items-center mt-3">
-                        <span className="text-sm text-[rgb(var(--text-secondary))]">{i18n.translate('profile.points')}: {progress.totalPoints || 0}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-[rgb(var(--text-secondary))]">{i18n.translate('profile.points')}: {progress.totalPoints || 0}</span>
                         {isCompleted && (
                           <button
                             onClick={() => handleDownloadCertificate(courseId)}
-                            className="text-sm px-4 py-1.5 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white rounded transition-colors"
+                            className="text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-500))] hover:text-white rounded transition-colors"
                           >
-                            {i18n.translate('profile.download')}
+                            {i18n.translate('profile.download') || 'Download Cert'}
                           </button>
                         )}
                       </div>

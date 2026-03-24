@@ -18,3 +18,4 @@ export * from './CourseViewer';
 export * from './CatalogViewer';
 export * from './ProfileViewer';
 export * from './CourseOverview';
+export * from './TableOfContents';

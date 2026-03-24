@@ -1,5 +1,5 @@
 {
-  "name": "examples/enterprise-showcase",
+  "name": "enterprise-showcase",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -12,7 +12,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "@mdx-js/react": "^3.0.1"
+    "@mdx-js/react": "^3.0.1",
+    "@learnmd/core": "workspace:*",
+    "@learnmd/default-theme": "workspace:*",
+    "@learnmd/plugin-badges": "workspace:*",
+    "@learnmd/plugin-pdf": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
@@ -23,8 +27,6 @@
     "remark-frontmatter": "^5.0.0",
     "remark-mdx-frontmatter": "^4.0.0",
     "typescript": "^5.4.0",
-    "vite": "^5.1.0",
-    "@learnmd/core": "file:../packages/core",
-    "@learnmd/default-theme": "file:../packages/default-theme"
+    "vite": "^5.1.0"
   }
 }
