@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "Deep Architecture",
+    "es": "Deep Architecture (ES)"
+  },
+  "description": {
+    "en": "An interactive course: Deep Architecture",
+    "es": "Un curso interactivo: Deep Architecture"
+  },
+  "version": "1.0.0",
+  "difficulty": "advanced",
+  "estimatedTime": "15h",
+  "lessons": [
+    "advanced-security",
+    "data-modeling",
+    "introduction"
+  ]
+}

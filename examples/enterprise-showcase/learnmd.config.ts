@@ -3,12 +3,12 @@ import { BadgesPlugin } from '@learnmd/plugin-badges';
 import { PDFPlugin } from '@learnmd/plugin-pdf';
 
 export default defineConfig({
-  title: 'LearnMD Enterprise Showcase',
-  description: 'Un ejemplo oficial que demuestra todas las capacidades de LearnMD.',
+  title: 'LearnMD Ultimate Showcase',
+  description: 'Demostración completa con todas las capacidades del CLI, plugins y traducciones.',
   defaultLanguage: 'es',
   availableLanguages: ['en', 'es'],
   theme: {
-    primaryColor: '#10b981', // Emerald
+    primaryColor: '#0ea5e9', // Teal/Cyan
     darkMode: true,
   },
   navigation: [
@@ -25,24 +25,24 @@ export default defineConfig({
     new PDFPlugin(),
     new BadgesPlugin([
       {
-        id: 'new-star',
-        name: 'Nueva Estrella',
-        description: 'Has iniciado tu proceso de onboarding.',
+        id: 'start-badge',
+        name: { en: 'Quick Starter', es: 'Iniciador Veloz' },
+        description: { en: 'You started the Express course.', es: 'Has iniciado el curso Express.' },
+        icon: '🚀',
+        criteria: { type: 'course_progress', courseId: 'express-onboarding', percentage: 1 }
+      },
+      {
+        id: 'halfway-badge',
+        name: { en: 'Architect in Training', es: 'Arquitecto en Formación' },
+        description: { en: 'Reached 50% of Deep Architecture.', es: 'Alcanzaste el 50% de Arquitectura Profunda.' },
+        icon: '🏗️',
+        criteria: { type: 'course_progress', courseId: 'deep-architecture', percentage: 50 }
+      },
+      {
+        id: 'master-badge',
+        name: { en: 'LearnMD Legend', es: 'Leyenda de LearnMD' },
+        description: { en: 'Completed all courses in this showcase.', es: 'Completaste todos los cursos de la demostración.' },
         icon: '🌟',
-        criteria: { type: 'course_progress', courseId: 'micro-onboarding', percentage: 1 }
-      },
-      {
-        id: 'rising-expert',
-        name: 'Experto en Crecimiento',
-        description: 'Has alcanzado el 50% de la maestría total.',
-        icon: '📈',
-        criteria: { type: 'course_progress', courseId: 'full-mastery', percentage: 50 }
-      },
-      {
-        id: 'master-architect',
-        name: 'Arquitecto Maestro',
-        description: 'Has completado todos los requisitos del showcase.',
-        icon: '🏰',
         criteria: { type: 'courses_completed', count: 2 }
       }
     ])
