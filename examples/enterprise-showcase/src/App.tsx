@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph, Title } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
@@ -12,6 +12,7 @@ const components = {
   Progress,
   LanguageSwitcher,
   Paragraph,
+  Title,
 };
 
 // Glob all markdown files dynamically across all courses
@@ -66,7 +67,7 @@ function App() {
                <Route key={idx} path={page.path} element={
                  <MainLayout>
                    <Header />
-                   <div className="prose dark:prose-invert max-w-4xl mx-auto py-12 px-6">
+                   <div className="prose dark:prose-invert container mx-auto px-4 py-8 max-w-4xl">
                      <MDXProvider components={components}>
                        <Component />
                      </MDXProvider>

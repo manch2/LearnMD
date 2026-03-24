@@ -10,6 +10,7 @@ import { VideoEmbed } from './VideoEmbed';
 import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
+import { Title } from './Title';
 import { useI18n } from '../hooks/useI18n';
 
 const components = {
@@ -19,6 +20,7 @@ const components = {
   Progress,
   LanguageSwitcher,
   Paragraph,
+  Title,
 };
 
 export interface CatalogViewerProps {

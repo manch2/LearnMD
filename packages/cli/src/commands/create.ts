@@ -220,6 +220,7 @@ const components = {
   Paragraph,
   Title,
 };
+};
 
 // Glob all markdown files dynamically across all courses
 const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });

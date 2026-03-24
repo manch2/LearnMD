@@ -5,19 +5,19 @@ import { PDFPlugin } from '@learnmd/plugin-pdf';
 export default defineConfig({
   title: 'LearnMD Ultimate Showcase',
   description: 'Demostración completa con todas las capacidades del CLI, plugins y traducciones.',
-  defaultLanguage: 'es',
+  defaultLanguage: 'en',
   availableLanguages: ['en', 'es'],
   theme: {
-    primaryColor: '#0ea5e9', // Teal/Cyan
+    primaryColor: '#8b5cf6', // Violet
     darkMode: true,
   },
   navigation: [
-    { label: { en: 'Catalog', es: 'Catálogo' }, path: '/' },
-    { label: { en: 'About Us', es: 'Nosotros' }, path: '/about' },
-    { label: { en: 'Support', es: 'Soporte' }, path: '/support' }
+    { label: 'Catalog', path: '/' },
+    { label: 'About Us', path: '/about-us' },
+    { label: 'Support', path: '/support' }
   ],
   customPages: [
-    { path: '/about', componentPath: 'pages/about.mdx' },
+    { path: '/about-us', componentPath: 'pages/about-us.mdx' },
     { path: '/support', componentPath: 'pages/support.mdx' }
   ],
   plugins: [
