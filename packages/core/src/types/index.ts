@@ -170,6 +170,7 @@ export interface UserProfile {
   id: string;
   name?: string;
   email?: string;
+  globalScore: number;
   totalPoints: number;
   badges: Badge[];
   coursesProgress: Record<string, CourseProgress>;
@@ -225,14 +226,27 @@ export interface Plugin {
   config?: PluginConfig;
 }
 
+export type PluginSlotName = 'profile:summary' | 'profile:courseActions' | 'profile:sections';
+
+export interface PluginSlotComponentRegistration {
+  slot: PluginSlotName;
+  name: string;
+  component: unknown;
+  order?: number;
+  metadata?: Record<string, unknown>;
+}
+
 /**
  * Plugin context provided to plugins
  */
 export interface PluginContext {
   course: Course;
-  storage: StorageAdapter;
+  storage: LearnMDStorage;
   i18n: I18nAdapter;
-  registerComponent: (name: string, component: unknown) => void;
+  registerComponent: (
+    nameOrRegistration: string | PluginSlotComponentRegistration,
+    component?: unknown
+  ) => void;
   registerHook: (hook: string, fn: (...args: unknown[]) => unknown) => void;
   config: Record<string, unknown>;
 }
@@ -253,6 +267,30 @@ export interface StorageAdapter {
   remove(key: string): Promise<void>;
   clear(): Promise<void>;
   keys(): Promise<string[]>;
+}
+
+/**
+ * Storage interface used by LearnMD runtime and plugins
+ */
+export interface LearnMDStorage extends StorageAdapter {
+  getUserProfile(): Promise<UserProfile | null>;
+  saveUserProfile(profile: UserProfile): Promise<void>;
+  getCourseProgress(courseId: string): Promise<CourseProgress | null>;
+  saveCourseProgress(progress: CourseProgress): Promise<void>;
+  getAllCourseProgress(): Promise<Record<string, CourseProgress>>;
+  getLessonProgress(courseId: string, lessonSlug: string): Promise<LessonProgress | null>;
+  updateLessonProgress(
+    courseId: string,
+    lessonSlug: string,
+    progress: Partial<LessonProgress>
+  ): Promise<void>;
+  completeLesson(
+    courseId: string,
+    lessonSlug: string,
+    quizScore?: number,
+    quizPassed?: boolean,
+    points?: number
+  ): Promise<void>;
 }
 
 /**
@@ -294,20 +332,49 @@ export interface VideoEmbedConfig {
  * Theme configuration
  */
 export interface ThemeConfig {
-  primaryColor: string;
-  secondaryColor: string;
-  backgroundColor: string;
-  textColor: string;
-  fontFamily: string;
-  borderRadius: number;
-  darkMode: {
-    enabled: boolean;
-    primaryColor: string;
-    backgroundColor: string;
-    textColor: string;
-  };
+  primaryColor?: string;
+  secondaryColor?: string;
+  backgroundColor?: string;
+  surfaceColor?: string;
+  textColor?: string;
+  mutedTextColor?: string;
+  borderColor?: string;
+  fontFamily?: string;
+  headingFontFamily?: string;
+  borderRadius?: number | string;
+  contentMaxWidth?: number | string;
+  logoText?: string;
+  darkMode?:
+    | boolean
+    | {
+        enabled?: boolean;
+        primaryColor?: string;
+        secondaryColor?: string;
+        backgroundColor?: string;
+        surfaceColor?: string;
+        textColor?: string;
+        mutedTextColor?: string;
+        borderColor?: string;
+      };
   navigation?: { label: string | TranslatedString; path: string }[];
   customPages?: { path: string; componentPath: string }[];
+}
+
+export interface GamificationPointsConfig {
+  lessonCompletion?: number;
+  quizPassed?: number;
+  quizPerfectScore?: number;
+}
+
+export interface GamificationStreakConfig {
+  enabled?: boolean;
+  bonusByDays?: Record<number, number>;
+}
+
+export interface GamificationConfig {
+  points?: GamificationPointsConfig;
+  achievements?: Array<Omit<Achievement, 'unlockedAt'>>;
+  streak?: GamificationStreakConfig;
 }
 
 /**
@@ -320,14 +387,10 @@ export interface Config {
   availableLanguages?: string[];
   basePath?: string;
   storagePrefix?: string;
-  enableGamification?: boolean;
   enableAnalytics?: boolean;
   theme?: ThemeConfig;
-  gamification?: {
-    pointsPerLesson?: number;
-    pointsPerQuiz?: number;
-    badges?: Array<{ id: string; name: string; icon: string }>;
-  };
+  gamification?: false | GamificationConfig;
   navigation?: { label: string | TranslatedString; path: string }[];
   customPages?: { path: string; componentPath: string }[];
+  plugins?: Array<Plugin | (() => Plugin)>;
 }

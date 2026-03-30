@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/plugin-pdf",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "description": "PDF certification plugin for LearnMD",
   "type": "module",
   "main": "./dist/index.js",

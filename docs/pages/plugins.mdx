@@ -9,95 +9,100 @@ title: 'Plugins'
 
 <Paragraph i18n="intro">
   <en>
-    LearnMD has a powerful plugin system that extends the framework's core functionality. Official plugins include **Badges** for gamification and **PDF** for certificate generation. You can also create your own custom plugins.
+    LearnMD plugins extend the core runtime without forcing you to fork the theme. In beta.3,
+    plugins can register hooks, read storage, and inject UI into official theme slots.
   </en>
   <es>
-    LearnMD tiene un poderoso sistema de plugins que extiende la funcionalidad base del framework. Los plugins oficiales incluyen **Badges** para gamificación y **PDF** para generación de certificados. También puedes crear tus propios plugins personalizados.
+    Los plugins de LearnMD extienden el runtime base sin obligarte a modificar el theme. En
+    beta.3, los plugins pueden registrar hooks, leer almacenamiento e inyectar UI en slots
+    oficiales del theme.
   </es>
 </Paragraph>
 
 ---
 
-## Plugin System Overview
+## Plugin Model
 
-<Paragraph i18n="plugin-overview">
+<Paragraph i18n="model">
   <en>
-    Plugins are registered in your `learnmd.config.ts` file. Each plugin implements the `Plugin` interface and receives a `PluginContext` that provides access to the core engine's managers.
+    Plugins are configured in `learnmd.config.ts`. Each plugin receives a `PluginContext` with
+    access to storage, i18n, hooks, and component registration. The theme owns layout and visual
+    styling, while plugins provide behavior and optional UI blocks that render inside stable slots.
   </en>
   <es>
-    Los plugins se registran en tu archivo `learnmd.config.ts`. Cada plugin implementa la interfaz `Plugin` y recibe un `PluginContext` que proporciona acceso a los managers del motor central.
+    Los plugins se configuran en `learnmd.config.ts`. Cada plugin recibe un `PluginContext` con
+    acceso a storage, i18n, hooks y registro de componentes. El theme es el dueno del layout y
+    del estilo visual, mientras que los plugins aportan comportamiento y bloques UI opcionales
+    que se renderizan dentro de slots estables.
   </es>
 </Paragraph>
 
 ```typescript
-// Plugin interface
+import type {
+  Plugin,
+  PluginContext,
+  PluginSlotName,
+} from '@learnmd/core';
+
 interface Plugin {
   name: string;
   version: string;
   onLoad: (ctx: PluginContext) => void | Promise<void>;
   onUnload?: (ctx: PluginContext) => void | Promise<void>;
-  config?: Record<string, unknown>;
 }
 
-// PluginContext available in onLoad
+type PluginSlotName =
+  | 'profile:summary'
+  | 'profile:courseActions'
+  | 'profile:sections';
+
 interface PluginContext {
-  course: Course;
-  storage: StorageAdapter;
+  storage: LearnMDStorage;
   i18n: I18nAdapter;
-  registerComponent: (name: string, component: unknown) => void;
   registerHook: (hook: string, fn: (...args: unknown[]) => unknown) => void;
+  registerComponent: (
+    registration:
+      | string
+      | {
+          slot: PluginSlotName;
+          name: string;
+          component: unknown;
+          order?: number;
+          metadata?: Record<string, unknown>;
+        },
+    component?: unknown
+  ) => void;
   config: Record<string, unknown>;
 }
 ```
 
-<Paragraph i18n="hooks-available">
+<Paragraph i18n="hooks">
   <en>
-    **Available Hooks:**
-
-    | Hook | Description |
-    |------|-------------|
-    | `app:init` | Triggered when the application starts |
-    | `lesson:complete` | Triggered when a user finishes a lesson |
-    | `progress:update` | Triggered when course progress is updated |
+    Common hooks in beta.3 include `app:init`, `lesson:complete`, `quiz:submit`, `progress:update`
+    and `profile:update`. Use hooks for behavior, and slots only when your plugin needs UI.
   </en>
   <es>
-    **Hooks Disponibles:**
-
-    | Hook | Descripción |
-    |------|-------------|
-    | `app:init` | Se ejecuta cuando la aplicación inicia |
-    | `lesson:complete` | Se ejecuta cuando un usuario termina una lección |
-    | `progress:update` | Se ejecuta cuando el progreso del curso se actualiza |
+    Los hooks comunes en beta.3 incluyen `app:init`, `lesson:complete`, `quiz:submit`,
+    `progress:update` y `profile:update`. Usa hooks para comportamiento, y slots solo cuando tu
+    plugin necesite UI.
   </es>
 </Paragraph>
 
 ---
 
-## Badges Plugin (`@learnmd/plugin-badges`)
+## Official Plugins
 
-<Paragraph i18n="badges-intro">
+### Badges Plugin (`@learnmd/plugin-badges`)
+
+<Paragraph i18n="badges">
   <en>
-    The Badges plugin provides gamification through achievement badges. It evaluates user progress in real-time and awards badges based on configurable criteria.
+    The badges plugin is responsible for awarding insignias. It consumes the public profile state,
+    including `globalScore`, and evaluates badge criteria without taking ownership of point
+    calculation.
   </en>
   <es>
-    El plugin de Badges proporciona gamificación a través de insignias de logros. Evalúa el progreso del usuario en tiempo real y otorga insignias basadas en criterios configurables.
-  </es>
-</Paragraph>
-
-### Installation
-
-```bash
-pnpm add @learnmd/plugin-badges
-```
-
-### Configuration
-
-<Paragraph i18n="badges-config">
-  <en>
-    Register the plugin in your `learnmd.config.ts`:
-  </en>
-  <es>
-    Registra el plugin en tu `learnmd.config.ts`:
+    El plugin de badges es responsable de otorgar insignias. Consume el estado publico del perfil,
+    incluido `globalScore`, y evalua criterios de badges sin aduenarse del calculo de puntos.
   </es>
 </Paragraph>
 
@@ -106,163 +111,197 @@ import { defineConfig } from '@learnmd/core';
 import { BadgesPlugin } from '@learnmd/plugin-badges';
 
 export default defineConfig({
-  // ...other config
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 15,
+    },
+  },
   plugins: [
     new BadgesPlugin([
       {
         id: 'first-steps',
         name: 'First Steps',
-        description: 'Started your first course.',
-        icon: '🚀',
+        description: 'Complete your first lesson.',
+        icon: '??',
         criteria: {
           type: 'course_progress',
-          courseId: 'my-course',
-          percentage: 1
-        }
+          courseId: 'getting-started',
+          percentage: 1,
+        },
       },
       {
-        id: 'halfway-there',
-        name: 'Halfway There',
-        description: 'Completed 50% of a course.',
-        icon: '⭐',
+        id: 'score-500',
+        name: 'Momentum',
+        description: 'Reach 500 global points.',
+        icon: '??',
         criteria: {
-          type: 'course_progress',
-          courseId: 'my-course',
-          percentage: 50
-        }
+          type: 'global_score',
+          score: 500,
+        },
       },
-      {
-        id: 'master',
-        name: 'Master',
-        description: 'Completed all courses.',
-        icon: '🏆',
-        criteria: {
-          type: 'courses_completed',
-          count: 3
-        }
-      }
-    ])
-  ]
+    ]),
+  ],
 });
 ```
 
-### Criteria Types
-
 <Paragraph i18n="badges-criteria">
   <en>
-    | Criteria Type | Parameters | Description |
-    |---------------|-----------|-------------|
-    | `course_progress` | `courseId`, `percentage` | Triggers when a specific course reaches the given completion percentage (1-100) |
-    | `courses_completed` | `count` | Triggers when the user has completed the specified number of courses |
+    Supported criteria include `course_progress`, `courses_completed`, and `global_score`. This
+    lets you build badges from progress, completions, or the public global score generated by the
+    gamification system.
   </en>
   <es>
-    | Tipo de Criterio | Parámetros | Descripción |
-    |------------------|-----------|-------------|
-    | `course_progress` | `courseId`, `percentage` | Se activa cuando un curso específico alcanza el porcentaje de completación dado (1-100) |
-    | `courses_completed` | `count` | Se activa cuando el usuario ha completado el número especificado de cursos |
+    Los criterios soportados incluyen `course_progress`, `courses_completed` y `global_score`.
+    Esto te permite construir badges desde progreso, cursos completados o el puntaje global
+    publico generado por el sistema de gamificacion.
   </es>
 </Paragraph>
 
-### Badge Configuration Properties
+### PDF Plugin (`@learnmd/plugin-pdf`)
 
-<Paragraph i18n="badges-props">
+<Paragraph i18n="pdf">
   <en>
-    | Property | Type | Required | Description |
-    |----------|------|----------|-------------|
-    | `id` | `string` | Yes | Unique identifier for the badge |
-    | `name` | `string` | Yes | Display name |
-    | `description` | `string` | Yes | What the badge represents |
-    | `icon` | `string` | Yes | Emoji or icon character |
-    | `criteria` | `object` | Yes | Conditions to earn the badge |
+    The PDF plugin is the only owner of certificate downloads. If you do not register
+    `new PDFPlugin()`, LearnMD will not render certificate actions in the profile and users will
+    not be able to generate PDFs from the UI.
   </en>
   <es>
-    | Propiedad | Tipo | Obligatorio | Descripción |
-    |-----------|------|-------------|-------------|
-    | `id` | `string` | Sí | Identificador único de la insignia |
-    | `name` | `string` | Sí | Nombre para mostrar |
-    | `description` | `string` | Sí | Qué representa la insignia |
-    | `icon` | `string` | Sí | Emoji o carácter de icono |
-    | `criteria` | `object` | Sí | Condiciones para ganar la insignia |
+    El plugin PDF es el unico dueno de las descargas de certificados. Si no registras
+    `new PDFPlugin()`, LearnMD no renderiza acciones de certificados en el perfil y los usuarios no
+    podran generar PDFs desde la UI.
   </es>
 </Paragraph>
-
----
-
-## PDF Plugin (`@learnmd/plugin-pdf`)
-
-<Paragraph i18n="pdf-intro">
-  <en>
-    The PDF plugin generates downloadable PDF certificates when users complete courses. It uses `html2canvas` and `jsPDF` to render React components to an off-screen canvas and export them as PDF documents.
-  </en>
-  <es>
-    El plugin de PDF genera certificados PDF descargables cuando los usuarios completan cursos. Utiliza `html2canvas` y `jsPDF` para renderizar componentes React en un canvas fuera de pantalla y exportarlos como documentos PDF.
-  </es>
-</Paragraph>
-
-### Installation
-
-```bash
-pnpm add @learnmd/plugin-pdf
-```
-
-### Basic Configuration
 
 ```typescript
 import { defineConfig } from '@learnmd/core';
 import { PDFPlugin } from '@learnmd/plugin-pdf';
 
 export default defineConfig({
-  // ...other config
   plugins: [
-    new PDFPlugin()
-  ]
+    new PDFPlugin({
+      signature: 'LearnMD Team',
+    }),
+  ],
 });
 ```
 
-### Custom Template
-
-<Paragraph i18n="pdf-template">
+<Paragraph i18n="pdf-ui">
   <en>
-    You can pass a custom React component template for full control over the certificate design. The template receives the user's name, course title, completion date, and any other data you provide:
+    In beta.3, the plugin injects its UI through the `profile:courseActions` slot. The default
+    theme decides where that slot is shown, but the action only exists when the plugin is present.
   </en>
   <es>
-    Puedes pasar un componente React personalizado como plantilla para tener control total sobre el diseño del certificado. La plantilla recibe el nombre del usuario, título del curso, fecha de completación y cualquier otro dato que proporciones:
+    En beta.3, el plugin inyecta su UI a traves del slot `profile:courseActions`. El theme por
+    defecto decide donde se muestra ese slot, pero la accion solo existe cuando el plugin esta
+    presente.
   </es>
 </Paragraph>
 
 ```typescript
-import { PDFPlugin } from '@learnmd/plugin-pdf';
 import React from 'react';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
 
-const CertificateTemplate = ({ userName, courseTitle, date }) => (
-  <div style={{
-    width: '800px',
-    height: '600px',
-    padding: '40px',
-    textAlign: 'center',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    color: 'white',
-    fontFamily: 'Inter, sans-serif'
-  }}>
+const CertificateTemplate = (
+  <div
+    style={{
+      width: '11in',
+      height: '8.5in',
+      padding: '48px',
+      background: '#ffffff',
+      color: '#0f172a',
+      fontFamily: 'Georgia, serif',
+    }}
+  >
     <h1>Certificate of Completion</h1>
-    <p>This certifies that</p>
-    <h2>{userName}</h2>
-    <p>has successfully completed</p>
-    <h3>{courseTitle}</h3>
-    <p>Date: {date}</p>
+    <p>This certifies successful completion.</p>
   </div>
 );
 
-new PDFPlugin({ template: CertificateTemplate })
+new PDFPlugin({
+  signature: 'LearnMD Instructors',
+  template: CertificateTemplate,
+});
+```
+
+---
+
+## UI Slots
+
+<Paragraph i18n="slots">
+  <en>
+    Plugins with UI should target theme slots instead of patching the theme. This keeps LearnMD
+    modular: the theme controls layout and styling primitives, while plugins register React
+    components for known integration points.
+  </en>
+  <es>
+    Los plugins con UI deben apuntar a slots del theme en lugar de parchear el theme. Esto mantiene
+    LearnMD modular: el theme controla layout y primitivas visuales, mientras los plugins registran
+    componentes React para puntos de integracion conocidos.
+  </es>
+</Paragraph>
+
+<Paragraph i18n="slots-list">
+  <en>
+    Current public slots:
+
+    | Slot | Purpose |
+    |------|---------|
+    | `profile:summary` | Small summary widgets near the top of the profile |
+    | `profile:courseActions` | Per-course actions such as certificates |
+    | `profile:sections` | Additional profile sections rendered below badges |
+  </en>
+  <es>
+    Slots publicos actuales:
+
+    | Slot | Proposito |
+    |------|-----------|
+    | `profile:summary` | Widgets pequenos cerca de la parte superior del perfil |
+    | `profile:courseActions` | Acciones por curso, como certificados |
+    | `profile:sections` | Secciones adicionales del perfil debajo de badges |
+  </es>
+</Paragraph>
+
+```typescript
+import React from 'react';
+import { BasePlugin, type PluginContext } from '@learnmd/core';
+
+function WelcomePanel() {
+  return (
+    <div className="rounded-xl border border-[rgb(var(--border-color))] bg-[rgb(var(--bg-primary))] p-4">
+      Custom plugin UI rendered inside the theme.
+    </div>
+  );
+}
+
+export class WelcomePlugin extends BasePlugin {
+  constructor() {
+    super('welcome', '1.0.0');
+  }
+
+  onLoad(ctx: PluginContext) {
+    ctx.registerComponent({
+      slot: 'profile:sections',
+      name: 'welcome-panel',
+      order: 10,
+      component: WelcomePanel,
+    });
+  }
+}
 ```
 
 <Callout type="tip">
-  <Paragraph i18n="pdf-tip">
+  <Paragraph i18n="slots-tip">
     <en>
-      The certificate template supports all standard CSS styling, including Tailwind CSS classes if your project uses it. You can include logos, borders, and decorative elements.
+      A plugin can ship its own UI logic, but it should reuse the theme's CSS variables and visual
+      tokens. That way users can change colors, spacing, and typography from `theme` without
+      rewriting each plugin.
     </en>
     <es>
-      La plantilla del certificado soporta todo el estilo CSS estándar, incluyendo clases de Tailwind CSS si tu proyecto lo usa. Puedes incluir logos, bordes y elementos decorativos.
+      Un plugin puede traer su propia logica UI, pero debe reutilizar las variables CSS y tokens
+      visuales del theme. Asi los usuarios pueden cambiar colores, espaciado y tipografia desde
+      `theme` sin reescribir cada plugin.
     </es>
   </Paragraph>
 </Callout>
@@ -271,57 +310,43 @@ new PDFPlugin({ template: CertificateTemplate })
 
 ## Creating Your Own Plugin
 
-<Paragraph i18n="custom-plugin">
-  <en>
-    You can create custom plugins to add any functionality you need. Here is a simple example of a logging plugin:
-  </en>
-  <es>
-    Puedes crear plugins personalizados para agregar cualquier funcionalidad que necesites. Aquí hay un ejemplo simple de un plugin de logging:
-  </es>
-</Paragraph>
-
 ```typescript
-import type { Plugin, PluginContext } from '@learnmd/core';
+import { BasePlugin, type PluginContext } from '@learnmd/core';
 
-export class AnalyticsPlugin implements Plugin {
-  name = 'analytics-plugin';
-  version = '1.0.0';
-
-  onLoad(ctx: PluginContext) {
-    console.log(`Plugin "${this.name}" loaded successfully`);
-
-    ctx.registerHook('lesson:complete', async (data) => {
-      console.log(`User completed lesson: ${data.lessonSlug}`);
-      // Send analytics event to your backend
-    });
-
-    ctx.registerHook('progress:update', async (data) => {
-      console.log(`Progress updated for course: ${data.courseId}`);
-    });
+export class AnalyticsPlugin extends BasePlugin {
+  constructor() {
+    super('analytics', '1.0.0');
   }
 
-  onUnload(ctx: PluginContext) {
-    console.log(`Plugin "${this.name}" unloaded`);
+  onLoad(ctx: PluginContext) {
+    ctx.registerHook('lesson:complete', async (payload) => {
+      console.log('Lesson completed', payload);
+    });
+
+    ctx.registerHook('progress:update', async (payload) => {
+      console.log('Progress updated', payload);
+    });
   }
 }
 ```
 
-<Paragraph i18n="register-custom">
+<Paragraph i18n="custom-register">
   <en>
-    Then register it in your config:
+    Register custom plugins in `plugins`. If your plugin needs UI, register slot components in
+    `onLoad`; if it is behavior-only, hooks are enough.
   </en>
   <es>
-    Luego regístralo en tu configuración:
+    Registra plugins personalizados en `plugins`. Si tu plugin necesita UI, registra componentes
+    de slot en `onLoad`; si es solo de comportamiento, los hooks son suficientes.
   </es>
 </Paragraph>
 
 ```typescript
 import { defineConfig } from '@learnmd/core';
 import { AnalyticsPlugin } from './plugins/analytics';
+import { WelcomePlugin } from './plugins/welcome';
 
 export default defineConfig({
-  plugins: [
-    new AnalyticsPlugin()
-  ]
+  plugins: [new AnalyticsPlugin(), new WelcomePlugin()],
 });
 ```

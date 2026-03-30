@@ -22,10 +22,19 @@ export * from './plugins/index.js';
 // LearnMD Context
 export * from './components/LearnMDProvider.js';
 
+import type { Config as LearnMDConfig } from './types/index.js';
+export type { LearnMDConfig };
+export type {
+  PluginSlotName,
+  PluginSlotComponentRegistration,
+  ThemeConfig,
+  GamificationConfig,
+} from './types/index.js';
+
 // Import class implementations for createLearnMD
 import { initializeI18n } from './i18n/index.js';
 import { StorageManager } from './storage/index.js';
-import { GamificationManager, GamificationPlugin } from './gamification/index.js';
+import { GamificationPlugin } from './gamification/index.js';
 import { RouterManager } from './router/index.js';
 import { PluginRegistry, createDefaultPluginContext, HOOKS } from './plugins/index.js';
 
@@ -47,33 +56,7 @@ import { PluginRegistry, createDefaultPluginContext, HOOKS } from './plugins/ind
 /**
  * Core version
  */
-export const VERSION = '0.0.2-beta.1';
-
-/**
- * Initialize LearnMD core with default configuration
- */
-export interface LearnMDConfig {
-  title?: string;
-  description?: string;
-  defaultLanguage?: string;
-  availableLanguages?: string[];
-  basePath?: string;
-  storagePrefix?: string;
-  enableGamification?: boolean;
-  enableAnalytics?: boolean;
-  theme?: {
-    primaryColor?: string;
-    darkMode?: boolean;
-  };
-  gamification?: {
-    pointsPerLesson?: number;
-    pointsPerQuiz?: number;
-    badges?: Array<{ id: string; name: string; icon: string }>;
-  };
-  navigation?: Array<{ label: string | Record<string, string>; path: string }>;
-  customPages?: Array<{ path: string; componentPath: string }>;
-  plugins?: any[];
-}
+export const VERSION = '0.0.3-beta.3';
 
 export function defineConfig(config: LearnMDConfig): LearnMDConfig {
   return config;
@@ -84,7 +67,6 @@ export function createLearnMD(config: LearnMDConfig = {}) {
     defaultLanguage = 'en',
     basePath = '',
     storagePrefix = 'learnmd',
-    enableGamification = true,
     enableAnalytics = false,
     navigation = [],
     customPages = [],
@@ -95,25 +77,27 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   const i18n = initializeI18n(defaultLanguage, config.availableLanguages);
 
   // Initialize storage
-  const storage = new StorageManager();
+  const storage = new StorageManager(storagePrefix);
 
   // Initialize gamification
-  const gamification = enableGamification ? new GamificationManager() : null;
+  const gamificationPlugin =
+    config.gamification === false ? null : new GamificationPlugin(config.gamification);
+  const gamification = gamificationPlugin?.manager || null;
 
   // Initialize router
   const router = new RouterManager();
 
   // Initialize plugins
   const pluginsRegistry = new PluginRegistry();
-  
+
   const activePlugins = [...plugins];
-  
-  if (enableGamification) {
-     activePlugins.unshift(new GamificationPlugin(config.gamification));
+
+  if (gamificationPlugin) {
+    activePlugins.unshift(gamificationPlugin);
   }
 
   if (activePlugins.length > 0) {
-    const ctx = createDefaultPluginContext({} as any, storage as any, i18n);
+    const ctx = createDefaultPluginContext({} as any, storage, i18n, config as Record<string, unknown>);
     // Bind context hooks to the actual registry so plugins can fire local hooks natively
     ctx.registerHook = (hook, fn) => pluginsRegistry.registerHook(hook, fn);
     (ctx as any).executeHook = (hook: string, ...args: any[]) => pluginsRegistry.executeHook(hook, ...args);
@@ -162,11 +146,15 @@ export function createLearnMD(config: LearnMDConfig = {}) {
       defaultLanguage,
       basePath,
       storagePrefix,
-      enableGamification,
       enableAnalytics,
+      gamification: config.gamification ?? {},
       navigation,
       customPages,
       plugins,
+      theme: config.theme,
+      title: config.title,
+      description: config.description,
+      availableLanguages: config.availableLanguages,
     },
   };
 }

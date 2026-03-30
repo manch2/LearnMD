@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/core",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "description": "Core framework for LearnMD - Markdown-based course creation",
   "type": "module",
   "main": "./dist/index.js",

@@ -6,10 +6,11 @@ export interface BadgeConfig {
   description: string;
   icon: string;
   criteria: {
-    type: 'courses_completed' | 'course_progress';
+    type: 'courses_completed' | 'course_progress' | 'global_score';
     count?: number;
     courseId?: string;
     percentage?: number;
+    score?: number;
   };
 }
 
@@ -62,6 +63,12 @@ export class BadgesPlugin extends BasePlugin {
           if (courseProgressValue >= percentage) {
             shouldAward = true;
           }
+        }
+      } else if (badge.criteria.type === 'global_score') {
+        const scoreThreshold = badge.criteria.score;
+        const currentScore = (profile as any).globalScore ?? profile.totalPoints ?? 0;
+        if (scoreThreshold !== undefined && currentScore >= scoreThreshold) {
+          shouldAward = true;
         }
       }
 

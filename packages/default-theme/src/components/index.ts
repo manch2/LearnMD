@@ -20,3 +20,5 @@ export * from './CatalogViewer';
 export * from './ProfileViewer';
 export * from './CourseOverview';
 export * from './TableOfContents';
+export * from './ContentPage';
+export * from './PluginSlot';

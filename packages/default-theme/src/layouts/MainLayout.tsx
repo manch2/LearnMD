@@ -41,6 +41,8 @@ export function Header({
   const { config } = useLearnMD();
 
   const navigation = manualNavigation || config.navigation || [];
+  const logoText =
+    (typeof config.theme === 'object' && config.theme?.logoText) || config.title || 'LearnMD';
 
   return (
     <header className="sticky top-0 z-40 bg-[rgb(var(--bg-primary))]/95 backdrop-blur border-b border-[rgb(var(--border-color))]">
@@ -50,7 +52,7 @@ export function Header({
             {logo || (
               <Link to="/" className="flex items-center gap-2">
                 <span className="text-2xl">📚</span>
-                <span className="font-bold text-xl">LearnMD</span>
+                <span className="font-bold text-xl">{logoText}</span>
               </Link>
             )}
             {title && (

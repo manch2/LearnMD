@@ -61,7 +61,6 @@ describe('StorageManager', () => {
   let manager: StorageManager;
 
   beforeEach(() => {
-    manager = new StorageManager();
     vi.stubGlobal('localStorage', {
       getItem: vi.fn(),
       setItem: vi.fn(),
@@ -70,11 +69,13 @@ describe('StorageManager', () => {
       length: 0,
       key: vi.fn(),
     });
+    manager = new StorageManager();
   });
 
   it('should save and get user profile', async () => {
     const profile: UserProfile = {
       id: 'user-1',
+      globalScore: 0,
       totalPoints: 0,
       badges: [],
       achievements: [],
@@ -90,6 +91,25 @@ describe('StorageManager', () => {
     
     const result = await manager.getUserProfile();
     expect(result).toEqual(profile);
+  });
+
+  it('should normalize global score from legacy total points', async () => {
+    vi.mocked(localStorage.getItem).mockReturnValue(
+      JSON.stringify({
+        id: 'legacy-user',
+        totalPoints: 55,
+        badges: [],
+        achievements: [],
+        coursesProgress: {},
+        streak: { current: 0, longest: 0, lastActiveDate: '' },
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      })
+    );
+
+    const result = await manager.getUserProfile();
+    expect(result?.globalScore).toBe(55);
+    expect(result?.totalPoints).toBe(55);
   });
 
   it('should update lesson progress and total points', async () => {

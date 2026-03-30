@@ -1,46 +1,67 @@
 # PDF Certificates
 
-The PDF plugin allows you to generate professional-looking certificates for users who successfully complete your courses.
+The PDF plugin owns certificate generation in LearnMD beta.3.
 
 ## Features
 
--   **Automatic Generation**: Generate a PDF as soon as a user finishes all lessons in a course.
--   **Customizable Templates**: Design your own certificate layouts using HTML/CSS or React.
--   **Data Injection**: Automatically include the user's name, the course title, and the completion date.
+-   Certificate downloads are available only when `new PDFPlugin()` is registered.
+-   The plugin injects its UI into the `profile:courseActions` slot.
+-   You can customize the default signature and provide a custom React template.
 
 ## Usage
 
-To enable PDF certificates, add the `PdfPlugin` to your configuration:
+Register the plugin in `learnmd.config.ts`:
 
 ```typescript
-// learnmd.config.ts
-import { PdfPlugin } from '@learnmd/plugins';
+import { defineConfig } from '@learnmd/core';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
 
 export default defineConfig({
   plugins: [
-    PdfPlugin({
-      template: 'standard',
-      showScore: true
-    })
-  ]
+    new PDFPlugin({
+      signature: 'LearnMD Team',
+    }),
+  ],
 });
 ```
 
 ## How it works
 
-The PDF plugin listens for the `course:complete` hook. When triggered, it uses the course data to generate a PDF file that the user can download.
+The plugin registers a UI action for completed courses in the profile. If the plugin is missing,
+no certificate button is rendered and the user has no alternative certificate flow in the default
+UI.
+
+## Custom template
+
+```typescript
+import React from 'react';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
+
+const CertificateTemplate = (
+  <div style={{ width: '11in', height: '8.5in', padding: '48px' }}>
+    <h1>Certificate of Completion</h1>
+    <p>Issued by LearnMD.</p>
+  </div>
+);
+
+new PDFPlugin({
+  signature: 'Lead Instructor',
+  template: CertificateTemplate,
+});
+```
 
 <Callout type="warning">
-  Ensure you have the necessary fonts and assets available for the PDF generator.
+  The default theme only shows certificate actions when the plugin is present and the course is
+  completed.
 </Callout>
 
 <Quiz 
-  question="Which hook does the PDF plugin listen to for generating certificates?"
+  question="What happens if the PDF plugin is not registered in beta.3?"
   options={[
-    { label: 'app:init', isCorrect: false },
-    { label: 'lesson:complete', isCorrect: false },
-    { label: 'course:complete', isCorrect: true },
-    { label: 'progress:update', isCorrect: false }
+    { label: 'Certificates still appear in the profile by default', isCorrect: false },
+    { label: 'The user can trigger certificate downloads from a hidden action', isCorrect: false },
+    { label: 'No certificate action is rendered in the default UI', isCorrect: true },
+    { label: 'The plugin is auto-enabled by gamification', isCorrect: false }
   ]}
-  explanation="The PDF plugin generates a certificate once a course is fully completed by listening to the `course:complete` hook."
+  explanation="In beta.3, PDF certificates are governed entirely by the PDF plugin. Without it, the default UI does not render any certificate action."
 />

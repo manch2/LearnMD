@@ -2,8 +2,10 @@ import type {
   Plugin,
   PluginContext,
   PluginConfig,
+  PluginSlotComponentRegistration,
+  PluginSlotName,
   Course,
-  StorageAdapter,
+  LearnMDStorage,
   I18nAdapter,
 } from '../types';
 
@@ -13,6 +15,7 @@ import type {
 export class PluginRegistry {
   private readonly plugins: Map<string, Plugin> = new Map();
   private readonly components: Map<string, unknown> = new Map();
+  private readonly slotComponents: Map<PluginSlotName, PluginSlotComponentRegistration[]> = new Map();
   private readonly hooks: Map<string, Array<(...args: unknown[]) => unknown>> = new Map();
 
   /**
@@ -73,8 +76,20 @@ export class PluginRegistry {
   /**
    * Register a component from a plugin
    */
-  registerComponent(name: string, component: unknown): void {
-    this.components.set(name, component);
+  registerComponent(
+    nameOrRegistration: string | PluginSlotComponentRegistration,
+    component?: unknown
+  ): void {
+    if (typeof nameOrRegistration === 'string') {
+      this.components.set(nameOrRegistration, component);
+      return;
+    }
+
+    const registration = nameOrRegistration;
+    const existing = this.slotComponents.get(registration.slot) || [];
+    existing.push(registration);
+    existing.sort((left, right) => (left.order || 0) - (right.order || 0));
+    this.slotComponents.set(registration.slot, existing);
   }
 
   /**
@@ -89,6 +104,10 @@ export class PluginRegistry {
    */
   getAllComponents(): Map<string, unknown> {
     return this.components;
+  }
+
+  getSlotComponents(slot: PluginSlotName): PluginSlotComponentRegistration[] {
+    return this.slotComponents.get(slot) || [];
   }
 
   /**
@@ -135,6 +154,7 @@ export class PluginRegistry {
   clear(): void {
     this.plugins.clear();
     this.components.clear();
+    this.slotComponents.clear();
     this.hooks.clear();
   }
 }
@@ -144,7 +164,7 @@ export class PluginRegistry {
  */
 export function createPluginContext(
   course: Course,
-  storage: StorageAdapter,
+  storage: LearnMDStorage,
   i18n: I18nAdapter,
   registry: PluginRegistry,
   config: PluginConfig = {}
@@ -153,7 +173,8 @@ export function createPluginContext(
     course,
     storage,
     i18n,
-    registerComponent: (name, component) => registry.registerComponent(name, component),
+    registerComponent: (nameOrRegistration, component) =>
+      registry.registerComponent(nameOrRegistration, component),
     registerHook: (hook, fn) => registry.registerHook(hook, fn),
     config,
   };
@@ -324,8 +345,9 @@ export async function loadPlugins(
  */
 export function createDefaultPluginContext(
   course: Course,
-  storage: StorageAdapter,
-  i18n: I18nAdapter
+  storage: LearnMDStorage,
+  i18n: I18nAdapter,
+  config: PluginConfig = {}
 ): PluginContext {
   const registry = new PluginRegistry();
 
@@ -333,8 +355,9 @@ export function createDefaultPluginContext(
     course,
     storage,
     i18n,
-    registerComponent: (name, component) => registry.registerComponent(name, component),
+    registerComponent: (nameOrRegistration, component) =>
+      registry.registerComponent(nameOrRegistration, component),
     registerHook: (hook, fn) => registry.registerHook(hook, fn),
-    config: {},
+    config,
   };
 }

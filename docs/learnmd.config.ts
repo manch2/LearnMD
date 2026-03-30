@@ -7,16 +7,25 @@ export default defineConfig({
   availableLanguages: ['en', 'es'],
   theme: {
     primaryColor: '#3b82f6',
-    darkMode: true,
+    secondaryColor: '#14b8a6',
+    fontFamily: '"Inter", system-ui, sans-serif',
+    headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
+    contentMaxWidth: '72rem',
+    logoText: 'LearnMD Docs',
+    darkMode: {
+      enabled: true,
+      backgroundColor: '#0f172a',
+      surfaceColor: '#1e293b',
+      textColor: '#e2e8f0',
+      mutedTextColor: '#94a3b8',
+    },
   },
   gamification: {
-    pointsPerLesson: 100,
-    pointsPerQuiz: 10,
-    badges: [
-      { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
-      { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' },
-      { id: 'course-complete', name: 'Course Graduate', icon: '🎓' },
-    ],
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 25,
+    },
   },
   navigation: [
     { label: { en: 'Getting Started', es: 'Primeros Pasos' }, path: '/getting-started' },

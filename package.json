@@ -1,6 +1,6 @@
 {
   "name": "learnmd",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "private": true,
   "description": "Open-source framework for creating interactive courses from Markdown files",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/default-theme",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "description": "Default theme for LearnMD courses",
   "type": "module",
   "main": "./dist/index.js",
@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@learnmd/core": "workspace:*",
-    "@learnmd/plugin-pdf": "workspace:*",
     "@mdx-js/react": "^3.0.1",
     "zustand": "^4.5.0"
   },

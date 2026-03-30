@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GamificationManager } from './index';
-import type { UserProfile, CourseProgress } from '../types';
+import { GamificationManager, resolveGamificationConfig } from './index';
+import type { UserProfile } from '../types';
 
 describe('GamificationManager', () => {
   let manager: GamificationManager;
@@ -10,6 +10,7 @@ describe('GamificationManager', () => {
     manager = new GamificationManager();
     mockProfile = {
       id: 'user-1',
+      globalScore: 0,
       totalPoints: 0,
       badges: [],
       achievements: [],
@@ -25,21 +26,6 @@ describe('GamificationManager', () => {
     expect(manager.calculateLessonPoints(100, true)).toBe(10 + 20 + 30); // Base + Quiz + Perfect
   });
 
-  it('should award "First Steps" badge', () => {
-    const progress: CourseProgress = {
-      courseId: 'c1',
-      completedLessons: ['l1'],
-      lessons: { l1: { lessonSlug: 'l1', completed: true, completedAt: Date.now(), timeSpent: 100, lastAccessedAt: Date.now() } },
-      totalPoints: 10,
-      badges: [],
-      startedAt: Date.now(),
-      lastAccessedAt: Date.now()
-    };
-
-    const earned = manager.checkBadges(progress, progress.lessons['l1'], mockProfile);
-    expect(earned.some(b => b.id === 'first-lesson')).toBe(true);
-  });
-
   it('should update and increment streaks', () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -51,8 +37,22 @@ describe('GamificationManager', () => {
   });
 
   it('should check achievements based on total points', () => {
+    mockProfile.globalScore = 1000;
     mockProfile.totalPoints = 1000;
     const earned = manager.checkAchievements(mockProfile);
     expect(earned.some(a => a.id === 'points-1000')).toBe(true);
+  });
+
+  it('should resolve config overrides', () => {
+    const resolved = resolveGamificationConfig({
+      points: {
+        lessonCompletion: 100,
+        quizPassed: 10,
+      },
+    });
+
+    expect(resolved.points.lessonCompletion).toBe(100);
+    expect(resolved.points.quizPassed).toBe(10);
+    expect(resolved.points.quizPerfectScore).toBe(30);
   });
 });
