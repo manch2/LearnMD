@@ -270,9 +270,6 @@ importers:
       '@learnmd/core':
         specifier: workspace:*
         version: link:../core
-      '@learnmd/plugin-pdf':
-        specifier: workspace:*
-        version: link:../plugins/pdf
       '@mdx-js/react':
         specifier: ^3.0.1
         version: 3.1.1(@types/react@18.3.28)(react@19.2.4)
