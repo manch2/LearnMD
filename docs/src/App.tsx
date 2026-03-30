@@ -47,37 +47,37 @@ const pageModules = import.meta.glob('../pages/*.mdx', { eager: true });
 function App() {
   return (
     <LearnMDProvider config={config}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Routes>
-          <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
-          <Route path="/profile" element={
-            <MainLayout title="Profile">
-              <Header title="User Profile" />
-              <ProfileViewer />
-            </MainLayout>
-          } />
-          <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />} />
+      <MDXProvider components={components}>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <Routes>
+            <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
+            <Route path="/profile" element={
+              <MainLayout title="Profile">
+                <Header title="User Profile" />
+                <ProfileViewer />
+              </MainLayout>
+            } />
+            <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />} />
 
-          {config.customPages?.map((page, idx) => {
-            // Map standard pages path to dynamic import
-            const modKey = `../${page.componentPath}`;
-            const mod = pageModules[modKey];
-            const Component = mod ? (mod as any).default : () => <div>Page not found</div>;
-            return (
-              <Route key={idx} path={page.path} element={
-                <MainLayout>
-                  <Header />
-                  <div className="prose dark:prose-invert container mx-auto px-4 py-8 max-w-4xl">
-                    <MDXProvider components={components}>
+            {config.customPages?.map((page, idx) => {
+              // Map standard pages path to dynamic import
+              const modKey = `../${page.componentPath}`;
+              const mod = pageModules[modKey];
+              const Component = mod ? (mod as any).default : () => <div>Page not found</div>;
+              return (
+                <Route key={idx} path={page.path} element={
+                  <MainLayout>
+                    <Header />
+                    <div className="prose dark:prose-invert container mx-auto px-4 py-8 max-w-4xl">
                       <Component />
-                    </MDXProvider>
-                  </div>
-                </MainLayout>
-              } />
-            );
-          })}
-        </Routes>
-      </BrowserRouter>
+                    </div>
+                  </MainLayout>
+                } />
+              );
+            })}
+          </Routes>
+        </BrowserRouter>
+      </MDXProvider>
     </LearnMDProvider>
   );
 }
