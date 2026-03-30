@@ -1,0 +1,363 @@
+---
+title: 'Configuration'
+---
+
+<Title i18n="title">
+  <en>Configuration Reference</en>
+  <es>Referencia de Configuración</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    Every LearnMD project is configured through the `learnmd.config.ts` file located at the root of your project. This file defines application settings, theming, gamification, navigation, custom pages, and plugin registration.
+  </en>
+  <es>
+    Cada proyecto LearnMD se configura a través del archivo `learnmd.config.ts` ubicado en la raíz de tu proyecto. Este archivo define las configuraciones de la aplicación, temas, gamificación, navegación, páginas personalizadas y registro de plugins.
+  </es>
+</Paragraph>
+
+---
+
+## Basic Configuration
+
+<Paragraph i18n="basic-config">
+  <en>
+    Use the `defineConfig` helper for type-safe configuration:
+  </en>
+  <es>
+    Usa el helper `defineConfig` para configuración con seguridad de tipos:
+  </es>
+</Paragraph>
+
+```typescript
+import { defineConfig } from '@learnmd/core';
+
+export default defineConfig({
+  title: 'My Learning Platform',
+  description: 'Interactive courses built with LearnMD',
+  defaultLanguage: 'en',
+  availableLanguages: ['en', 'es'],
+  theme: {
+    primaryColor: '#3b82f6',
+    darkMode: true,
+  },
+  gamification: {
+    pointsPerLesson: 100,
+    pointsPerQuiz: 10,
+    badges: [
+      { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
+      { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' },
+    ],
+  },
+  navigation: [
+    { label: 'Getting Started', path: '/getting-started' },
+    { label: 'Docs', path: '/docs' },
+  ],
+  customPages: [
+    { path: '/getting-started', componentPath: 'pages/getting-started.mdx' },
+    { path: '/docs', componentPath: 'pages/docs.mdx' },
+  ],
+});
+```
+
+---
+
+## All Config Options
+
+### Root Options
+
+<Paragraph i18n="root-options">
+  <en>
+    | Option | Type | Description | Default |
+    |--------|------|-------------|---------|
+    | `title` | `string` | Application title shown in the header | `undefined` |
+    | `description` | `string` | Application description for SEO | `undefined` |
+    | `defaultLanguage` | `string` | Default language code | `'en'` |
+    | `availableLanguages` | `string[]` | List of supported language codes | `['en']` |
+    | `basePath` | `string` | Base URL path for deployment | `'/'` |
+    | `storagePrefix` | `string` | Prefix for IndexedDB storage keys | `'learnmd'` |
+    | `enableGamification` | `boolean` | Enable gamification features | `true` |
+    | `enableAnalytics` | `boolean` | Enable analytics tracking | `false` |
+  </en>
+  <es>
+    | Opción | Tipo | Descripción | Por defecto |
+    |--------|------|-------------|-------------|
+    | `title` | `string` | Título de la aplicación mostrado en el header | `undefined` |
+    | `description` | `string` | Descripción de la aplicación para SEO | `undefined` |
+    | `defaultLanguage` | `string` | Código de idioma por defecto | `'en'` |
+    | `availableLanguages` | `string[]` | Lista de códigos de idiomas soportados | `['en']` |
+    | `basePath` | `string` | Ruta base de URL para despliegue | `'/'` |
+    | `storagePrefix` | `string` | Prefijo para las claves de almacenamiento IndexedDB | `'learnmd'` |
+    | `enableGamification` | `boolean` | Habilitar funciones de gamificación | `true` |
+    | `enableAnalytics` | `boolean` | Habilitar seguimiento de analíticas | `false` |
+  </es>
+</Paragraph>
+
+---
+
+### Theme Configuration
+
+<Paragraph i18n="theme-config">
+  <en>
+    The `theme` object controls the visual appearance of your project:
+
+    | Option | Type | Description | Default |
+    |--------|------|-------------|---------|
+    | `primaryColor` | `string` | Primary color in hex format | `'#3b82f6'` |
+    | `secondaryColor` | `string` | Secondary accent color | `undefined` |
+    | `backgroundColor` | `string` | Main background color | `undefined` |
+    | `textColor` | `string` | Main text color | `undefined` |
+    | `fontFamily` | `string` | Font family | `'Inter, system-ui, sans-serif'` |
+    | `borderRadius` | `number` | Border radius in pixels | `8` |
+    | `darkMode` | `boolean \| object` | Enable dark mode | `true` |
+  </en>
+  <es>
+    El objeto `theme` controla la apariencia visual de tu proyecto:
+
+    | Opción | Tipo | Descripción | Por defecto |
+    |--------|------|-------------|-------------|
+    | `primaryColor` | `string` | Color primario en formato hex | `'#3b82f6'` |
+    | `secondaryColor` | `string` | Color de acento secundario | `undefined` |
+    | `backgroundColor` | `string` | Color de fondo principal | `undefined` |
+    | `textColor` | `string` | Color de texto principal | `undefined` |
+    | `fontFamily` | `string` | Familia tipográfica | `'Inter, system-ui, sans-serif'` |
+    | `borderRadius` | `number` | Radio de borde en píxeles | `8` |
+    | `darkMode` | `boolean \| object` | Habilitar modo oscuro | `true` |
+  </es>
+</Paragraph>
+
+```typescript
+theme: {
+  primaryColor: '#10b981',       // Emerald green
+  secondaryColor: '#6366f1',     // Indigo
+  fontFamily: 'Roboto, sans-serif',
+  borderRadius: 12,
+  darkMode: {
+    enabled: true,
+    primaryColor: '#34d399',
+    backgroundColor: '#0f172a',
+    textColor: '#e2e8f0',
+  },
+}
+```
+
+---
+
+### Gamification Configuration
+
+<Paragraph i18n="gamification-config">
+  <en>
+    The `gamification` object configures the points and badges system:
+
+    | Option | Type | Description | Default |
+    |--------|------|-------------|---------|
+    | `pointsPerLesson` | `number` | Points awarded for completing a lesson | `100` |
+    | `pointsPerQuiz` | `number` | Points awarded per correct quiz answer | `10` |
+    | `badges` | `Badge[]` | Array of badge definitions | `[]` |
+  </en>
+  <es>
+    El objeto `gamification` configura el sistema de puntos e insignias:
+
+    | Opción | Tipo | Descripción | Por defecto |
+    |--------|------|-------------|-------------|
+    | `pointsPerLesson` | `number` | Puntos otorgados por completar una lección | `100` |
+    | `pointsPerQuiz` | `number` | Puntos otorgados por respuesta correcta en quiz | `10` |
+    | `badges` | `Badge[]` | Array de definiciones de insignias | `[]` |
+  </es>
+</Paragraph>
+
+```typescript
+gamification: {
+  pointsPerLesson: 150,
+  pointsPerQuiz: 25,
+  badges: [
+    { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
+    { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' },
+    { id: 'course-complete', name: 'Graduate', icon: '🎓' },
+    { id: 'streak-7', name: 'Week Warrior', icon: '🔥' },
+  ],
+}
+```
+
+---
+
+### Navigation
+
+<Paragraph i18n="navigation-config">
+  <en>
+    The `navigation` array defines the links shown in the header navigation bar. Each entry has a `label` (which can be a translated string) and a `path`:
+  </en>
+  <es>
+    El array `navigation` define los enlaces mostrados en la barra de navegación del header. Cada entrada tiene un `label` (que puede ser un string traducido) y un `path`:
+  </es>
+</Paragraph>
+
+```typescript
+navigation: [
+  { label: 'Getting Started', path: '/getting-started' },
+  { label: 'CLI Reference', path: '/cli-reference' },
+  { label: 'Plugins', path: '/plugins' },
+  { label: 'Architecture', path: '/architecture' },
+],
+```
+
+<Paragraph i18n="navigation-i18n">
+  <en>
+    For bilingual labels, use the `TranslatedString` format:
+  </en>
+  <es>
+    Para etiquetas bilingües, usa el formato `TranslatedString`:
+  </es>
+</Paragraph>
+
+```typescript
+navigation: [
+  { label: { en: 'Getting Started', es: 'Primeros Pasos' }, path: '/getting-started' },
+  { label: { en: 'Plugins', es: 'Plugins' }, path: '/plugins' },
+],
+```
+
+---
+
+### Custom Pages
+
+<Paragraph i18n="custom-pages-config">
+  <en>
+    The `customPages` array maps URL paths to MDX files in your `pages/` directory. Each custom page appears as a standalone route outside of any course:
+  </en>
+  <es>
+    El array `customPages` mapea rutas URL a archivos MDX en tu directorio `pages/`. Cada página personalizada aparece como una ruta independiente fuera de cualquier curso:
+  </es>
+</Paragraph>
+
+```typescript
+customPages: [
+  { path: '/getting-started', componentPath: 'pages/getting-started.mdx' },
+  { path: '/faq', componentPath: 'pages/faq.mdx' },
+  { path: '/changelog', componentPath: 'pages/changelog.mdx' },
+],
+```
+
+<Callout type="info">
+  <Paragraph i18n="custom-pages-tip">
+    <en>
+      The `learnmd add page` CLI command automatically creates the MDX file and injects the route entry into `learnmd.config.ts` for you.
+    </en>
+    <es>
+      El comando `learnmd add page` del CLI crea automáticamente el archivo MDX e inyecta la entrada de ruta en `learnmd.config.ts` por ti.
+    </es>
+  </Paragraph>
+</Callout>
+
+---
+
+## Course Configuration (`learnmd.json`)
+
+<Paragraph i18n="course-config">
+  <en>
+    Each course has its own `learnmd.json` file inside the course directory. This file defines course-specific metadata:
+
+    | Field | Type | Description |
+    |-------|------|-------------|
+    | `title` | `TranslatedString` | Course title in multiple languages |
+    | `description` | `TranslatedString` | Course description |
+    | `version` | `string` | Course version |
+    | `author` | `string` | Course author |
+    | `difficulty` | `string` | `beginner`, `intermediate`, or `advanced` |
+    | `estimatedTime` | `string` | Estimated completion time |
+    | `lessons` | `string[]` | Ordered array of lesson slugs |
+    | `tags` | `string[]` | Tags for categorization |
+  </en>
+  <es>
+    Cada curso tiene su propio archivo `learnmd.json` dentro del directorio del curso. Este archivo define metadatos específicos del curso:
+
+    | Campo | Tipo | Descripción |
+    |-------|------|-------------|
+    | `title` | `TranslatedString` | Título del curso en múltiples idiomas |
+    | `description` | `TranslatedString` | Descripción del curso |
+    | `version` | `string` | Versión del curso |
+    | `author` | `string` | Autor del curso |
+    | `difficulty` | `string` | `beginner`, `intermediate`, o `advanced` |
+    | `estimatedTime` | `string` | Tiempo estimado de completación |
+    | `lessons` | `string[]` | Array ordenado de slugs de lecciones |
+    | `tags` | `string[]` | Etiquetas para categorización |
+  </es>
+</Paragraph>
+
+```json
+{
+  "title": {
+    "en": "React Fundamentals",
+    "es": "Fundamentos de React"
+  },
+  "description": {
+    "en": "Learn React from the ground up",
+    "es": "Aprende React desde cero"
+  },
+  "version": "1.0.0",
+  "author": "LearnMD Team",
+  "difficulty": "intermediate",
+  "estimatedTime": "3 hours",
+  "lessons": [
+    "introduction",
+    "components",
+    "hooks-overview",
+    "state-management"
+  ]
+}
+```
+
+## Full Example Configuration
+
+```typescript
+import { defineConfig } from '@learnmd/core';
+import { BadgesPlugin } from '@learnmd/plugin-badges';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
+
+export default defineConfig({
+  title: 'My Learning Platform',
+  description: 'Interactive courses powered by LearnMD',
+  defaultLanguage: 'en',
+  availableLanguages: ['en', 'es'],
+
+  theme: {
+    primaryColor: '#3b82f6',
+    darkMode: true,
+  },
+
+  gamification: {
+    pointsPerLesson: 100,
+    pointsPerQuiz: 10,
+    badges: [
+      { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
+      { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' },
+      { id: 'course-complete', name: 'Graduate', icon: '🎓' },
+    ],
+  },
+
+  navigation: [
+    { label: 'Getting Started', path: '/getting-started' },
+    { label: 'CLI Reference', path: '/cli-reference' },
+    { label: 'Plugins', path: '/plugins' },
+  ],
+
+  customPages: [
+    { path: '/getting-started', componentPath: 'pages/getting-started.mdx' },
+    { path: '/cli-reference', componentPath: 'pages/cli-reference.mdx' },
+    { path: '/plugins', componentPath: 'pages/plugins.mdx' },
+  ],
+
+  plugins: [
+    new BadgesPlugin([
+      {
+        id: 'first-steps',
+        name: 'First Steps',
+        description: 'Started your first course.',
+        icon: '🚀',
+        criteria: { type: 'course_progress', courseId: 'my-course', percentage: 1 }
+      }
+    ]),
+    new PDFPlugin()
+  ],
+});
+```

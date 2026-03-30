@@ -1,0 +1,392 @@
+---
+title: 'Components'
+---
+
+<Title i18n="title">
+  <en>MDX Components Reference</en>
+  <es>Referencia de Componentes MDX</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    LearnMD provides a set of interactive MDX components that you can use directly inside your `.mdx` lesson and page files. These components handle quizzes, callouts, video embeds, progress tracking, and internationalization.
+  </en>
+  <es>
+    LearnMD proporciona un conjunto de componentes MDX interactivos que puedes usar directamente dentro de tus archivos `.mdx` de lecciones y páginas. Estos componentes manejan quizzes, callouts, video embeds, seguimiento de progreso e internacionalización.
+  </es>
+</Paragraph>
+
+---
+
+## Callout
+
+<Paragraph i18n="callout-desc">
+  <en>
+    Callouts are styled alert boxes to highlight important information. There are four types available:
+  </en>
+  <es>
+    Los Callouts son cajas de alerta estilizadas para resaltar información importante. Hay cuatro tipos disponibles:
+  </es>
+</Paragraph>
+
+```mdx
+<Callout type="info">
+  This is an informational callout.
+</Callout>
+
+<Callout type="tip">
+  This is a helpful tip for the learner.
+</Callout>
+
+<Callout type="warning">
+  This is a warning about potential issues.
+</Callout>
+
+<Callout type="success">
+  This confirms a successful action or outcome.
+</Callout>
+```
+
+<Paragraph i18n="callout-types">
+  <en>
+    | Type | Color | Use Case |
+    |------|-------|----------|
+    | `info` | Blue | Background context, general information |
+    | `tip` | Green | Best practices, performance tips |
+    | `warning` | Yellow/Orange | Potential issues, breaking changes |
+    | `success` | Green | Confirmation, completed steps |
+  </en>
+  <es>
+    | Tipo | Color | Caso de Uso |
+    |------|-------|-------------|
+    | `info` | Azul | Contexto general, información |
+    | `tip` | Verde | Mejores prácticas, tips de rendimiento |
+    | `warning` | Amarillo/Naranja | Problemas potenciales, cambios que rompen |
+    | `success` | Verde | Confirmación, pasos completados |
+  </es>
+</Paragraph>
+
+<Callout type="info">
+  <Paragraph i18n="callout-example">
+    <en>This is a live example of an `info` callout rendered inline.</en>
+    <es>Este es un ejemplo en vivo de un callout `info` renderizado en línea.</es>
+  </Paragraph>
+</Callout>
+
+---
+
+## Quiz
+
+<Paragraph i18n="quiz-desc">
+  <en>
+    The Quiz component creates interactive multiple-choice questions with instant feedback, scoring, and explanation support.
+  </en>
+  <es>
+    El componente Quiz crea preguntas interactivas de opción múltiple con retroalimentación instantánea, puntuación y soporte para explicaciones.
+  </es>
+</Paragraph>
+
+### Basic Usage
+
+```mdx
+<Quiz
+  id="basics-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What language does LearnMD use for content?",
+      options: [
+        { id: "a", label: "HTML" },
+        { id: "b", label: "MDX" },
+        { id: "c", label: "LaTeX" },
+        { id: "d", label: "Plain Text" }
+      ],
+      correctAnswer: "b",
+      explanation: "LearnMD uses MDX, which combines Markdown with JSX components.",
+      points: 10
+    }
+  ]}
+/>
+```
+
+### Multiple Questions
+
+```mdx
+<Quiz
+  id="advanced-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Which CLI command creates a new project?",
+      options: [
+        { id: "a", label: "learnmd create" },
+        { id: "b", label: "learnmd init" },
+        { id: "c", label: "learnmd new" }
+      ],
+      correctAnswer: "a",
+      explanation: "The `create` command scaffolds a full new project.",
+      points: 10
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What file stores course metadata?",
+      options: [
+        { id: "a", label: "package.json" },
+        { id: "b", label: "learnmd.json" },
+        { id: "c", label: "course.yaml" }
+      ],
+      correctAnswer: "b",
+      explanation: "Each course has a `learnmd.json` with title, lessons, and metadata.",
+      points: 10
+    }
+  ]}
+/>
+```
+
+### Quiz Properties
+
+<Paragraph i18n="quiz-props">
+  <en>
+    | Property | Type | Required | Description |
+    |----------|------|----------|-------------|
+    | `id` | `string` | Yes | Unique quiz identifier |
+    | `questions` | `QuizQuestion[]` | Yes | Array of questions |
+    | `questions[].id` | `string` | Yes | Unique question identifier |
+    | `questions[].type` | `string` | Yes | `multiple-choice`, `true-false`, or `input` |
+    | `questions[].question` | `string` | Yes | Question text |
+    | `questions[].options` | `Option[]` | Yes | Answer options with `id` and `label` |
+    | `questions[].correctAnswer` | `string` | Yes | ID of the correct option |
+    | `questions[].explanation` | `string` | No | Explanation shown after answering |
+    | `questions[].points` | `number` | No | Points awarded for correct answer |
+  </en>
+  <es>
+    | Propiedad | Tipo | Obligatorio | Descripción |
+    |-----------|------|-------------|-------------|
+    | `id` | `string` | Sí | Identificador único del quiz |
+    | `questions` | `QuizQuestion[]` | Sí | Array de preguntas |
+    | `questions[].id` | `string` | Sí | Identificador único de la pregunta |
+    | `questions[].type` | `string` | Sí | `multiple-choice`, `true-false`, o `input` |
+    | `questions[].question` | `string` | Sí | Texto de la pregunta |
+    | `questions[].options` | `Option[]` | Sí | Opciones de respuesta con `id` y `label` |
+    | `questions[].correctAnswer` | `string` | Sí | ID de la opción correcta |
+    | `questions[].explanation` | `string` | No | Explicación mostrada después de responder |
+    | `questions[].points` | `number` | No | Puntos otorgados por respuesta correcta |
+  </es>
+</Paragraph>
+
+---
+
+## VideoEmbed
+
+<Paragraph i18n="video-desc">
+  <en>
+    Embeds videos from popular providers directly into your lessons. Supports YouTube, Vimeo, OneDrive, and Google Drive.
+  </en>
+  <es>
+    Incrusta videos de proveedores populares directamente en tus lecciones. Soporta YouTube, Vimeo, OneDrive y Google Drive.
+  </es>
+</Paragraph>
+
+```mdx
+<!-- YouTube -->
+<VideoEmbed provider="youtube" id="dQw4w9WgXcQ" title="Introduction Video" />
+
+<!-- Vimeo -->
+<VideoEmbed provider="vimeo" id="123456789" title="Course Overview" />
+
+<!-- Google Drive -->
+<VideoEmbed provider="googledrive" id="FILE_ID" title="Lecture Recording" />
+
+<!-- OneDrive -->
+<VideoEmbed provider="onedrive" id="FILE_ID" title="Workshop Video" />
+```
+
+### VideoEmbed Properties
+
+<Paragraph i18n="video-props">
+  <en>
+    | Property | Type | Required | Description |
+    |----------|------|----------|-------------|
+    | `provider` | `string` | Yes | `youtube`, `vimeo`, `onedrive`, `googledrive`, or `custom` |
+    | `id` | `string` | Yes* | Video ID from the provider |
+    | `url` | `string` | No | Full URL (for `custom` provider) |
+    | `title` | `string` | No | Accessible title for the video |
+    | `startTime` | `number` | No | Start playback at this second |
+    | `endTime` | `number` | No | Stop playback at this second |
+  </en>
+  <es>
+    | Propiedad | Tipo | Obligatorio | Descripción |
+    |-----------|------|-------------|-------------|
+    | `provider` | `string` | Sí | `youtube`, `vimeo`, `onedrive`, `googledrive`, o `custom` |
+    | `id` | `string` | Sí* | ID del video del proveedor |
+    | `url` | `string` | No | URL completa (para proveedor `custom`) |
+    | `title` | `string` | No | Título accesible para el video |
+    | `startTime` | `number` | No | Iniciar reproducción en este segundo |
+    | `endTime` | `number` | No | Detener reproducción en este segundo |
+  </es>
+</Paragraph>
+
+---
+
+## Progress
+
+<Paragraph i18n="progress-desc">
+  <en>
+    Displays a visual progress bar. Useful for showing course completion, lesson progress, or any percentage-based metric.
+  </en>
+  <es>
+    Muestra una barra de progreso visual. Útil para mostrar completación de cursos, progreso de lecciones o cualquier métrica basada en porcentajes.
+  </es>
+</Paragraph>
+
+```mdx
+<Progress value={75} showPercentage label="Course Progress" />
+
+<Progress value={30} label="Module 1" />
+
+<Progress value={100} showPercentage label="Complete!" />
+```
+
+### Progress Properties
+
+<Paragraph i18n="progress-props">
+  <en>
+    | Property | Type | Required | Description |
+    |----------|------|----------|-------------|
+    | `value` | `number` | Yes | Progress percentage (0-100) |
+    | `label` | `string` | No | Label text above the bar |
+    | `showPercentage` | `boolean` | No | Show percentage number |
+  </en>
+  <es>
+    | Propiedad | Tipo | Obligatorio | Descripción |
+    |-----------|------|-------------|-------------|
+    | `value` | `number` | Sí | Porcentaje de progreso (0-100) |
+    | `label` | `string` | No | Texto de etiqueta sobre la barra |
+    | `showPercentage` | `boolean` | No | Mostrar número de porcentaje |
+  </es>
+</Paragraph>
+
+---
+
+## LanguageSwitcher
+
+<Paragraph i18n="lang-desc">
+  <en>
+    A dropdown component that allows users to switch between available languages. The selected language affects all i18n-wrapped content on the page.
+  </en>
+  <es>
+    Un componente desplegable que permite a los usuarios cambiar entre los idiomas disponibles. El idioma seleccionado afecta todo el contenido envuelto con i18n en la página.
+  </es>
+</Paragraph>
+
+```mdx
+<LanguageSwitcher variant="dropdown" showLabel />
+```
+
+<Paragraph i18n="lang-props">
+  <en>
+    | Property | Type | Required | Description |
+    |----------|------|----------|-------------|
+    | `variant` | `string` | No | Display variant (`dropdown`) |
+    | `showLabel` | `boolean` | No | Show language name next to flag |
+  </en>
+  <es>
+    | Propiedad | Tipo | Obligatorio | Descripción |
+    |-----------|------|-------------|-------------|
+    | `variant` | `string` | No | Variante de visualización (`dropdown`) |
+    | `showLabel` | `boolean` | No | Mostrar nombre del idioma junto a la bandera |
+  </es>
+</Paragraph>
+
+---
+
+## Title & Paragraph (i18n)
+
+<Paragraph i18n="i18n-desc">
+  <en>
+    The `Title` and `Paragraph` components provide internationalization (i18n) support. They wrap content in language-specific tags, and the correct content is shown based on the user's selected language.
+  </en>
+  <es>
+    Los componentes `Title` y `Paragraph` proporcionan soporte de internacionalización (i18n). Envuelven el contenido en etiquetas específicas por idioma, y el contenido correcto se muestra basado en el idioma seleccionado por el usuario.
+  </es>
+</Paragraph>
+
+```mdx
+<Title i18n="welcome">
+  <en>Welcome to the Course</en>
+  <es>Bienvenido al Curso</es>
+</Title>
+
+<Paragraph i18n="intro-text">
+  <en>
+    This paragraph will be shown when the user has English selected.
+    It supports **markdown formatting** inside the tags.
+  </en>
+  <es>
+    Este párrafo se mostrará cuando el usuario tenga español seleccionado.
+    Soporta **formato markdown** dentro de las etiquetas.
+  </es>
+</Paragraph>
+```
+
+<Callout type="tip">
+  <Paragraph i18n="i18n-tip">
+    <en>
+      The `i18n` prop must be a unique key within the page. This key is used internally to identify which translation to display. Use descriptive keys like `"intro"`, `"section-1-desc"`, etc.
+    </en>
+    <es>
+      La prop `i18n` debe ser una clave única dentro de la página. Esta clave se usa internamente para identificar qué traducción mostrar. Usa claves descriptivas como `"intro"`, `"section-1-desc"`, etc.
+    </es>
+  </Paragraph>
+</Callout>
+
+---
+
+## Lesson Frontmatter
+
+<Paragraph i18n="frontmatter-desc">
+  <en>
+    Every lesson MDX file supports YAML frontmatter at the top for metadata:
+  </en>
+  <es>
+    Cada archivo MDX de lección soporta frontmatter YAML en la parte superior para metadatos:
+  </es>
+</Paragraph>
+
+```yaml
+---
+title:
+  en: 'Introduction to React'
+  es: 'Introducción a React'
+description:
+  en: 'Learn the basics of React components'
+  es: 'Aprende los fundamentos de los componentes React'
+duration: '15 minutes'
+difficulty: 'beginner'
+category: 'frontend'
+---
+```
+
+<Paragraph i18n="frontmatter-fields">
+  <en>
+    | Field | Type | Description |
+    |-------|------|-------------|
+    | `title` | `TranslatedString` | Lesson title (bilingual) |
+    | `description` | `TranslatedString` | Lesson description (bilingual) |
+    | `duration` | `string` | Estimated reading/completion time |
+    | `difficulty` | `string` | `beginner`, `intermediate`, or `advanced` |
+    | `category` | `string` | Topic category for filtering |
+  </en>
+  <es>
+    | Campo | Tipo | Descripción |
+    |-------|------|-------------|
+    | `title` | `TranslatedString` | Título de la lección (bilingüe) |
+    | `description` | `TranslatedString` | Descripción de la lección (bilingüe) |
+    | `duration` | `string` | Tiempo estimado de lectura/completación |
+    | `difficulty` | `string` | `beginner`, `intermediate`, o `advanced` |
+    | `category` | `string` | Categoría del tema para filtrado |
+  </es>
+</Paragraph>

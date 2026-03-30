@@ -1,36 +1,215 @@
-# Architecture Overview
+---
+title: 'Architecture'
+---
 
-LearnMD is designed to be highly modular and extensible. It leverages modern web technologies to provide a fast and developer-friendly experience.
+<Title i18n="title">
+  <en>Architecture Overview</en>
+  <es>Resumen de Arquitectura</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    LearnMD is designed as a highly modular, extensible monorepo. It leverages modern web technologies — Vite, React, MDX, and TypeScript — to deliver a fast, developer-friendly experience for building interactive educational content.
+  </en>
+  <es>
+    LearnMD está diseñado como un monorepo altamente modular y extensible. Aprovecha tecnologías web modernas — Vite, React, MDX y TypeScript — para ofrecer una experiencia rápida y amigable para desarrolladores que construyen contenido educativo interactivo.
+  </es>
+</Paragraph>
+
+---
 
 ## Core Pillars
 
-1.  **MDX-First**: Content is written in MDX, allowing you to use React components directly in your documentation.
-2.  **Plugin Architecture**: Core features like Gamification and PDF generation are implemented as plugins.
-3.  **Static Site Generation**: Built on top of Vite for extremely fast builds and HMR.
-4.  **Flexible Routing**: Automatic routing for courses, lessons, and custom pages.
+<Paragraph i18n="pillars">
+  <en>
+    1. **MDX-First**: Content is written in MDX, combining Markdown simplicity with the power of React components
+    2. **Plugin Architecture**: Core features like gamification badges and PDF certificates are implemented as independent plugins
+    3. **Static Site Generation**: Built on Vite for extremely fast builds and hot module replacement (HMR)
+    4. **Flexible Routing**: Automatic routing for courses, lessons, and custom pages via `learnmd.config.ts`
+    5. **Internationalization (i18n)**: First-class bilingual content support with `<Title>` and `<Paragraph>` components
+    6. **Client-Side Storage**: IndexedDB-backed progress tracking with no backend required
+  </en>
+  <es>
+    1. **MDX-First**: El contenido se escribe en MDX, combinando la simplicidad de Markdown con el poder de los componentes React
+    2. **Arquitectura de Plugins**: Funcionalidades clave como insignias de gamificación y certificados PDF se implementan como plugins independientes
+    3. **Generación de Sitios Estáticos**: Construido sobre Vite para compilaciones extremadamente rápidas y reemplazo de módulos en caliente (HMR)
+    4. **Routing Flexible**: Enrutamiento automático para cursos, lecciones y páginas personalizadas vía `learnmd.config.ts`
+    5. **Internacionalización (i18n)**: Soporte de contenido bilingüe de primera clase con componentes `<Title>` y `<Paragraph>`
+    6. **Almacenamiento del Lado del Cliente**: Seguimiento de progreso respaldado por IndexedDB sin necesidad de backend
+  </es>
+</Paragraph>
+
+---
 
 ## Monorepo Structure
 
-The project uses Turborepo to manage multiple packages:
+<Paragraph i18n="monorepo">
+  <en>
+    The project uses **Turborepo** with **pnpm workspaces** to manage multiple packages:
+  </en>
+  <es>
+    El proyecto usa **Turborepo** con **pnpm workspaces** para administrar múltiples paquetes:
+  </es>
+</Paragraph>
 
--   `@learnmd/core`: The engine that powers everything—parser, router, i18n, and state management.
--   `@learnmd/cli`: Command-line tool for project initialization and content synchronization.
--   `@learnmd/default-theme`: A polished, responsive UI built with Tailwind CSS.
--   `@learnmd/plugins`: Official plugins for badges, PDF exports, and more.
+```text
+learnmd/
+├── packages/
+│   ├── core/              # @learnmd/core — Engine, types, state, i18n, storage
+│   ├── cli/               # @learnmd/cli — Command-line tool
+│   ├── default-theme/     # @learnmd/default-theme — UI components & layouts
+│   └── plugins/
+│       ├── badges/        # @learnmd/plugin-badges — Gamification badges
+│       └── pdf/           # @learnmd/plugin-pdf — PDF certificate generation
+├── docs/                  # This documentation site (built with LearnMD itself)
+├── examples/              # Example projects
+├── skills/                # AI agent skills
+├── turbo.json             # Turborepo configuration
+└── pnpm-workspace.yaml    # Workspace definition
+```
+
+### Package Responsibilities
+
+<Paragraph i18n="packages">
+  <en>
+    | Package | npm Name | Description |
+    |---------|----------|-------------|
+    | **Core** | `@learnmd/core` | The engine — `LearnMDProvider`, type definitions, `defineConfig()`, i18n adapter, IndexedDB storage, gamification state, plugin manager |
+    | **CLI** | `@learnmd/cli` | Project scaffolding (`create`), course/lesson/page management (`add`), file sync (`sync`), dev server and build commands |
+    | **Default Theme** | `@learnmd/default-theme` | `MainLayout`, `Header`, `CatalogViewer`, `CourseViewer`, `ProfileViewer`, and all MDX components (`Callout`, `Quiz`, `VideoEmbed`, `Progress`, `Title`, `Paragraph`, `LanguageSwitcher`) |
+    | **Badges Plugin** | `@learnmd/plugin-badges` | Real-time badge evaluation based on course progress and completion criteria |
+    | **PDF Plugin** | `@learnmd/plugin-pdf` | PDF certificate generation using `html2canvas` and `jsPDF` with customizable React templates |
+  </en>
+  <es>
+    | Paquete | Nombre npm | Descripción |
+    |---------|------------|-------------|
+    | **Core** | `@learnmd/core` | El motor — `LearnMDProvider`, definiciones de tipos, `defineConfig()`, adaptador i18n, almacenamiento IndexedDB, estado de gamificación, gestor de plugins |
+    | **CLI** | `@learnmd/cli` | Scaffolding de proyectos (`create`), gestión de cursos/lecciones/páginas (`add`), sincronización de archivos (`sync`), servidor de desarrollo y comandos de build |
+    | **Default Theme** | `@learnmd/default-theme` | `MainLayout`, `Header`, `CatalogViewer`, `CourseViewer`, `ProfileViewer`, y todos los componentes MDX (`Callout`, `Quiz`, `VideoEmbed`, `Progress`, `Title`, `Paragraph`, `LanguageSwitcher`) |
+    | **Badges Plugin** | `@learnmd/plugin-badges` | Evaluación de insignias en tiempo real basada en progreso y criterios de completación de cursos |
+    | **PDF Plugin** | `@learnmd/plugin-pdf` | Generación de certificados PDF usando `html2canvas` y `jsPDF` con plantillas React personalizables |
+  </es>
+</Paragraph>
+
+---
 
 ## Data Flow
 
-When a user visits a lesson:
+<Paragraph i18n="data-flow">
+  <en>
+    When a user visits a lesson, the following sequence occurs:
 
-1.  The `RouterManager` identifies the course and lesson from the URL.
-2.  The `Parser` reads the MDX content and extracts frontmatter metadata.
-3.  The `LearnMDProvider` provides the global state (progress, gamification points).
-4.  The theme components render the content and interactive elements (Quizzes, Callouts).
+    1. **URL Parsing**: React Router identifies the course and lesson from the URL path (`/courses/:courseId/lessons/:lessonSlug`)
+    2. **Module Resolution**: Vite's `import.meta.glob` resolves the MDX file at build time, making all lessons available as eagerly-loaded modules
+    3. **State Injection**: The `LearnMDProvider` context provides global state — user progress, gamification points, current language, and plugin instances
+    4. **MDX Rendering**: The `MDXProvider` makes interactive components (`Callout`, `Quiz`, etc.) available to the MDX content
+    5. **Theme Rendering**: The `CourseViewer` component from `@learnmd/default-theme` wraps the lesson in the sidebar layout with navigation
+    6. **Progress Tracking**: When a user completes a lesson or answers a quiz, progress is persisted to IndexedDB via the storage adapter
+    7. **Plugin Hooks**: Registered plugins receive lifecycle events (`lesson:complete`, `progress:update`) and can trigger badge awards or other side effects
+  </en>
+  <es>
+    Cuando un usuario visita una lección, ocurre la siguiente secuencia:
 
-## Customization
+    1. **Parsing de URL**: React Router identifica el curso y la lección desde la ruta URL (`/courses/:courseId/lessons/:lessonSlug`)
+    2. **Resolución de Módulos**: El `import.meta.glob` de Vite resuelve el archivo MDX en tiempo de compilación, haciendo todas las lecciones disponibles como módulos cargados eagerly
+    3. **Inyección de Estado**: El contexto `LearnMDProvider` proporciona el estado global — progreso del usuario, puntos de gamificación, idioma actual e instancias de plugins
+    4. **Renderizado MDX**: El `MDXProvider` hace los componentes interactivos (`Callout`, `Quiz`, etc.) disponibles para el contenido MDX
+    5. **Renderizado del Tema**: El componente `CourseViewer` de `@learnmd/default-theme` envuelve la lección en el layout del sidebar con navegación
+    6. **Seguimiento de Progreso**: Cuando un usuario completa una lección o responde un quiz, el progreso se persiste en IndexedDB a través del adaptador de almacenamiento
+    7. **Hooks de Plugins**: Los plugins registrados reciben eventos del ciclo de vida (`lesson:complete`, `progress:update`) y pueden disparar otorgamiento de insignias u otros efectos secundarios
+  </es>
+</Paragraph>
 
-You can customize almost every aspect of LearnMD:
+---
 
--   **Theming**: Override components or styles in the default theme.
--   **Plugins**: Create your own plugins to add custom hooks and functionality.
--   **Config**: Fine-tune the behavior in `learnmd.config.ts`.
+## Storage System
+
+<Paragraph i18n="storage">
+  <en>
+    LearnMD uses **IndexedDB** for client-side persistence. All user progress, quiz scores, badges, and gamification data is stored locally in the browser — no backend server is required.
+
+    The storage adapter interface:
+  </en>
+  <es>
+    LearnMD usa **IndexedDB** para persistencia del lado del cliente. Todo el progreso del usuario, puntuaciones de quizzes, insignias y datos de gamificación se almacenan localmente en el navegador — no se requiere un servidor backend.
+
+    La interfaz del adaptador de almacenamiento:
+  </es>
+</Paragraph>
+
+```typescript
+interface StorageAdapter {
+  get<T>(key: string): Promise<T | null>;
+  set<T>(key: string, value: T): Promise<void>;
+  remove(key: string): Promise<void>;
+  clear(): Promise<void>;
+  keys(): Promise<string[]>;
+}
+```
+
+<Paragraph i18n="storage-keys">
+  <en>
+    Storage keys are prefixed with the `storagePrefix` from your config (default: `learnmd`). Data stored includes:
+
+    - `{prefix}_progress_{courseId}` — Course progress (completed lessons, points, timestamps)
+    - `{prefix}_profile` — User profile (total points, badges, streak data)
+    - `{prefix}_settings` — User preferences (language, theme)
+  </en>
+  <es>
+    Las claves de almacenamiento están prefijadas con el `storagePrefix` de tu configuración (por defecto: `learnmd`). Los datos almacenados incluyen:
+
+    - `{prefix}_progress_{courseId}` — Progreso del curso (lecciones completadas, puntos, timestamps)
+    - `{prefix}_profile` — Perfil del usuario (puntos totales, insignias, datos de racha)
+    - `{prefix}_settings` — Preferencias del usuario (idioma, tema)
+  </es>
+</Paragraph>
+
+---
+
+## Plugin System Architecture
+
+<Paragraph i18n="plugin-arch">
+  <en>
+    Plugins follow a simple lifecycle model:
+
+    1. **Registration**: Plugins are passed in the `plugins` array of `learnmd.config.ts`
+    2. **Loading**: During app initialization, each plugin's `onLoad(ctx)` method is called with a `PluginContext`
+    3. **Hook Registration**: Plugins use `ctx.registerHook(name, fn)` to listen for lifecycle events
+    4. **Execution**: When events fire (e.g., a lesson is completed), all registered hook handlers execute
+    5. **Unloading**: When the app unmounts, each plugin's optional `onUnload(ctx)` method is called for cleanup
+  </en>
+  <es>
+    Los plugins siguen un modelo de ciclo de vida simple:
+
+    1. **Registro**: Los plugins se pasan en el array `plugins` de `learnmd.config.ts`
+    2. **Carga**: Durante la inicialización de la app, se llama al método `onLoad(ctx)` de cada plugin con un `PluginContext`
+    3. **Registro de Hooks**: Los plugins usan `ctx.registerHook(name, fn)` para escuchar eventos del ciclo de vida
+    4. **Ejecución**: Cuando los eventos se disparan (ej., una lección se completa), todos los handlers de hooks registrados se ejecutan
+    5. **Descarga**: Cuando la app se desmonta, se llama al método opcional `onUnload(ctx)` de cada plugin para limpieza
+  </es>
+</Paragraph>
+
+---
+
+## Customization Points
+
+<Paragraph i18n="customization">
+  <en>
+    You can customize almost every aspect of LearnMD:
+
+    - **Theming**: Override colors, fonts, and border radius in `learnmd.config.ts`, or replace entire components from `@learnmd/default-theme`
+    - **Plugins**: Create custom plugins to add analytics, integrations, or custom behavior
+    - **Configuration**: Fine-tune gamification, navigation, i18n, and page routing
+    - **Components**: Build your own MDX components and register them via `MDXProvider`
+    - **Storage**: Implement a custom `StorageAdapter` to use a remote backend instead of IndexedDB
+  </en>
+  <es>
+    Puedes personalizar casi cada aspecto de LearnMD:
+
+    - **Temas**: Sobreescribe colores, fuentes y radio de bordes en `learnmd.config.ts`, o reemplaza componentes completos de `@learnmd/default-theme`
+    - **Plugins**: Crea plugins personalizados para agregar analíticas, integraciones o comportamiento personalizado
+    - **Configuración**: Ajusta gamificación, navegación, i18n y enrutamiento de páginas
+    - **Componentes**: Construye tus propios componentes MDX y regístralos vía `MDXProvider`
+    - **Almacenamiento**: Implementa un `StorageAdapter` personalizado para usar un backend remoto en lugar de IndexedDB
+  </es>
+</Paragraph>

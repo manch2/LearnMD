@@ -1,0 +1,414 @@
+---
+title: 'CLI Reference'
+---
+
+<Title i18n="title">
+  <en>CLI Reference</en>
+  <es>Referencia del CLI</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    The LearnMD CLI (`@learnmd/cli`) is a command-line tool for creating projects, scaffolding courses, adding lessons, and managing your content. Every command supports both **interactive** (guided prompts) and **non-interactive** (flags-only) modes.
+  </en>
+  <es>
+    El CLI de LearnMD (`@learnmd/cli`) es una herramienta de línea de comandos para crear proyectos, estructurar cursos, agregar lecciones y administrar tu contenido. Cada comando soporta tanto el modo **interactivo** (con prompts guiados) como el modo **no interactivo** (solo flags).
+  </es>
+</Paragraph>
+
+<Callout type="info">
+  <Paragraph i18n="non-interactive-note">
+    <en>
+      **AI Agents**: Always use the `--non-interactive` (or `-n`) flag when running CLI commands programmatically or from an AI agent to prevent the terminal from hanging on interactive prompts.
+    </en>
+    <es>
+      **Agentes de IA**: Siempre usa el flag `--non-interactive` (o `-n`) al ejecutar comandos del CLI programáticamente o desde un agente de IA para evitar que la terminal se cuelgue en prompts interactivos.
+    </es>
+  </Paragraph>
+</Callout>
+
+---
+
+## `learnmd create`
+
+<Paragraph i18n="create-desc">
+  <en>
+    Creates a new LearnMD project from scratch. Generates all boilerplate files including `package.json`, `vite.config.ts`, `learnmd.config.ts`, `App.tsx`, sample course, and home page.
+  </en>
+  <es>
+    Crea un nuevo proyecto LearnMD desde cero. Genera todos los archivos base incluyendo `package.json`, `vite.config.ts`, `learnmd.config.ts`, `App.tsx`, un curso de ejemplo y la página de inicio.
+  </es>
+</Paragraph>
+
+```bash
+learnmd create [name] [options]
+```
+
+<Paragraph i18n="create-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--template <template>` | `-t` | Template to use | `default` |
+    | `--language <language>` | `-l` | Default language | `en` |
+    | `--non-interactive` | `-n` | Run without interactive prompts | `false` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--template <template>` | `-t` | Plantilla a usar | `default` |
+    | `--language <language>` | `-l` | Idioma por defecto | `en` |
+    | `--non-interactive` | `-n` | Ejecutar sin prompts interactivos | `false` |
+  </es>
+</Paragraph>
+
+<Paragraph i18n="create-examples">
+  <en>
+    **Examples:**
+  </en>
+  <es>
+    **Ejemplos:**
+  </es>
+</Paragraph>
+
+```bash
+# Interactive mode (will ask for project name)
+learnmd create
+
+# Non-interactive with a name
+learnmd create my-awesome-course --non-interactive
+
+# With custom language
+learnmd create mi-curso --language es --non-interactive
+```
+
+---
+
+## `learnmd init`
+
+<Paragraph i18n="init-desc">
+  <en>
+    Initializes LearnMD in an existing project directory. Use this when you already have a project and want to add LearnMD capabilities to it.
+  </en>
+  <es>
+    Inicializa LearnMD en un directorio de proyecto existente. Úsalo cuando ya tienes un proyecto y quieres agregar las capacidades de LearnMD.
+  </es>
+</Paragraph>
+
+```bash
+learnmd init
+```
+
+---
+
+## `learnmd add course`
+
+<Paragraph i18n="add-course-desc">
+  <en>
+    Scaffolds a new course inside the `courses/` directory. Creates the folder structure with `learnmd.json`, an `overview.mdx` page, and an initial "Introduction" lesson.
+  </en>
+  <es>
+    Crea la estructura de un nuevo curso dentro del directorio `courses/`. Genera la estructura de carpetas con `learnmd.json`, una página `overview.mdx` y una lección inicial de "Introducción".
+  </es>
+</Paragraph>
+
+```bash
+learnmd add course <name> [options]
+```
+
+<Paragraph i18n="add-course-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--difficulty <level>` | `-d` | Difficulty level (`beginner`, `intermediate`, `advanced`) | `beginner` |
+    | `--time <duration>` | `-t` | Estimated completion time | `1 hour` |
+    | `--author <name>` | `-a` | Author name | `LearnMD Author` |
+    | `--description <text>` | `--desc` | Course description | Auto-generated |
+    | `--non-interactive` | `-n` | Run without interactive prompts | `false` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--difficulty <level>` | `-d` | Nivel de dificultad (`beginner`, `intermediate`, `advanced`) | `beginner` |
+    | `--time <duration>` | `-t` | Tiempo estimado de completación | `1 hour` |
+    | `--author <name>` | `-a` | Nombre del autor | `LearnMD Author` |
+    | `--description <text>` | `--desc` | Descripción del curso | Auto-generada |
+    | `--non-interactive` | `-n` | Ejecutar sin prompts interactivos | `false` |
+  </es>
+</Paragraph>
+
+<Paragraph i18n="add-course-examples">
+  <en>
+    **Examples:**
+  </en>
+  <es>
+    **Ejemplos:**
+  </es>
+</Paragraph>
+
+```bash
+# Interactive mode
+learnmd add course "React Fundamentals"
+
+# Full non-interactive
+learnmd add course "React Fundamentals" \
+  --difficulty intermediate \
+  --time "3 hours" \
+  --author "Jane Doe" \
+  --description "Learn React from scratch" \
+  --non-interactive
+```
+
+<Paragraph i18n="add-course-output">
+  <en>
+    **Generated structure:**
+  </en>
+  <es>
+    **Estructura generada:**
+  </es>
+</Paragraph>
+
+```text
+courses/react-fundamentals/
+├── learnmd.json          # Course metadata (bilingual)
+├── overview.mdx          # Course overview page
+└── lessons/
+    └── introduction.mdx  # First lesson (auto-generated)
+```
+
+---
+
+## `learnmd add lesson`
+
+<Paragraph i18n="add-lesson-desc">
+  <en>
+    Adds a new lesson to an existing course. Creates an MDX file with frontmatter, i18n wrappers, a sample Callout, Quiz, and Progress component.
+  </en>
+  <es>
+    Agrega una nueva lección a un curso existente. Crea un archivo MDX con frontmatter, wrappers de i18n, un componente Callout de ejemplo, Quiz y Progress.
+  </es>
+</Paragraph>
+
+```bash
+learnmd add lesson <title> [options]
+```
+
+<Paragraph i18n="add-lesson-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--course <slug>` | `-c` | Course slug to add the lesson to | `demo-course` |
+    | `--description <text>` | `--desc` | Lesson description | Auto-generated |
+    | `--non-interactive` | `-n` | Run without interactive prompts | `false` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--course <slug>` | `-c` | Slug del curso donde agregar la lección | `demo-course` |
+    | `--description <text>` | `--desc` | Descripción de la lección | Auto-generada |
+    | `--non-interactive` | `-n` | Ejecutar sin prompts interactivos | `false` |
+  </es>
+</Paragraph>
+
+```bash
+# Add a lesson to a specific course
+learnmd add lesson "Hooks in Depth" --course react-fundamentals --non-interactive
+
+# Add with description
+learnmd add lesson "State Management" \
+  --course react-fundamentals \
+  --description "Learn useState, useReducer, and context" \
+  --non-interactive
+```
+
+---
+
+## `learnmd add page`
+
+<Paragraph i18n="add-page-desc">
+  <en>
+    Creates a custom MDX page in the `pages/` directory and **automatically injects** the route into `learnmd.config.ts`. Custom pages appear as standalone pages outside of any course (e.g., "About", "FAQ", "Changelog").
+  </en>
+  <es>
+    Crea una página MDX personalizada en el directorio `pages/` e **inyecta automáticamente** la ruta en `learnmd.config.ts`. Las páginas personalizadas aparecen como páginas independientes fuera de cualquier curso (ej. "Acerca de", "FAQ", "Changelog").
+  </es>
+</Paragraph>
+
+```bash
+learnmd add page <title> [options]
+```
+
+```bash
+# Create a custom FAQ page
+learnmd add page "Frequently Asked Questions" --non-interactive
+```
+
+<Paragraph i18n="add-page-result">
+  <en>
+    This creates `pages/frequently-asked-questions.mdx` and adds a route entry to your `learnmd.config.ts` automatically.
+  </en>
+  <es>
+    Esto crea `pages/frequently-asked-questions.mdx` y agrega una entrada de ruta a tu `learnmd.config.ts` automáticamente.
+  </es>
+</Paragraph>
+
+---
+
+## `learnmd sync`
+
+<Paragraph i18n="sync-desc">
+  <en>
+    Scans the `lessons/` directory of a course and updates the `learnmd.json` configuration to reflect the current set of MDX files. Use this after manually creating, renaming, or deleting lesson files.
+  </en>
+  <es>
+    Escanea el directorio `lessons/` de un curso y actualiza la configuración `learnmd.json` para reflejar el conjunto actual de archivos MDX. Úsalo después de crear, renombrar o eliminar archivos de lecciones manualmente.
+  </es>
+</Paragraph>
+
+```bash
+learnmd sync <course-slug> [options]
+```
+
+<Paragraph i18n="sync-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--non-interactive` | `-n` | Run without interactive prompts | `false` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--non-interactive` | `-n` | Ejecutar sin prompts interactivos | `false` |
+  </es>
+</Paragraph>
+
+```bash
+learnmd sync react-fundamentals --non-interactive
+```
+
+<Callout type="warning">
+  <Paragraph i18n="sync-warning">
+    <en>
+      Always run `sync` after manually modifying lesson files. Without syncing, new lessons will not appear in the course sidebar navigation.
+    </en>
+    <es>
+      Siempre ejecuta `sync` después de modificar archivos de lecciones manualmente. Sin sincronizar, las nuevas lecciones no aparecerán en la navegación lateral del curso.
+    </es>
+  </Paragraph>
+</Callout>
+
+---
+
+## `learnmd dev`
+
+<Paragraph i18n="dev-desc">
+  <en>
+    Starts the Vite development server with hot module replacement (HMR). Changes to MDX files, components, and styles are reflected instantly in the browser.
+  </en>
+  <es>
+    Inicia el servidor de desarrollo Vite con reemplazo de módulos en caliente (HMR). Los cambios en archivos MDX, componentes y estilos se reflejan instantáneamente en el navegador.
+  </es>
+</Paragraph>
+
+```bash
+learnmd dev [options]
+```
+
+<Paragraph i18n="dev-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--port <port>` | `-p` | Port to run on | `3000` |
+    | `--host <host>` | `-h` | Host to run on | `localhost` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--port <port>` | `-p` | Puerto donde ejecutar | `3000` |
+    | `--host <host>` | `-h` | Host donde ejecutar | `localhost` |
+  </es>
+</Paragraph>
+
+```bash
+# Default
+learnmd dev
+
+# Custom port
+learnmd dev --port 8080
+
+# Expose to network
+learnmd dev --host 0.0.0.0
+```
+
+---
+
+## `learnmd build`
+
+<Paragraph i18n="build-desc">
+  <en>
+    Builds the project for production. The output is a static site in the specified output directory, ready for deployment to any static hosting service.
+  </en>
+  <es>
+    Compila el proyecto para producción. La salida es un sitio estático en el directorio de salida especificado, listo para desplegar en cualquier servicio de hosting estático.
+  </es>
+</Paragraph>
+
+```bash
+learnmd build [options]
+```
+
+<Paragraph i18n="build-flags">
+  <en>
+    | Flag | Alias | Description | Default |
+    |------|-------|-------------|---------|
+    | `--out <dir>` | `-o` | Output directory | `dist` |
+    | `--base <base>` | | Base path for deployment | `/` |
+  </en>
+  <es>
+    | Flag | Alias | Descripción | Por defecto |
+    |------|-------|-------------|-------------|
+    | `--out <dir>` | `-o` | Directorio de salida | `dist` |
+    | `--base <base>` | | Ruta base para despliegue | `/` |
+  </es>
+</Paragraph>
+
+```bash
+# Default build
+learnmd build
+
+# Build for GitHub Pages subdirectory
+learnmd build --base /my-repo/
+
+# Custom output directory
+learnmd build --out build
+```
+
+---
+
+## Quick Reference Table
+
+<Paragraph i18n="quick-reference">
+  <en>
+    | Command | Description |
+    |---------|-------------|
+    | `learnmd create [name]` | Create a new project |
+    | `learnmd init` | Initialize in existing project |
+    | `learnmd add course <name>` | Scaffold a new course |
+    | `learnmd add lesson <title>` | Add a lesson to a course |
+    | `learnmd add page <title>` | Create a custom page |
+    | `learnmd sync <course>` | Sync lessons to config |
+    | `learnmd dev` | Start dev server |
+    | `learnmd build` | Build for production |
+  </en>
+  <es>
+    | Comando | Descripción |
+    |---------|-------------|
+    | `learnmd create [name]` | Crear un nuevo proyecto |
+    | `learnmd init` | Inicializar en proyecto existente |
+    | `learnmd add course <name>` | Crear la estructura de un nuevo curso |
+    | `learnmd add lesson <title>` | Agregar una lección a un curso |
+    | `learnmd add page <title>` | Crear una página personalizada |
+    | `learnmd sync <course>` | Sincronizar lecciones a la configuración |
+    | `learnmd dev` | Iniciar servidor de desarrollo |
+    | `learnmd build` | Compilar para producción |
+  </es>
+</Paragraph>
