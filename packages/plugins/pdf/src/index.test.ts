@@ -272,7 +272,7 @@ describe('PDFPlugin', () => {
 
     vi.mocked(html2canvas).mockResolvedValue({
       toDataURL: vi.fn(() => 'data:image/png;base64,test'),
-    } as unknown as ReturnType<typeof html2canvas>);
+    } as unknown as HTMLCanvasElement);
 
     const renderMock = vi.fn();
     const unmountMock = vi.fn();
