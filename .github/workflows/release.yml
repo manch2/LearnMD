@@ -49,6 +49,8 @@ jobs:
           artifacts: '*-dist.zip'
           artifactErrorsFailBuild: true
           generateReleaseNotes: true
+          allowUpdates: true
+          replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
