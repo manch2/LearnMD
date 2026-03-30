@@ -1,9 +1,9 @@
-import chalk from 'chalk';
+﻿import chalk from 'chalk';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 
 export async function initCommand() {
-  console.log(chalk.blue('\n✨ Initializing LearnMD...\n'));
+  console.log(chalk.blue('\nInitializing LearnMD...\n'));
 
   try {
     const projectFiles = await getProjectFiles();
@@ -15,13 +15,13 @@ export async function initCommand() {
       console.log(chalk.gray(`  Created: ${file.path}`));
     }
 
-    console.log(chalk.green('\n✅ LearnMD initialized successfully!\n'));
+    console.log(chalk.green('\nLearnMD initialized successfully!\n'));
     console.log(chalk.blue('Next steps:'));
     console.log('  1. Create your course content in the courses/ directory');
     console.log('  2. Customize your theme in learnmd.config.ts');
-    console.log('  3. Run "npm run dev" to start development\n');
+    console.log('  3. Run "pnpm dev" to start development\n');
   } catch (error) {
-    console.error(chalk.red('\n❌ Initialization failed:'), error);
+    console.error(chalk.red('\nInitialization failed:'), error);
     process.exit(1);
   }
 }
@@ -46,7 +46,18 @@ export default defineConfig({
   availableLanguages: ['en', 'es'],
   theme: {
     primaryColor: '#3b82f6',
-    darkMode: true,
+    secondaryColor: '#14b8a6',
+    contentMaxWidth: '72rem',
+    darkMode: {
+      enabled: true,
+    },
+  },
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 25,
+    },
   },
   plugins: [],
 });
@@ -74,3 +85,4 @@ dist/
     },
   ];
 }
+

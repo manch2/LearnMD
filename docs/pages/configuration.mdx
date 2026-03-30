@@ -1,0 +1,218 @@
+﻿---
+title: 'Configuration'
+---
+
+<Title i18n="title">
+  <en>Configuration Reference</en>
+  <es>Referencia de Configuración</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    Every LearnMD project is configured through `learnmd.config.ts`. In `0.0.4-beta.1`, the public configuration matches the runtime behavior for theme, gamification, plugins, and custom pages.
+  </en>
+  <es>
+    Cada proyecto LearnMD se configura mediante `learnmd.config.ts`. En `0.0.4-beta.1`, la configuración pública coincide con el comportamiento real del runtime para theme, gamificación, plugins y páginas personalizadas.
+  </es>
+</Paragraph>
+
+## Basic Example / Ejemplo base
+
+```typescript
+import { defineConfig } from '@learnmd/core';
+import { BadgesPlugin } from '@learnmd/plugin-badges';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
+
+export default defineConfig({
+  title: 'My Learning Platform',
+  description: 'Interactive courses powered by LearnMD',
+  defaultLanguage: 'en',
+  availableLanguages: ['en', 'es'],
+
+  theme: {
+    primaryColor: '#3b82f6',
+    secondaryColor: '#14b8a6',
+    fontFamily: '"Inter", system-ui, sans-serif',
+    headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
+    contentMaxWidth: '72rem',
+    logoText: 'My Docs',
+    darkMode: {
+      enabled: true,
+      backgroundColor: '#0f172a',
+      surfaceColor: '#1e293b',
+      textColor: '#e2e8f0',
+      mutedTextColor: '#94a3b8',
+    },
+  },
+
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 25,
+    },
+  },
+
+  navigation: [
+    { label: { en: 'Getting Started', es: 'Primeros Pasos' }, path: '/getting-started' },
+    { label: { en: 'Plugins', es: 'Plugins' }, path: '/plugins' },
+  ],
+
+  customPages: [
+    { path: '/getting-started', componentPath: 'pages/getting-started.mdx' },
+    { path: '/plugins', componentPath: 'pages/plugins.mdx' },
+  ],
+
+  plugins: [
+    new BadgesPlugin([
+      {
+        id: 'global-500',
+        name: { en: 'XP 500', es: 'XP 500' },
+        description: { en: 'Reach a global score of 500.', es: 'Alcanza un puntaje global de 500.' },
+        icon: '??',
+        criteria: { type: 'global_score', score: 500 },
+      },
+    ]),
+    new PDFPlugin(),
+  ],
+});
+```
+
+## Root Options / Opciones raíz
+
+<Paragraph i18n="root-options">
+  <en>
+    The root config controls project identity, languages, theming, plugins, and static routes. The most important top-level keys are `title`, `description`, `defaultLanguage`, `availableLanguages`, `theme`, `gamification`, `navigation`, `customPages`, and `plugins`.
+  </en>
+  <es>
+    La configuración raíz controla la identidad del proyecto, los idiomas, el theme, los plugins y las rutas estáticas. Las claves principales son `title`, `description`, `defaultLanguage`, `availableLanguages`, `theme`, `gamification`, `navigation`, `customPages` y `plugins`.
+  </es>
+</Paragraph>
+
+<Callout type="info">
+  <Paragraph i18n="gamification-switch">
+    <en>
+      `enableGamification` is no longer the practical switch. Use `gamification: false` when you want to disable the built-in score plugin completely.
+    </en>
+    <es>
+      `enableGamification` ya no es el interruptor práctico. Usa `gamification: false` cuando quieras desactivar por completo el plugin integrado de puntaje.
+    </es>
+  </Paragraph>
+</Callout>
+
+## Theme Configuration / Configuración del theme
+
+<Paragraph i18n="theme-config">
+  <en>
+    `ThemeConfig` now exposes real options consumed by the default theme, including brand colors, typography, border radius, and `contentMaxWidth` for the shared content container used by home and custom pages.
+  </en>
+  <es>
+    `ThemeConfig` ahora expone opciones reales consumidas por el theme por defecto, incluyendo colores de marca, tipografía, radio de bordes y `contentMaxWidth` para el contenedor compartido que usan el home y las páginas personalizadas.
+  </es>
+</Paragraph>
+
+```typescript
+theme: {
+  primaryColor: '#2563eb',
+  secondaryColor: '#0f766e',
+  fontFamily: '"Inter", system-ui, sans-serif',
+  headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
+  contentMaxWidth: '72rem',
+  logoText: 'LearnMD Docs',
+  darkMode: {
+    enabled: true,
+    backgroundColor: '#0f172a',
+    surfaceColor: '#1e293b',
+    textColor: '#e2e8f0',
+    mutedTextColor: '#94a3b8',
+  },
+}
+```
+
+## Gamification / Gamificación
+
+<Paragraph i18n="gamification">
+  <en>
+    Gamification owns the public `globalScore`, points, achievements, and streaks. Badge rules stay in `@learnmd/plugin-badges`, so the score system and the badge system remain modular.
+  </en>
+  <es>
+    La gamificación es dueña del `globalScore` público, los puntos, los logros y las rachas. Las reglas de insignias se mantienen en `@learnmd/plugin-badges`, para que el sistema de puntaje y el de badges sigan siendo modulares.
+  </es>
+</Paragraph>
+
+```typescript
+gamification: {
+  points: {
+    lessonCompletion: 100,
+    quizPassed: 10,
+    quizPerfectScore: 25,
+  },
+  streak: {
+    enabled: true,
+    bonusByDays: {
+      7: 50,
+      30: 200,
+    },
+  },
+}
+```
+
+```typescript
+gamification: false
+```
+
+## Plugins / Plugins
+
+<Paragraph i18n="plugins">
+  <en>
+    Plugins extend behavior and UI. If a plugin is not registered inside `plugins`, its actions and interface should not appear in the application.
+  </en>
+  <es>
+    Los plugins extienden el comportamiento y la UI. Si un plugin no está registrado dentro de `plugins`, sus acciones y su interfaz no deben aparecer en la aplicación.
+  </es>
+</Paragraph>
+
+```typescript
+plugins: [
+  new BadgesPlugin([
+    {
+      id: 'score-1000',
+      name: { en: 'XP 1000', es: 'XP 1000' },
+      description: { en: 'Reach a global score of 1000.', es: 'Alcanza un puntaje global de 1000.' },
+      icon: '??',
+      criteria: { type: 'global_score', score: 1000 },
+    },
+  ]),
+  new PDFPlugin(),
+]
+```
+
+## Custom Pages / Páginas personalizadas
+
+<Paragraph i18n="custom-pages">
+  <en>
+    `customPages` maps application routes to MDX files. In `0.0.4-beta.1`, those pages use the same content wrapper as the home page, so width and spacing stay aligned.
+  </en>
+  <es>
+    `customPages` conecta rutas de la aplicación con archivos MDX. En `0.0.4-beta.1`, esas páginas usan el mismo contenedor de contenido que el home, así que el ancho y el espaciado se mantienen alineados.
+  </es>
+</Paragraph>
+
+```typescript
+customPages: [
+  { path: '/getting-started', componentPath: 'pages/getting-started.mdx' },
+  { path: '/plugins', componentPath: 'pages/plugins.mdx' },
+]
+```
+
+## Migration Notes / Notas de migración
+
+<Paragraph i18n="migration">
+  <en>
+    Replace `pointsPerLesson` and `pointsPerQuiz` with `gamification.points.*`, use `gamification: false` instead of `enableGamification: false`, keep badges in `@learnmd/plugin-badges`, and register `PDFPlugin` explicitly if you want certificate actions in the UI.
+  </en>
+  <es>
+    Reemplaza `pointsPerLesson` y `pointsPerQuiz` por `gamification.points.*`, usa `gamification: false` en lugar de `enableGamification: false`, mantén las insignias en `@learnmd/plugin-badges` y registra `PDFPlugin` explícitamente si quieres acciones de certificados en la UI.
+  </es>
+</Paragraph>
+

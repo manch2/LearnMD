@@ -1,0 +1,211 @@
+﻿---
+title: 'Plugins'
+---
+
+<Title i18n="title">
+  <en>Plugins</en>
+  <es>Plugins</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    LearnMD plugins extend the runtime without forcing you to fork the theme. In `0.0.4-beta.1`, plugins can register hooks, read storage, and inject UI into official theme slots.
+  </en>
+  <es>
+    Los plugins de LearnMD extienden el runtime sin obligarte a bifurcar el theme. En `0.0.4-beta.1`, los plugins pueden registrar hooks, leer storage e inyectar UI en slots oficiales del theme.
+  </es>
+</Paragraph>
+
+## Plugin Model / Modelo de plugins
+
+<Paragraph i18n="model">
+  <en>
+    Plugins are configured in `learnmd.config.ts`. Each plugin receives a `PluginContext` with access to storage, i18n, hooks, and component registration. The theme owns layout and visual styling, while plugins provide behavior and optional UI blocks.
+  </en>
+  <es>
+    Los plugins se configuran en `learnmd.config.ts`. Cada plugin recibe un `PluginContext` con acceso a storage, i18n, hooks y registro de componentes. El theme es dueño del layout y del estilo visual, mientras los plugins aportan comportamiento y bloques de UI opcionales.
+  </es>
+</Paragraph>
+
+```typescript
+import type { PluginContext, PluginSlotName } from '@learnmd/core';
+
+type PluginSlotName =
+  | 'profile:summary'
+  | 'profile:courseActions'
+  | 'profile:sections';
+
+interface PluginContext {
+  storage: LearnMDStorage;
+  i18n: I18nAdapter;
+  registerHook: (hook: string, fn: (...args: unknown[]) => unknown) => void;
+  registerComponent: (
+    registration:
+      | string
+      | {
+          slot: PluginSlotName;
+          name: string;
+          component: unknown;
+          order?: number;
+          metadata?: Record<string, unknown>;
+        },
+    component?: unknown
+  ) => void;
+}
+```
+
+## Official Plugins / Plugins oficiales
+
+### Badges Plugin (`@learnmd/plugin-badges`)
+
+<Paragraph i18n="badges">
+  <en>
+    The badges plugin awards insignias based on the public profile state, including `globalScore`. It evaluates badge criteria but does not own point calculation.
+  </en>
+  <es>
+    El plugin de badges otorga insignias a partir del estado público del perfil, incluido `globalScore`. Evalúa criterios de badges, pero no es dueño del cálculo de puntos.
+  </es>
+</Paragraph>
+
+```typescript
+new BadgesPlugin([
+  {
+    id: 'first-steps',
+    name: { en: 'First Steps', es: 'Primeros pasos' },
+    description: { en: 'Complete your first lesson.', es: 'Completa tu primera lección.' },
+    icon: '??',
+    criteria: {
+      type: 'course_progress',
+      courseId: 'getting-started',
+      percentage: 1,
+    },
+  },
+  {
+    id: 'score-500',
+    name: { en: 'Momentum', es: 'Impulso' },
+    description: { en: 'Reach 500 global points.', es: 'Alcanza 500 puntos globales.' },
+    icon: '??',
+    criteria: {
+      type: 'global_score',
+      score: 500,
+    },
+  },
+])
+```
+
+### PDF Plugin (`@learnmd/plugin-pdf`)
+
+<Paragraph i18n="pdf">
+  <en>
+    The PDF plugin is the only owner of certificate downloads. If you do not register `new PDFPlugin()`, LearnMD must not render certificate actions in the profile.
+  </en>
+  <es>
+    El plugin PDF es el único dueño de las descargas de certificados. Si no registras `new PDFPlugin()`, LearnMD no debe renderizar acciones de certificado en el perfil.
+  </es>
+</Paragraph>
+
+```typescript
+new PDFPlugin({
+  signature: 'LearnMD Team',
+})
+```
+
+<Paragraph i18n="pdf-ui">
+  <en>
+    The plugin injects its interface through the `profile:courseActions` slot. The theme decides where the slot is rendered, but the action exists only when the plugin is present.
+  </en>
+  <es>
+    El plugin inyecta su interfaz mediante el slot `profile:courseActions`. El theme decide dónde se renderiza ese slot, pero la acción existe solo cuando el plugin está presente.
+  </es>
+</Paragraph>
+
+## UI Slots / Slots de UI
+
+<Paragraph i18n="slots">
+  <en>
+    Plugins with UI should target official theme slots instead of patching the theme. This keeps LearnMD modular and lets themes keep visual ownership.
+  </en>
+  <es>
+    Los plugins con UI deben usar slots oficiales del theme en lugar de parchear el theme. Esto mantiene LearnMD modular y permite que el theme conserve la responsabilidad visual.
+  </es>
+</Paragraph>
+
+<Paragraph i18n="slots-list">
+  <en>
+    Public slots include `profile:summary` for compact widgets, `profile:courseActions` for per-course actions such as certificates, and `profile:sections` for additional profile panels.
+  </en>
+  <es>
+    Los slots públicos incluyen `profile:summary` para widgets compactos, `profile:courseActions` para acciones por curso como certificados y `profile:sections` para paneles adicionales del perfil.
+  </es>
+</Paragraph>
+
+```typescript
+import React from 'react';
+import { BasePlugin, type PluginContext } from '@learnmd/core';
+
+function WelcomePanel() {
+  return (
+    <div className="rounded-xl border border-[rgb(var(--border-color))] bg-[rgb(var(--bg-primary))] p-4">
+      Custom plugin UI rendered inside the theme.
+    </div>
+  );
+}
+
+export class WelcomePlugin extends BasePlugin {
+  constructor() {
+    super('welcome', '1.0.0');
+  }
+
+  onLoad(ctx: PluginContext) {
+    ctx.registerComponent({
+      slot: 'profile:sections',
+      name: 'welcome-panel',
+      order: 10,
+      component: WelcomePanel,
+    });
+  }
+}
+```
+
+<Callout type="tip">
+  <Paragraph i18n="slots-tip">
+    <en>
+      A plugin can ship its own UI logic, but it should reuse the theme CSS variables and tokens so users can restyle the platform from `theme` without rewriting each plugin.
+    </en>
+    <es>
+      Un plugin puede traer su propia lógica de UI, pero debe reutilizar las variables CSS y los tokens del theme para que los usuarios puedan rediseñar la plataforma desde `theme` sin reescribir cada plugin.
+    </es>
+  </Paragraph>
+</Callout>
+
+## Creating Your Own Plugin / Crear tu propio plugin
+
+<Paragraph i18n="custom-register">
+  <en>
+    Register custom plugins in `plugins`. If your plugin needs UI, register slot components in `onLoad`; if it only changes behavior, hooks are enough.
+  </en>
+  <es>
+    Registra plugins personalizados en `plugins`. Si tu plugin necesita UI, registra componentes de slot en `onLoad`; si solo cambia comportamiento, los hooks son suficientes.
+  </es>
+</Paragraph>
+
+```typescript
+import { BasePlugin, type PluginContext } from '@learnmd/core';
+
+export class AnalyticsPlugin extends BasePlugin {
+  constructor() {
+    super('analytics', '1.0.0');
+  }
+
+  onLoad(ctx: PluginContext) {
+    ctx.registerHook('lesson:complete', async (payload) => {
+      console.log('Lesson completed', payload);
+    });
+
+    ctx.registerHook('progress:update', async (payload) => {
+      console.log('Progress updated', payload);
+    });
+  }
+}
+```
+

@@ -1,5 +1,31 @@
 import { openDB, type IDBPDatabase } from 'idb';
-import type { StorageAdapter, CourseProgress, UserProfile, LessonProgress } from '../types';
+import type { LearnMDStorage, StorageAdapter, CourseProgress, UserProfile, LessonProgress } from '../types';
+
+function normalizeUserProfile(profile: UserProfile): UserProfile {
+  const globalScore = profile.globalScore ?? profile.totalPoints ?? 0;
+  return {
+    ...profile,
+    globalScore,
+    totalPoints: globalScore,
+  };
+}
+
+export function createDefaultUserProfile(overrides: Partial<UserProfile> = {}): UserProfile {
+  const now = Date.now();
+  return normalizeUserProfile({
+    id: overrides.id || 'user-1',
+    name: overrides.name,
+    email: overrides.email,
+    globalScore: overrides.globalScore ?? overrides.totalPoints ?? 0,
+    totalPoints: overrides.totalPoints ?? overrides.globalScore ?? 0,
+    badges: overrides.badges || [],
+    coursesProgress: overrides.coursesProgress || {},
+    streak: overrides.streak || { current: 0, longest: 0, lastActiveDate: '' },
+    achievements: overrides.achievements || [],
+    createdAt: overrides.createdAt ?? now,
+    updatedAt: overrides.updatedAt ?? now,
+  });
+}
 
 /**
  * LocalStorage adapter for simple key-value storage
@@ -207,12 +233,12 @@ export class IndexedDBAdapter implements StorageAdapter {
 /**
  * Combined storage manager using both LocalStorage and IndexedDB
  */
-export class StorageManager {
+export class StorageManager implements LearnMDStorage {
   private readonly localStorage: LocalStorageAdapter;
   private readonly _indexedDB: IndexedDBAdapter;
 
-  constructor() {
-    this.localStorage = new LocalStorageAdapter();
+  constructor(prefix = 'learnmd') {
+    this.localStorage = new LocalStorageAdapter(prefix);
     this._indexedDB = new IndexedDBAdapter();
   }
 
@@ -250,14 +276,15 @@ export class StorageManager {
    * Get user profile
    */
   async getUserProfile(): Promise<UserProfile | null> {
-    return this.localStorage.get<UserProfile>('userProfile');
+    const profile = await this.localStorage.get<UserProfile>('userProfile');
+    return profile ? normalizeUserProfile(profile) : null;
   }
 
   /**
    * Save user profile
    */
   async saveUserProfile(profile: UserProfile): Promise<void> {
-    await this.localStorage.set('userProfile', profile);
+    await this.localStorage.set('userProfile', normalizeUserProfile(profile));
   }
 
   /**

@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+﻿import chalk from 'chalk';
 import { mkdir, writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 import { createRequire } from 'module';
@@ -17,7 +17,7 @@ interface CreateOptions {
 export async function createCommand(name?: string, options?: CreateOptions) {
   const isNonInteractive = options?.nonInteractive;
   if (!isNonInteractive) {
-    intro(chalk.bgBlue(' 📚 Create LearnMD Project '));
+    intro(chalk.bgBlue(' Create LearnMD Project '));
   }
 
   let projectName = name;
@@ -27,7 +27,7 @@ export async function createCommand(name?: string, options?: CreateOptions) {
     projectName = 'my-course';
   }
 
-  if (!projectName) return; // Cancelled
+  if (!projectName) return;
 
   const isInWorkspace = await checkIfInLearnMDWorkspace();
 
@@ -38,17 +38,17 @@ export async function createCommand(name?: string, options?: CreateOptions) {
     await createEssentialFiles(projectName, isInWorkspace);
 
     if (!isNonInteractive) {
-      outro(chalk.green('✅ LearnMD project created successfully!'));
+      outro(chalk.green('LearnMD project created successfully!'));
       console.log(chalk.blue('Next steps:'));
     } else {
-      console.log(chalk.green('✅ LearnMD project created successfully!'));
+      console.log(chalk.green('LearnMD project created successfully!'));
       console.log('Next steps:');
     }
     console.log(`  cd ${projectName}`);
     console.log('  pnpm install');
     console.log('  pnpm dev\n');
   } catch (error) {
-    console.error(chalk.red('\n❌ Error creating project:'), error);
+    console.error(chalk.red('\nError creating project:'), error);
     process.exit(1);
   }
 }
@@ -101,11 +101,11 @@ async function createBasicStructure(projectPath: string) {
   await writeFile(join(projectPath, 'learnmd.config.ts'), getLearnMdConfig());
   await writeFile(join(projectPath, '.gitignore'), getGitIgnore());
 
-  // Course config for the demo course
   await writeFile(join(projectPath, 'courses/demo-course/learnmd.json'), getCourseConfig('Demo Course'));
 
-  // Overview MDX
-  await writeFile(join(projectPath, 'courses/demo-course/overview.mdx'), `---
+  await writeFile(
+    join(projectPath, 'courses/demo-course/overview.mdx'),
+    `---
 title: Demo Course Overview
 ---
 
@@ -122,10 +122,12 @@ title: Demo Course Overview
     Esta es la página de descripción general. Configura la descripción de tu curso y el mensaje de bienvenida aquí.
   </es>
 </Paragraph>
-`);
+`
+  );
 
-  // Home MDX
-  await writeFile(join(projectPath, 'home.mdx'), `---
+  await writeFile(
+    join(projectPath, 'home.mdx'),
+    `---
 title: Home
 ---
 
@@ -142,30 +144,34 @@ title: Home
     Esta es la página de inicio predeterminada para tu proyecto LearnMD. Puedes personalizar esta página o eliminarla.
   </es>
 </Paragraph>
-`);
+`
+  );
 
   await writeFile(join(projectPath, 'courses/demo-course/lessons/.gitkeep'), '');
 }
 
 export function getCourseConfig(courseName: string): string {
-  return JSON.stringify({
-    title: {
-      en: courseName,
-      es: `${courseName} (ES)`,
+  return JSON.stringify(
+    {
+      title: {
+        en: courseName,
+        es: `${courseName} (ES)`,
+      },
+      description: {
+        en: `An interactive course: ${courseName}`,
+        es: `Un curso interactivo: ${courseName}`,
+      },
+      author: '',
+      version: '1.0.0',
+      difficulty: 'beginner',
+      estimatedTime: '1 hour',
+      tags: [],
+      lessons: [],
     },
-    description: {
-      en: `An interactive course: ${courseName}`,
-      es: `Un curso interactivo: ${courseName}`,
-    },
-    author: '',
-    version: '1.0.0',
-    difficulty: 'beginner',
-    estimatedTime: '1 hour',
-    tags: [],
-    lessons: [],
-  }, null, 2);
+    null,
+    2
+  );
 }
-
 
 async function createEssentialFiles(projectPath: string, _isInWorkspace: boolean) {
   await writeFile(join(projectPath, '.npmrc'), 'auto-install-peers=true\n');
@@ -206,7 +212,21 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 function getAppTsx(): string {
   return `/// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph, Title } from '@learnmd/default-theme';
+import {
+  CatalogViewer,
+  CourseViewer,
+  ProfileViewer,
+  MainLayout,
+  Header,
+  Callout,
+  Quiz,
+  VideoEmbed,
+  Progress,
+  LanguageSwitcher,
+  Paragraph,
+  Title,
+  ContentPage,
+} from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
@@ -221,7 +241,6 @@ const components = {
   Title,
 };
 
-// Glob all markdown files dynamically across all courses
 const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });
 const allLessons = Object.entries(lessonModules).map(([path, mod]) => {
   const parts = path.split('/');
@@ -231,59 +250,68 @@ const allLessons = Object.entries(lessonModules).map(([path, mod]) => {
     courseSlug,
     slug: lessonSlug,
     Component: (mod as any).default as React.ComponentType,
-    frontmatter: (mod as any).frontmatter || {}
+    frontmatter: (mod as any).frontmatter || {},
   };
 });
 
-// Load Course Configurations (learnmd.json)
 const courseConfigsRaw = import.meta.glob('../courses/*/learnmd.json', { eager: true });
 const coursesConfig = Object.entries(courseConfigsRaw).reduce((acc, [path, mod]) => {
   const courseSlug = path.split('/')[2];
-  acc[courseSlug] = { id: courseSlug, ...(mod as any).default || mod };
+  acc[courseSlug] = { id: courseSlug, ...((mod as any).default || mod) };
   return acc;
 }, {} as Record<string, any>);
 
-// Optional: Load Home Page MDX
 const homeModule = import.meta.glob('../home.mdx', { eager: true });
-const HomeComponent = Object.values(homeModule)[0] ? (Object.values(homeModule)[0] as any).default : undefined;
+const HomeComponent = Object.values(homeModule)[0]
+  ? (Object.values(homeModule)[0] as any).default
+  : undefined;
 
-// Load Custom Pages dynamically
 const pageModules = import.meta.glob('../pages/*.mdx', { eager: true });
 
 function App() {
   return (
     <LearnMDProvider config={config}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
-          <Route path="/profile" element={
-            <MainLayout title="Profile">
-              <Header title="User Profile" />
-              <ProfileViewer />
-            </MainLayout>
-          } />
-          <Route path="/courses/:courseId/*" element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />} />
-          
-          {config.customPages?.map((page, idx) => {
-             // Map standard pages path to dynamic import
-             const modKey = \`../\${page.componentPath}\`;
-             const mod = pageModules[modKey];
-             const Component = mod ? (mod as any).default : () => <div>Page not found</div>;
-             return (
-               <Route key={idx} path={page.path} element={
-                 <MainLayout>
-                   <Header />
-                   <div className="prose dark:prose-invert container mx-auto px-4 py-8 max-w-4xl">
-                     <MDXProvider components={components}>
-                       <Component />
-                     </MDXProvider>
-                   </div>
-                 </MainLayout>
-               } />
-             );
-          })}
-        </Routes>
-      </BrowserRouter>
+      <MDXProvider components={components}>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
+          <Routes>
+            <Route path="/" element={<CatalogViewer courses={allLessons} HomeComponent={HomeComponent} />} />
+            <Route
+              path="/profile"
+              element={
+                <MainLayout title="Profile">
+                  <Header title="User Profile" />
+                  <ProfileViewer />
+                </MainLayout>
+              }
+            />
+            <Route
+              path="/courses/:courseId/*"
+              element={<CourseViewer allLessons={allLessons} coursesConfig={coursesConfig} />}
+            />
+
+            {config.customPages?.map((page, idx) => {
+              const modKey = 
+                '../' + page.componentPath;
+              const mod = pageModules[modKey];
+              const Component = mod ? (mod as any).default : () => <div>Page not found</div>;
+              return (
+                <Route
+                  key={idx}
+                  path={page.path}
+                  element={
+                    <MainLayout>
+                      <Header />
+                      <ContentPage>
+                        <Component />
+                      </ContentPage>
+                    </MainLayout>
+                  }
+                />
+              );
+            })}
+          </Routes>
+        </BrowserRouter>
+      </MDXProvider>
     </LearnMDProvider>
   );
 }
@@ -293,28 +321,15 @@ export default App;
 }
 
 function getIndexCss(): string {
-  return `:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  return `html,
+body,
+#root {
+  min-height: 100vh;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
-}
-
-#root {
-  width: 100%;
-  min-height: 100vh;
 }
 `;
 }
@@ -322,29 +337,35 @@ body {
 function getViteConfig(): string {
   return `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import mdx from '@mdx-js/rollup';
-import remarkGfm from 'remark-gfm';
-import remarkFrontmatter from 'remark-frontmatter';
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { resolve } from 'path';
 
-export default defineConfig({
-  plugins: [
-    {
-      enforce: 'pre',
-      ...mdx({
-        remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
-        providerImportSource: '@mdx-js/react'
-      })
+export default defineConfig(async () => {
+  const [{ default: mdx }, { default: remarkGfm }, { default: remarkFrontmatter }, { default: remarkMdxFrontmatter }] =
+    await Promise.all([
+      import('@mdx-js/rollup'),
+      import('remark-gfm'),
+      import('remark-frontmatter'),
+      import('remark-mdx-frontmatter'),
+    ]);
+
+  return {
+    plugins: [
+      {
+        enforce: 'pre',
+        ...mdx({
+          remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
+          providerImportSource: '@mdx-js/react',
+        }),
+      },
+      react(),
+    ],
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+      dedupe: ['react', 'react-dom', '@learnmd/core'],
     },
-    react()
-  ],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
-    dedupe: ['react', 'react-dom', '@learnmd/core']
-  },
+  };
 });
 `;
 }
@@ -410,7 +431,7 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
     react: '^18.2.0',
     'react-dom': '^18.2.0',
     'react-router-dom': '^6.22.3',
-    '@mdx-js/react': '^3.0.1'
+    '@mdx-js/react': '^3.0.1',
   };
 
   const devDependencies: Record<string, string> = {
@@ -423,10 +444,8 @@ async function updatePackageJson(projectPath: string, name: string, isInWorkspac
     'remark-mdx-frontmatter': '^4.0.0',
     typescript: '^5.4.0',
     vite: '^5.1.0',
-    '@learnmd/core': isInWorkspace ? 'file:../packages/core' : `^${version}`,
-    '@learnmd/default-theme': isInWorkspace
-      ? 'file:../packages/default-theme'
-      : `^${version}`,
+    '@learnmd/core': isInWorkspace ? 'workspace:*' : '^' + version,
+    '@learnmd/default-theme': isInWorkspace ? 'workspace:*' : '^' + version,
   };
 
   const packageJson = {
@@ -456,17 +475,22 @@ export default defineConfig({
   availableLanguages: ['en', 'es'],
   theme: {
     primaryColor: '#3b82f6',
-    darkMode: true,
+    secondaryColor: '#14b8a6',
+    headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
+    contentMaxWidth: '72rem',
+    darkMode: {
+      enabled: true,
+    },
   },
   gamification: {
-    pointsPerLesson: 100,
-    pointsPerQuiz: 10,
-    badges: [
-      { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
-      { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' },
-      { id: 'course-complete', name: 'Course Graduate', icon: '🎓' },
-    ],
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 25,
+    },
   },
 });
 `;
 }
+
+

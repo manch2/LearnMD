@@ -1,52 +1,76 @@
-# Plugin Lifecycle
+﻿<Title i18n="title">
+  <en>Plugin Lifecycle</en>
+  <es>Ciclo de vida del plugin</es>
+</Title>
 
-LearnMD is highly extensible via its plugin system. Plugins allow you to tap into various stages of the application's lifecycle and add custom functionality.
+<Paragraph i18n="intro">
+  <en>
+    LearnMD plugins hook into the runtime lifecycle to extend behavior without editing the core or forking the theme.
+  </en>
+  <es>
+    Los plugins de LearnMD se conectan al ciclo de vida del runtime para extender el comportamiento sin editar el core ni bifurcar el theme.
+  </es>
+</Paragraph>
 
-## Core Plugin API
+## Core API / API principal
 
-A plugin is simply an object with a `name` and a `setup` function:
+<Paragraph i18n="api">
+  <en>
+    A plugin implements `onLoad`, receives a `PluginContext`, and can register hooks or UI slot components. Optional `onUnload` logic can clean up resources if your plugin needs it.
+  </en>
+  <es>
+    Un plugin implementa `onLoad`, recibe un `PluginContext` y puede registrar hooks o componentes para slots de UI. La lógica opcional `onUnload` puede limpiar recursos si tu plugin lo necesita.
+  </es>
+</Paragraph>
 
 ```typescript
-export interface Plugin {
-  name: string;
-  setup: (ctx: PluginContext) => void | Promise<void>;
+import { BasePlugin, type PluginContext } from '@learnmd/core';
+
+export class LoggerPlugin extends BasePlugin {
+  constructor() {
+    super('logger', '1.0.0');
+  }
+
+  onLoad(ctx: PluginContext) {
+    ctx.registerHook('lesson:complete', async (payload) => {
+      console.log('Lesson completed', payload);
+    });
+  }
 }
 ```
 
-The `setup` function receives a `PluginContext` that provides access to the core engine's managers (i18n, storage, gamification, router) and a `registerHook` function.
-
-## Available Hooks
-
-The core engine provides several hooks that plugins can use:
-
--   `app:init`: Triggered when the application starts.
--   `lesson:complete`: Triggered when a user finishes a lesson.
--   `progress:update`: Triggered when course progress is updated.
-
-## Creating a Simple Plugin
-
-```typescript
-export const LoggerPlugin = {
-  name: 'logger-plugin',
-  setup: (ctx) => {
-    ctx.registerHook('lesson:complete', async (data) => {
-      console.log(`User finished lesson: ${data.lessonSlug}`);
-    });
-  }
-};
-```
-
 <Callout type="info">
-  Plugins are registered in the `learnmd.config.ts` file under the `plugins` array.
+  <Paragraph i18n="registration">
+    <en>
+      Register plugins in the `plugins` array of `learnmd.config.ts`. That keeps activation explicit and predictable.
+    </en>
+    <es>
+      Registra los plugins en el arreglo `plugins` de `learnmd.config.ts`. Eso mantiene la activación explícita y predecible.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="What is the primary function of the `setup` method in a LearnMD plugin?"
-  options={[
-    { label: 'To define the plugin name', isCorrect: false },
-    { label: 'To register hooks and interact with the core engine', isCorrect: true },
-    { label: 'To parse MDX content', isCorrect: false },
-    { label: 'To render React components', isCorrect: false }
+<Quiz
+  id="plugin-lifecycle-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is the main job of `onLoad` in a LearnMD plugin?',
+        es: '¿Cuál es el trabajo principal de `onLoad` en un plugin de LearnMD?',
+      },
+      options: [
+        { id: 'a', label: { en: 'Compile MDX files', es: 'Compilar archivos MDX' } },
+        { id: 'b', label: { en: 'Register hooks and components with the runtime', es: 'Registrar hooks y componentes en el runtime' } },
+        { id: 'c', label: { en: 'Replace the router package', es: 'Reemplazar el paquete de routing' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'Plugins use `onLoad` to connect behavior and optional UI to the runtime through the plugin context.',
+        es: 'Los plugins usan `onLoad` para conectar comportamiento y UI opcional al runtime mediante el plugin context.',
+      },
+    },
   ]}
-  explanation="The `setup` method is where you register hooks and define how the plugin interacts with the LearnMD core."
 />
+

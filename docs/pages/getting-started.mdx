@@ -1,57 +1,216 @@
-# Getting Started with LearnMD
+---
+title: 'Getting Started'
+---
 
-LearnMD is a modern, lightweight, and extensible framework for building interactive documentation and courses using MDX.
+<Title i18n="title">
+  <en>Getting Started with LearnMD</en>
+  <es>Primeros Pasos con LearnMD</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    LearnMD is a modern, lightweight, and extensible open-source framework for building interactive documentation and courses using MDX. Inspired by Docusaurus and Google Codelabs, it combines the power of Vite, React, and MDX to deliver a fast and developer-friendly experience.
+  </en>
+  <es>
+    LearnMD es un framework moderno, ligero y extensible de código abierto para construir documentación y cursos interactivos usando MDX. Inspirado por Docusaurus y Google Codelabs, combina el poder de Vite, React y MDX para ofrecer una experiencia rápida y amigable para desarrolladores.
+  </es>
+</Paragraph>
 
 ## Prerequisites
 
-- **Node.js**: v18.0.0 or higher
-- **pnpm**: (Recommended) but npm or yarn also work
+<Paragraph i18n="prerequisites">
+  <en>
+    Before you begin, make sure you have the following installed on your machine:
+
+    - **Node.js** v18.0.0 or higher
+    - **pnpm** (Recommended) — npm or yarn also work
+    - A code editor like **VS Code**
+  </en>
+  <es>
+    Antes de comenzar, asegúrate de tener lo siguiente instalado en tu máquina:
+
+    - **Node.js** v18.0.0 o superior
+    - **pnpm** (Recomendado) — npm o yarn también funcionan
+    - Un editor de código como **VS Code**
+  </es>
+</Paragraph>
 
 ## Installation
 
-You can create a new LearnMD project using our CLI:
+<Paragraph i18n="installation">
+  <en>
+    You can create a new LearnMD project using the CLI. There are two modes available:
+
+    **Interactive mode** (guided prompts):
+  </en>
+  <es>
+    Puedes crear un nuevo proyecto LearnMD usando el CLI. Hay dos modos disponibles:
+
+    **Modo interactivo** (con prompts guiados):
+  </es>
+</Paragraph>
 
 ```bash
-npx learnmd init my-course
+npx @learnmd/cli create my-course
+```
+
+<Paragraph i18n="non-interactive">
+  <en>
+    **Non-interactive mode** (ideal for CI/CD and AI agents):
+  </en>
+  <es>
+    **Modo no interactivo** (ideal para CI/CD y agentes de IA):
+  </es>
+</Paragraph>
+
+```bash
+npx @learnmd/cli create my-course --non-interactive
+```
+
+<Paragraph i18n="after-create">
+  <en>
+    Then navigate to your project and install dependencies:
+  </en>
+  <es>
+    Luego navega a tu proyecto e instala las dependencias:
+  </es>
+</Paragraph>
+
+```bash
 cd my-course
-npm install
+pnpm install
 ```
 
 ## Project Structure
 
-A typical LearnMD project looks like this:
+<Paragraph i18n="project-structure">
+  <en>
+    A typical LearnMD project looks like this:
+  </en>
+  <es>
+    Un proyecto típico de LearnMD luce así:
+  </es>
+</Paragraph>
 
 ```text
 my-course/
-├── docs/             # Optional: If you want nested documentation
-├── courses/          # Your courses and lessons
-│   └── my-first-course/
-│       ├── learnmd.json
-│       ├── overview.mdx
+├── courses/                # Your courses and lessons
+│   └── demo-course/
+│       ├── learnmd.json    # Course configuration (title, difficulty, lessons)
+│       ├── overview.mdx    # Course overview page
 │       └── lessons/
 │           └── introduction.mdx
-├── pages/            # Custom MDX pages
-├── public/           # Static assets
-├── learnmd.config.ts # Core configuration
+├── pages/                  # Custom MDX pages (Getting Started, About, etc.)
+├── public/                 # Static assets (images, fonts)
+├── src/
+│   ├── App.tsx             # Main application entry
+│   ├── main.tsx            # React root mount
+│   └── index.css           # Global styles
+├── home.mdx                # Homepage content (optional)
+├── learnmd.config.ts       # Core configuration (theme, gamification, nav)
+├── vite.config.ts          # Vite build configuration
 └── package.json
 ```
 
-## Development
+## Start the Development Server
 
-To start the development server:
-
-```bash
-npm run dev
-```
-
-This will launch the interactive course at `http://localhost:5173`.
-
-## Adding Lessons
-
-Use the CLI to quickly add new lessons:
+<Paragraph i18n="dev-server">
+  <en>
+    Launch the local development server with hot module replacement:
+  </en>
+  <es>
+    Inicia el servidor de desarrollo local con reemplazo de módulos en caliente:
+  </es>
+</Paragraph>
 
 ```bash
-npx learnmd add lesson "My New Lesson" --course my-first-course
+pnpm dev
 ```
 
-This will create a new MDX file in `courses/my-first-course/lessons/` and update the `learnmd.json` configuration for that course.
+<Paragraph i18n="dev-server-info">
+  <en>
+    This starts the app at `http://localhost:5173`. Any changes you make to MDX files or components will be reflected instantly.
+  </en>
+  <es>
+    Esto inicia la aplicación en `http://localhost:5173`. Cualquier cambio que hagas en archivos MDX o componentes se reflejará al instante.
+  </es>
+</Paragraph>
+
+## Create Your First Course
+
+<Paragraph i18n="first-course">
+  <en>
+    Use the CLI to scaffold a new course:
+  </en>
+  <es>
+    Usa el CLI para crear un nuevo curso:
+  </es>
+</Paragraph>
+
+```bash
+npx learnmd add course "JavaScript Basics" --difficulty beginner --time "2 hours" --author "Your Name" --non-interactive
+```
+
+<Paragraph i18n="first-course-result">
+  <en>
+    This creates the folder `courses/javascript-basics/` with a `learnmd.json` config, an `overview.mdx`, and an initial lesson. You can then add more lessons:
+  </en>
+  <es>
+    Esto crea la carpeta `courses/javascript-basics/` con un archivo de configuración `learnmd.json`, un `overview.mdx` y una lección inicial. Después puedes agregar más lecciones:
+  </es>
+</Paragraph>
+
+```bash
+npx learnmd add lesson "Variables and Types" --course javascript-basics --non-interactive
+npx learnmd add lesson "Functions" --course javascript-basics --non-interactive
+```
+
+## Sync Your Lessons
+
+<Paragraph i18n="sync-lessons">
+  <en>
+    If you create or rename lesson files manually, you must sync them so the `learnmd.json` configuration stays updated:
+  </en>
+  <es>
+    Si creas o renombras archivos de lecciones manualmente, debes sincronizarlos para que la configuración `learnmd.json` se mantenga actualizada:
+  </es>
+</Paragraph>
+
+```bash
+npx learnmd sync javascript-basics --non-interactive
+```
+
+## Build for Production
+
+<Paragraph i18n="build-production">
+  <en>
+    When your course is ready, build it for production:
+  </en>
+  <es>
+    Cuando tu curso esté listo, compílalo para producción:
+  </es>
+</Paragraph>
+
+```bash
+pnpm build
+```
+
+<Paragraph i18n="build-result">
+  <en>
+    The output will be in the `dist/` folder, ready to deploy to any static hosting service (GitHub Pages, Netlify, Vercel, etc.).
+  </en>
+  <es>
+    La salida estará en la carpeta `dist/`, lista para desplegar en cualquier servicio de hosting estático (GitHub Pages, Netlify, Vercel, etc.).
+  </es>
+</Paragraph>
+
+<Callout type="tip">
+  <Paragraph i18n="next-steps-tip">
+    <en>
+      Check out the **CLI Reference** page for a full list of all available commands and flags, or dive into the **Configuration** page to customize your project.
+    </en>
+    <es>
+      Consulta la página de **Referencia del CLI** para una lista completa de todos los comandos y flags disponibles, o revisa la página de **Configuración** para personalizar tu proyecto.
+    </es>
+  </Paragraph>
+</Callout>

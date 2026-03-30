@@ -41,7 +41,12 @@ import { createLearnMD } from '@learnmd/core';
 
 const app = createLearnMD({
   defaultLanguage: 'en',
-  enableGamification: true,
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+    },
+  },
 });
 
 app.start();

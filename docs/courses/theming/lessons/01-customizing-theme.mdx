@@ -1,46 +1,70 @@
-# Customizing the Theme
+﻿<Title i18n="title">
+  <en>Customizing the Theme</en>
+  <es>Personalizar el theme</es>
+</Title>
 
-LearnMD comes with a beautiful and responsive default theme built with Tailwind CSS. However, you can easily customize it to match your brand.
-
-## Quick Customization
-
-You can make simple changes to the theme directly in `learnmd.config.ts`:
+<Paragraph i18n="intro">
+  <en>
+    LearnMD ships with a default theme, but its appearance is intentionally configurable. Brand colors, fonts, width, and dark mode tokens are controlled through `learnmd.config.ts`.
+  </en>
+  <es>
+    LearnMD incluye un theme por defecto, pero su apariencia es intencionalmente configurable. Los colores de marca, las fuentes, el ancho y los tokens de modo oscuro se controlan desde `learnmd.config.ts`.
+  </es>
+</Paragraph>
 
 ```typescript
-// learnmd.config.ts
 theme: {
-  primaryColor: '#8b5cf6', // A nice purple
-  darkMode: true,
+  primaryColor: '#8b5cf6',
+  secondaryColor: '#0f766e',
+  headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
+  contentMaxWidth: '72rem',
+  darkMode: {
+    enabled: true,
+  },
 }
 ```
 
-This will update the primary accent color and set the initial color mode.
-
-## Overriding Styles
-
-Since the default theme uses Tailwind CSS, you can easily override any style by providing your own CSS file.
-
-1.  Create a CSS file (e.g., `src/custom.css`).
-2.  Import it in your main entry point.
-3.  Use Tailwind's `@layer` directive to override components.
-
-## Advanced Customization
-
-For more complex changes, you can:
--   **Create a Custom Theme Package**: Build your own theme as a separate package.
--   **Override Components**: Replace specific theme components with your own implementations.
+<Paragraph i18n="theme-fields">
+  <en>
+    Start with configuration before forking styles. In many cases `primaryColor`, `secondaryColor`, `fontFamily`, `headingFontFamily`, and `contentMaxWidth` already provide enough freedom.
+  </en>
+  <es>
+    Empieza por la configuración antes de bifurcar estilos. En muchos casos `primaryColor`, `secondaryColor`, `fontFamily`, `headingFontFamily` y `contentMaxWidth` ya ofrecen suficiente libertad.
+  </es>
+</Paragraph>
 
 <Callout type="info">
-  Check out the `@learnmd/default-theme` source code to see how it's built!
+  <Paragraph i18n="info">
+    <en>
+      Plugins with UI should reuse theme CSS variables so they inherit the project look automatically.
+    </en>
+    <es>
+      Los plugins con UI deben reutilizar las variables CSS del theme para heredar automáticamente la apariencia del proyecto.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Which CSS framework is used for the default LearnMD theme?"
-  options={[
-    { label: 'Bootstrap', isCorrect: false },
-    { label: 'Tailwind CSS', isCorrect: true },
-    { label: 'Bulma', isCorrect: false },
-    { label: 'SASS/SCSS', isCorrect: false }
+<Quiz
+  id="customizing-theme-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'Which option controls the shared readable width for home and custom pages?',
+        es: '¿Qué opción controla el ancho legible compartido para el home y las páginas personalizadas?',
+      },
+      options: [
+        { id: 'a', label: { en: 'logoText', es: 'logoText' } },
+        { id: 'b', label: { en: 'contentMaxWidth', es: 'contentMaxWidth' } },
+        { id: 'c', label: { en: 'storagePrefix', es: 'storagePrefix' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: '`contentMaxWidth` governs the width of the shared content container used by the theme.',
+        es: '`contentMaxWidth` gobierna el ancho del contenedor de contenido compartido que usa el theme.',
+      },
+    },
   ]}
-  explanation="The default LearnMD theme is built using Tailwind CSS for rapid styling and easy customization."
 />
+

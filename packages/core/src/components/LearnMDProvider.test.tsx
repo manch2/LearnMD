@@ -1,36 +1,26 @@
+// @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { LearnMDProvider, useLearnMD } from './LearnMDProvider';
-import { LearnMDConfig } from '../index.js';
 
-const TestComponent = () => {
-  const { config } = useLearnMD();
-  return <div data-testid="lang">{config.defaultLanguage}</div>;
-};
+function Probe() {
+  const learnmd = useLearnMD();
+  return <div>{learnmd.config.defaultLanguage}</div>;
+}
 
 describe('LearnMDProvider', () => {
-  it('should provide the learnmd instance to children', () => {
-    const config: LearnMDConfig = {
-      defaultLanguage: 'es',
-      courses: []
-    } as any;
-
+  it('provides the LearnMD context to descendants', () => {
     render(
-      <LearnMDProvider config={config}>
-        <TestComponent />
+      <LearnMDProvider config={{ defaultLanguage: 'es', availableLanguages: ['en', 'es'] }}>
+        <Probe />
       </LearnMDProvider>
     );
 
-    expect(screen.getByTestId('lang').textContent).toBe('es');
+    expect(screen.getByText('es')).toBeTruthy();
   });
 
-  it('should throw error when used outside of provider', () => {
-    // Suppress console.error for this test as we expect an error
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
-    expect(() => render(<TestComponent />)).toThrow('useLearnMD must be used within a LearnMDProvider');
-    
-    consoleSpy.mockRestore();
+  it('throws when useLearnMD is called outside the provider', () => {
+    expect(() => render(<Probe />)).toThrow('useLearnMD must be used within a LearnMDProvider');
   });
 });

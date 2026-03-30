@@ -1,0 +1,312 @@
+---
+title: 'AI Integration'
+---
+
+<Title i18n="title">
+  <en>AI Agent Integration</en>
+  <es>Integración con Agentes de IA</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    LearnMD is designed to work seamlessly with AI coding assistants and agents. The **LearnMD Course Creator** skill enables AI agents to create complete courses, add lessons, manage configurations, and build educational content — all without manual intervention.
+  </en>
+  <es>
+    LearnMD está diseñado para funcionar sin problemas con asistentes y agentes de codificación con IA. El skill **LearnMD Course Creator** permite a los agentes de IA crear cursos completos, agregar lecciones, administrar configuraciones y construir contenido educativo — todo sin intervención manual.
+  </es>
+</Paragraph>
+
+---
+
+## The LearnMD Course Creator Skill
+
+<Paragraph i18n="skill-overview">
+  <en>
+    The `learnmd-course-creator` skill is a set of instructions and reference materials that teach AI agents how to use the LearnMD framework effectively. When an AI agent loads this skill, it gains the knowledge to:
+
+    - Create new LearnMD projects from scratch
+    - Scaffold courses with proper metadata and structure
+    - Add lessons with i18n support, quizzes, callouts, and video embeds
+    - Configure gamification (badges, points)
+    - Set up PDF certificate generation
+    - Sync lesson files with the course configuration
+  </en>
+  <es>
+    El skill `learnmd-course-creator` es un conjunto de instrucciones y materiales de referencia que enseñan a los agentes de IA cómo usar el framework LearnMD efectivamente. Cuando un agente de IA carga este skill, obtiene el conocimiento para:
+
+    - Crear nuevos proyectos LearnMD desde cero
+    - Estructurar cursos con metadatos y estructura apropiados
+    - Agregar lecciones con soporte i18n, quizzes, callouts y video embeds
+    - Configurar gamificación (insignias, puntos)
+    - Configurar generación de certificados PDF
+    - Sincronizar archivos de lecciones con la configuración del curso
+  </es>
+</Paragraph>
+
+---
+
+## When the Skill Activates
+
+<Paragraph i18n="activation">
+  <en>
+    The AI agent automatically uses this skill when it detects requests like:
+
+    - "Create a course about Python programming"
+    - "Add a new lesson on database design"
+    - "Set up quizzes for the React course"
+    - "Add video embeds to the introduction lesson"
+    - "Configure badges for course completion"
+    - "Set up PDF certificates"
+  </en>
+  <es>
+    El agente de IA usa automáticamente este skill cuando detecta solicitudes como:
+
+    - "Crea un curso sobre programación en Python"
+    - "Agrega una nueva lección sobre diseño de bases de datos"
+    - "Configura quizzes para el curso de React"
+    - "Agrega video embeds a la lección de introducción"
+    - "Configura insignias para completación del curso"
+    - "Configura certificados PDF"
+  </es>
+</Paragraph>
+
+---
+
+## Non-Interactive Mode (Critical)
+
+<Callout type="warning">
+  <Paragraph i18n="non-interactive-critical">
+    <en>
+      **MANDATORY for AI Agents**: All CLI commands MUST use the `--non-interactive` (or `-n`) flag when executed by an AI agent. Without this flag, the CLI will display interactive prompts that cause the terminal to hang indefinitely.
+    </en>
+    <es>
+      **OBLIGATORIO para Agentes de IA**: Todos los comandos del CLI DEBEN usar el flag `--non-interactive` (o `-n`) cuando se ejecutan por un agente de IA. Sin este flag, el CLI mostrará prompts interactivos que causan que la terminal se cuelgue indefinidamente.
+    </es>
+  </Paragraph>
+</Callout>
+
+<Paragraph i18n="non-interactive-examples">
+  <en>
+    **Correct (AI-safe):**
+  </en>
+  <es>
+    **Correcto (seguro para IA):**
+  </es>
+</Paragraph>
+
+```bash
+# Create project
+learnmd create my-course --non-interactive
+
+# Add course
+learnmd add course "Docker Fundamentals" --difficulty beginner --time "2 hours" --non-interactive
+
+# Add lesson
+learnmd add lesson "Containers 101" --course docker-fundamentals --non-interactive
+
+# Sync
+learnmd sync docker-fundamentals --non-interactive
+```
+
+<Paragraph i18n="non-interactive-wrong">
+  <en>
+    **Incorrect (will hang):**
+  </en>
+  <es>
+    **Incorrecto (se colgará):**
+  </es>
+</Paragraph>
+
+```bash
+# ❌ These will prompt for user input and hang
+learnmd create
+learnmd add course "Docker"
+learnmd sync docker-fundamentals
+```
+
+---
+
+## AI Workflow: End-to-End Course Creation
+
+<Paragraph i18n="workflow-intro">
+  <en>
+    Here is a complete example of how an AI agent creates a full course from a single user request:
+  </en>
+  <es>
+    Aquí hay un ejemplo completo de cómo un agente de IA crea un curso completo a partir de una sola solicitud del usuario:
+  </es>
+</Paragraph>
+
+### Step 1: Create the Course
+
+```bash
+learnmd add course "Kubernetes Essentials" \
+  --difficulty intermediate \
+  --time "4 hours" \
+  --author "AI Assistant" \
+  --description "Learn Kubernetes from pods to deployments" \
+  --non-interactive
+```
+
+### Step 2: Add Lessons
+
+```bash
+learnmd add lesson "What is Kubernetes?" --course kubernetes-essentials --non-interactive
+learnmd add lesson "Pods and Containers" --course kubernetes-essentials --non-interactive
+learnmd add lesson "Services and Networking" --course kubernetes-essentials --non-interactive
+learnmd add lesson "Deployments and Scaling" --course kubernetes-essentials --non-interactive
+```
+
+### Step 3: Enrich Lesson Content
+
+<Paragraph i18n="enrich-content">
+  <en>
+    After scaffolding, the AI agent edits each lesson MDX file to add rich content:
+  </en>
+  <es>
+    Después de la estructura inicial, el agente de IA edita cada archivo MDX de lección para agregar contenido enriquecido:
+  </es>
+</Paragraph>
+
+```mdx
+---
+title:
+  en: 'What is Kubernetes?'
+  es: '¿Qué es Kubernetes?'
+description:
+  en: 'Introduction to container orchestration'
+  es: 'Introducción a la orquestación de contenedores'
+duration: '20 minutes'
+---
+
+<Title i18n="title">
+  <en>What is Kubernetes?</en>
+  <es>¿Qué es Kubernetes?</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    Kubernetes (K8s) is an open-source container orchestration platform.
+    It automates the deployment, scaling, and management of containerized applications.
+  </en>
+  <es>
+    Kubernetes (K8s) es una plataforma de orquestación de contenedores de código abierto.
+    Automatiza el despliegue, escalado y gestión de aplicaciones en contenedores.
+  </es>
+</Paragraph>
+
+<Callout type="info">
+  Kubernetes was originally designed by Google and is now maintained by the CNCF.
+</Callout>
+
+<VideoEmbed provider="youtube" id="PziYflu8cB8" title="Kubernetes Explained" />
+
+<Quiz
+  id="k8s-intro-quiz"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does Kubernetes primarily manage?",
+      options: [
+        { id: "a", label: "Virtual machines" },
+        { id: "b", label: "Containerized applications" },
+        { id: "c", label: "Database servers" }
+      ],
+      correctAnswer: "b",
+      explanation: "Kubernetes is specifically designed to orchestrate containerized workloads.",
+      points: 10
+    }
+  ]}
+/>
+```
+
+### Step 4: Sync
+
+```bash
+learnmd sync kubernetes-essentials --non-interactive
+```
+
+---
+
+## Course Structure Reference
+
+<Paragraph i18n="structure-ref">
+  <en>
+    The AI agent follows this standard file hierarchy when creating courses:
+  </en>
+  <es>
+    El agente de IA sigue esta jerarquía de archivos estándar al crear cursos:
+  </es>
+</Paragraph>
+
+```text
+courses/
+└── kubernetes-essentials/
+    ├── learnmd.json              # Course config (auto-generated)
+    ├── overview.mdx              # Course overview page
+    └── lessons/
+        ├── introduction.mdx      # Auto-generated first lesson
+        ├── what-is-kubernetes?.mdx
+        ├── pods-and-containers.mdx
+        ├── services-and-networking.mdx
+        └── deployments-and-scaling.mdx
+```
+
+---
+
+## Component Reference for AI Agents
+
+<Paragraph i18n="component-ref">
+  <en>
+    When creating lesson content, AI agents have access to these components:
+
+    | Component | Usage |
+    |-----------|-------|
+    | `<Callout type="info\|tip\|warning\|success">` | Styled alert boxes |
+    | `<Quiz id="..." questions={[...]} />` | Interactive quizzes with scoring |
+    | `<VideoEmbed provider="youtube" id="..." />` | Embedded videos |
+    | `<Progress value={50} showPercentage />` | Progress bars |
+    | `<LanguageSwitcher variant="dropdown" />` | Language toggle |
+    | `<Title i18n="key"><en>...</en><es>...</es></Title>` | Bilingual headings |
+    | `<Paragraph i18n="key"><en>...</en><es>...</es></Paragraph>` | Bilingual paragraphs |
+  </en>
+  <es>
+    Al crear contenido de lecciones, los agentes de IA tienen acceso a estos componentes:
+
+    | Componente | Uso |
+    |------------|-----|
+    | `<Callout type="info\|tip\|warning\|success">` | Cajas de alerta estilizadas |
+    | `<Quiz id="..." questions={[...]} />` | Quizzes interactivos con puntuación |
+    | `<VideoEmbed provider="youtube" id="..." />` | Videos incrustados |
+    | `<Progress value={50} showPercentage />` | Barras de progreso |
+    | `<LanguageSwitcher variant="dropdown" />` | Selector de idioma |
+    | `<Title i18n="key"><en>...</en><es>...</es></Title>` | Encabezados bilingües |
+    | `<Paragraph i18n="key"><en>...</en><es>...</es></Paragraph>` | Párrafos bilingües |
+  </es>
+</Paragraph>
+
+---
+
+## Best Practices for AI-Generated Content
+
+<Paragraph i18n="best-practices">
+  <en>
+    1. **Keep lessons focused**: One topic per lesson, 10-20 minutes reading time maximum
+    2. **Use quizzes strategically**: Place them after key concepts, not after every paragraph
+    3. **Add visual variety**: Mix videos, callouts, code blocks, and text
+    4. **Always sync**: After creating or modifying files, run `learnmd sync <slug> --non-interactive`
+    5. **Non-interactive is mandatory**: Always append `--non-interactive` to all CLI commands
+    6. **Bilingual content**: Use `<Title>` and `<Paragraph>` i18n wrappers for all text content
+    7. **Descriptive frontmatter**: Always include `title`, `description`, and `duration` in lesson frontmatter
+  </en>
+  <es>
+    1. **Mantén las lecciones enfocadas**: Un tema por lección, máximo 10-20 minutos de lectura
+    2. **Usa quizzes estratégicamente**: Colócalos después de conceptos clave, no después de cada párrafo
+    3. **Agrega variedad visual**: Mezcla videos, callouts, bloques de código y texto
+    4. **Siempre sincroniza**: Después de crear o modificar archivos, ejecuta `learnmd sync <slug> --non-interactive`
+    5. **No interactivo es obligatorio**: Siempre agrega `--non-interactive` a todos los comandos del CLI
+    6. **Contenido bilingüe**: Usa wrappers i18n `<Title>` y `<Paragraph>` para todo el contenido de texto
+    7. **Frontmatter descriptivo**: Siempre incluye `title`, `description` y `duration` en el frontmatter de las lecciones
+  </es>
+</Paragraph>

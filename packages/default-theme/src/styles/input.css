@@ -38,8 +38,10 @@
     /* Other */
     --border-color: 229 231 235;
     --font-family: 'Inter', system-ui, sans-serif;
+    --heading-font-family: var(--font-family);
     --font-mono: 'Fira Code', monospace;
     --border-radius: 0.5rem;
+    --content-max-width: 64rem;
 
     /* Success, warning, error */
     --success: 34 197 94;
@@ -173,18 +175,22 @@
 
 .prose h1 {
   @apply text-3xl font-bold mb-4 text-[rgb(var(--text-primary))];
+  font-family: var(--heading-font-family);
 }
 
 .prose h2 {
   @apply text-2xl font-semibold mb-3 text-[rgb(var(--text-primary))] mt-8;
+  font-family: var(--heading-font-family);
 }
 
 .prose h3 {
   @apply text-xl font-semibold mb-2 text-[rgb(var(--text-primary))] mt-6;
+  font-family: var(--heading-font-family);
 }
 
 .prose h4 {
   @apply text-lg font-medium mb-2 text-[rgb(var(--text-primary))] mt-4;
+  font-family: var(--heading-font-family);
 }
 
 .prose p {

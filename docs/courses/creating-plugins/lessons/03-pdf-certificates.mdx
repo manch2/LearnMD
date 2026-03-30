@@ -1,46 +1,92 @@
-# PDF Certificates
+﻿<Title i18n="title">
+  <en>PDF Certificates</en>
+  <es>Certificados PDF</es>
+</Title>
 
-The PDF plugin allows you to generate professional-looking certificates for users who successfully complete your courses.
+<Paragraph i18n="intro">
+  <en>
+    The PDF plugin owns certificate generation in LearnMD `0.0.4-beta.1`. If the plugin is not registered, the default UI must not show certificate actions.
+  </en>
+  <es>
+    El plugin PDF es dueño de la generación de certificados en LearnMD `0.0.4-beta.1`. Si el plugin no está registrado, la UI por defecto no debe mostrar acciones de certificados.
+  </es>
+</Paragraph>
 
-## Features
-
--   **Automatic Generation**: Generate a PDF as soon as a user finishes all lessons in a course.
--   **Customizable Templates**: Design your own certificate layouts using HTML/CSS or React.
--   **Data Injection**: Automatically include the user's name, the course title, and the completion date.
-
-## Usage
-
-To enable PDF certificates, add the `PdfPlugin` to your configuration:
+## Registration / Registro
 
 ```typescript
-// learnmd.config.ts
-import { PdfPlugin } from '@learnmd/plugins';
+import { defineConfig } from '@learnmd/core';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
 
 export default defineConfig({
   plugins: [
-    PdfPlugin({
-      template: 'standard',
-      showScore: true
-    })
-  ]
+    new PDFPlugin({
+      signature: 'LearnMD Team',
+    }),
+  ],
 });
 ```
 
-## How it works
+<Paragraph i18n="behavior">
+  <en>
+    The plugin registers a UI action for completed courses in the `profile:courseActions` slot. Without the plugin, users do not have an alternate certificate flow in the default interface.
+  </en>
+  <es>
+    El plugin registra una acción de UI para cursos completados en el slot `profile:courseActions`. Sin el plugin, los usuarios no tienen un flujo alternativo de certificados en la interfaz por defecto.
+  </es>
+</Paragraph>
 
-The PDF plugin listens for the `course:complete` hook. When triggered, it uses the course data to generate a PDF file that the user can download.
+## Custom Template / Plantilla personalizada
+
+```typescript
+import React from 'react';
+import { PDFPlugin } from '@learnmd/plugin-pdf';
+
+const CertificateTemplate = (
+  <div style={{ width: '11in', height: '8.5in', padding: '48px' }}>
+    <h1>Certificate of Completion</h1>
+    <p>Issued by LearnMD.</p>
+  </div>
+);
+
+new PDFPlugin({
+  signature: 'Lead Instructor',
+  template: CertificateTemplate,
+});
+```
 
 <Callout type="warning">
-  Ensure you have the necessary fonts and assets available for the PDF generator.
+  <Paragraph i18n="warning">
+    <en>
+      Certificate UI should always be gated by plugin registration. Do not import certificate generation directly from the theme layer.
+    </en>
+    <es>
+      La UI de certificados siempre debe estar controlada por el registro del plugin. No importes la generación de certificados directamente desde la capa del theme.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Which hook does the PDF plugin listen to for generating certificates?"
-  options={[
-    { label: 'app:init', isCorrect: false },
-    { label: 'lesson:complete', isCorrect: false },
-    { label: 'course:complete', isCorrect: true },
-    { label: 'progress:update', isCorrect: false }
+<Quiz
+  id="pdf-certificates-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What happens if `PDFPlugin` is not registered?',
+        es: '¿Qué ocurre si `PDFPlugin` no está registrado?',
+      },
+      options: [
+        { id: 'a', label: { en: 'Certificates still appear by default', es: 'Los certificados siguen apareciendo por defecto' } },
+        { id: 'b', label: { en: 'No certificate action is rendered in the default UI', es: 'No se renderiza ninguna acción de certificado en la UI por defecto' } },
+        { id: 'c', label: { en: 'Gamification enables the certificate flow automatically', es: 'La gamificación habilita el flujo de certificados automáticamente' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'Certificate downloads are fully governed by `PDFPlugin`.',
+        es: 'Las descargas de certificados están totalmente gobernadas por `PDFPlugin`.',
+      },
+    },
   ]}
-  explanation="The PDF plugin generates a certificate once a course is fully completed by listening to the `course:complete` hook."
 />
+

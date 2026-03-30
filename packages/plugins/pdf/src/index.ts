@@ -1,8 +1,8 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BasePlugin, PluginContext, UserProfile } from '@learnmd/core';
+import { BasePlugin, PluginContext, UserProfile, CourseProgress } from '@learnmd/core';
 
 export interface CertificateOptions {
   courseTitle: string;
@@ -11,12 +11,35 @@ export interface CertificateOptions {
   template?: React.ReactNode;
 }
 
+export interface PDFPluginConfig {
+  signature?: string;
+  template?: React.ReactNode;
+}
+
+interface ProfileCourseActionProps {
+  profile?: UserProfile | null;
+  courseId?: string;
+  progress?: CourseProgress;
+  translate?: (key: string) => string;
+}
+
 export class PDFPlugin extends BasePlugin {
-  constructor() {
-    super('pdf', '1.0.0');
+  constructor(config: PDFPluginConfig = {}) {
+    super('pdf', '1.1.0', config as Record<string, unknown>);
   }
 
-  onLoad(_ctx: PluginContext): void {
+  onLoad(ctx: PluginContext): void {
+    ctx.registerComponent({
+      slot: 'profile:courseActions',
+      name: 'pdf-certificate-download',
+      order: 100,
+      metadata: {
+        isCertificateAvailable: true,
+      },
+      component: (props: ProfileCourseActionProps) =>
+        React.createElement(PDFProfileCourseAction, { plugin: this, ...props }),
+    });
+
     console.log('PDF Plugin loaded');
   }
 
@@ -26,7 +49,12 @@ export class PDFPlugin extends BasePlugin {
       return;
     }
 
-    const { courseTitle, completionDate = new Date(), signature = 'LearnMD Instructors', template } = options;
+    const {
+      courseTitle,
+      completionDate = new Date(),
+      signature = options.signature || (this.config as PDFPluginConfig | undefined)?.signature || 'LearnMD Instructors',
+      template = options.template || (this.config as PDFPluginConfig | undefined)?.template,
+    } = options;
 
     if (template) {
       const container = document.createElement('div');
@@ -121,8 +149,41 @@ export class PDFPlugin extends BasePlugin {
   }
 }
 
-// Keep the standalone function for backward compatibility or simple use
-export async function generateCertificate(profile: UserProfile, options: CertificateOptions): Promise<void> {
-  const plugin = new PDFPlugin();
-  return plugin.generateCertificate(profile, options);
+function PDFProfileCourseAction({
+  plugin,
+  profile,
+  courseId,
+  progress,
+  translate,
+}: ProfileCourseActionProps & { plugin: PDFPlugin }) {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  if (!profile || !courseId || !progress?.completedAt) {
+    return null;
+  }
+
+  const label = translate?.('profile.download') || 'Download Certificate';
+
+  const handleClick = async () => {
+    setIsGenerating(true);
+    try {
+      await plugin.generateCertificate(profile, {
+        courseTitle: courseId,
+        completionDate: progress.completedAt ? new Date(progress.completedAt) : undefined,
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return React.createElement(
+    'button',
+    {
+      onClick: handleClick,
+      disabled: isGenerating,
+      className:
+        'text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-500))] hover:text-white rounded transition-colors disabled:opacity-50',
+    },
+    isGenerating ? 'Generating...' : label
+  );
 }

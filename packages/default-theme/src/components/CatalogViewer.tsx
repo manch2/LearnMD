@@ -11,6 +11,7 @@ import { Progress } from './Progress';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Paragraph } from './Paragraph';
 import { Title } from './Title';
+import { ContentPage } from './ContentPage';
 import { useI18n } from '../hooks/useI18n';
 
 const components = {
@@ -77,22 +78,22 @@ export function CatalogViewer({ courses, HomeComponent }: CatalogViewerProps) {
       />
       {HomeComponent ? (
         <div className="hero bg-gradient-to-b from-[rgb(var(--color-primary-50))] to-transparent dark:from-[rgb(var(--color-primary-900))/20 dark:to-transparent border-b border-[rgb(var(--border-color))] py-12 md:py-20 mb-8 md:mb-12">
-          <div className="container mx-auto px-4 max-w-4xl text-center prose dark:prose-invert prose-lg">
+          <ContentPage className="py-0 text-center" prose>
             <MDXProvider components={components}>
               <HomeComponent />
             </MDXProvider>
-          </div>
+          </ContentPage>
         </div>
       ) : (
         <div className="hero bg-gradient-to-b from-[rgb(var(--color-primary-50))] to-transparent dark:from-[rgb(var(--color-primary-900))/20 dark:to-transparent border-b border-[rgb(var(--border-color))] py-12 md:py-20 mb-8 md:mb-12 text-center">
-          <div className="container mx-auto px-4 max-w-4xl">
+          <ContentPage className="py-0 text-center" prose={false}>
             <h1 className="text-4xl md:text-5xl font-extrabold text-[rgb(var(--text-primary))] mb-4 tracking-tight">
               {translate('catalog.title') || 'Course Catalog'}
             </h1>
             <p className="text-lg md:text-xl text-[rgb(var(--text-secondary))] max-w-2xl mx-auto">
               {translate('catalog.hero_subtitle') || 'Ready to learn? Choose from our interactive courses below and start your journey.'}
             </p>
-          </div>
+          </ContentPage>
         </div>
       )}
 

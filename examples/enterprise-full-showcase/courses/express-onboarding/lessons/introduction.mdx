@@ -1,0 +1,56 @@
+---
+title:
+  en: 'Introduction'
+  es: 'Introducción'
+description:
+  en: 'Meet the LearnMD enterprise showcase.'
+  es: 'Conoce el showcase enterprise de LearnMD.'
+duration: '10 minutes'
+---
+
+<Title i18n="title">
+  <en>Introduction</en>
+  <es>Introducción</es>
+</Title>
+
+<Callout type="info">
+  <Paragraph i18n="callout">
+    <en>This lesson explains the moving pieces of the showcase and the role of the CLI-first workflow.</en>
+    <es>Esta lección explica las piezas del showcase y el papel del flujo CLI-first.</es>
+  </Paragraph>
+</Callout>
+
+<Paragraph i18n="intro">
+  <en>
+    The project was scaffolded with the LearnMD CLI and then customized only through content and configuration files.
+  </en>
+  <es>
+    El proyecto fue generado con el CLI de LearnMD y luego personalizado únicamente mediante archivos de contenido y configuración.
+  </es>
+</Paragraph>
+
+<Quiz
+  id="introduction-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'How was this showcase project created?',
+        es: '¿Cómo fue creado este proyecto showcase?',
+      },
+      options: [
+        { id: 'a', label: { en: 'By editing the app code manually first', es: 'Editando primero el código de la app manualmente' } },
+        { id: 'b', label: { en: 'With the LearnMD CLI scaffold', es: 'Con el scaffold del CLI de LearnMD' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'The example was created with the CLI and then customized only through content and configuration.',
+        es: 'El ejemplo fue creado con el CLI y luego personalizado solo con contenido y configuración.',
+      },
+      points: 10,
+    },
+  ]}
+/>
+
+<Progress value={100} showPercentage label="Lesson Progress" />

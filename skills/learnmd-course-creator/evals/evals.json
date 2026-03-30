@@ -1,0 +1,23 @@
+{
+  "skill_name": "learnmd-course-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new course called 'Python Basics' with Spanish and English support. It should be for beginners and take about 2 hours to complete.",
+      "expected_output": "A complete course directory structure with learnmd.config.ts containing i18n configuration, and at least one lesson file with proper frontmatter and basic content scaffold.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Add a new lesson to my existing course about React hooks. The lesson should include: a video embed from YouTube, an interactive quiz about useState, and i18n support in English and Spanish.",
+      "expected_output": "A Markdown lesson file with frontmatter, VideoEmbed component with youtube provider, Quiz component with useState question, and Paragraph components with i18n translations.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I want to create a gamified course about JavaScript. Set up badges for completing lessons, a progress tracker, and include a quiz at the end of each module.",
+      "expected_output": "A learnmd.config.ts with gamification configuration including badges, progress settings, and a sample lesson with Quiz components integrated.",
+      "files": []
+    }
+  ]
+}

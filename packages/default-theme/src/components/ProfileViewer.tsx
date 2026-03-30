@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useLearnMD, getTranslatedString } from '@learnmd/core';
+import { useLearnMD, getTranslatedString, createDefaultUserProfile } from '@learnmd/core';
 import { MainLayout, Header } from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';
-import { generateCertificate } from '@learnmd/plugin-pdf';
 import type { UserProfile, CourseProgress } from '@learnmd/core';
 import { useI18n } from '../hooks/useI18n';
+import { PluginSlot } from './PluginSlot';
 
 export function ProfileViewer() {
   const { storage } = useLearnMD();
@@ -19,7 +19,7 @@ export function ProfileViewer() {
 
   useEffect(() => {
     async function loadData() {
-      const p = await storage.getUserProfile() || { id: '1', name: '', email: '', totalPoints: 0, badges: [], coursesProgress: {}, streak: { current: 0, longest: 0, lastActiveDate: '' }, achievements: [], createdAt: Date.now(), updatedAt: Date.now() };
+      const p = (await storage.getUserProfile()) || createDefaultUserProfile();
       setProfile(p as UserProfile);
       setName(p.name || '');
       setEmail(p.email || '');
@@ -42,11 +42,6 @@ export function ProfileViewer() {
     setIsSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
-  };
-
-  const handleDownloadCertificate = async (courseId: string) => {
-    if (!profile) return;
-    await generateCertificate(profile, { courseTitle: courseId });
   };
 
   return (
@@ -112,6 +107,19 @@ export function ProfileViewer() {
         {/* Metrics & History Section */}
         <div className="space-y-8">
           <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))]">
+            <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{translate('profile.score')}</h2>
+            <div className="flex items-baseline gap-3">
+              <span className="text-4xl font-black text-[rgb(var(--color-primary-500))]">{profile?.globalScore || 0}</span>
+              <span className="text-sm font-medium text-[rgb(var(--text-secondary))]">{translate('profile.score_public')}</span>
+            </div>
+            <PluginSlot
+              slot="profile:summary"
+              slotProps={{ profile, progressData, translate, currentLanguage }}
+              className="mt-4"
+            />
+          </div>
+
+          <div className="bg-[rgb(var(--bg-secondary))] p-8 rounded-xl shadow-sm border border-[rgb(var(--border-color))]">
             <h2 className="text-xl font-bold mb-4 text-[rgb(var(--text-primary))]">{translate('profile.history')}</h2>
             <div className="space-y-6">
               {Object.keys(progressData || {}).length > 0 ? (
@@ -134,14 +142,11 @@ export function ProfileViewer() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-[rgb(var(--text-secondary))]">{translate('profile.points')}: {progress.totalPoints || 0}</span>
-                        {isCompleted && (
-                          <button
-                            onClick={() => handleDownloadCertificate(courseId)}
-                            className="text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-500))] hover:text-white rounded transition-colors"
-                          >
-                            {translate('profile.download') || 'Download Cert'}
-                          </button>
-                        )}
+                        <PluginSlot
+                          slot="profile:courseActions"
+                          slotProps={{ profile, courseId, progress, translate, currentLanguage }}
+                          className="contents"
+                        />
                       </div>
                     </div>
                   );
@@ -167,6 +172,12 @@ export function ProfileViewer() {
               <p className="text-[rgb(var(--text-secondary))] text-sm">{translate('profile.no_badges')}</p>
             )}
           </div>
+
+          <PluginSlot
+            slot="profile:sections"
+            slotProps={{ profile, progressData, translate, currentLanguage }}
+            className="space-y-8"
+          />
         </div>
       </div>
     </div>
