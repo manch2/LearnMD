@@ -1,0 +1,52 @@
+# Plugin Lifecycle
+
+LearnMD is highly extensible via its plugin system. Plugins allow you to tap into various stages of the application's lifecycle and add custom functionality.
+
+## Core Plugin API
+
+A plugin is simply an object with a `name` and a `setup` function:
+
+```typescript
+export interface Plugin {
+  name: string;
+  setup: (ctx: PluginContext) => void | Promise<void>;
+}
+```
+
+The `setup` function receives a `PluginContext` that provides access to the core engine's managers (i18n, storage, gamification, router) and a `registerHook` function.
+
+## Available Hooks
+
+The core engine provides several hooks that plugins can use:
+
+-   `app:init`: Triggered when the application starts.
+-   `lesson:complete`: Triggered when a user finishes a lesson.
+-   `progress:update`: Triggered when course progress is updated.
+
+## Creating a Simple Plugin
+
+```typescript
+export const LoggerPlugin = {
+  name: 'logger-plugin',
+  setup: (ctx) => {
+    ctx.registerHook('lesson:complete', async (data) => {
+      console.log(`User finished lesson: ${data.lessonSlug}`);
+    });
+  }
+};
+```
+
+<Callout type="info">
+  Plugins are registered in the `learnmd.config.ts` file under the `plugins` array.
+</Callout>
+
+<Quiz 
+  question="What is the primary function of the `setup` method in a LearnMD plugin?"
+  options={[
+    { label: 'To define the plugin name', isCorrect: false },
+    { label: 'To register hooks and interact with the core engine', isCorrect: true },
+    { label: 'To parse MDX content', isCorrect: false },
+    { label: 'To render React components', isCorrect: false }
+  ]}
+  explanation="The `setup` method is where you register hooks and define how the plugin interacts with the LearnMD core."
+/>

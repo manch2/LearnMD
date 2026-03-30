@@ -1,0 +1,20 @@
+{
+  "title": {
+    "en": "Building Courses",
+    "es": "Building Courses (ES)"
+  },
+  "description": {
+    "en": "Complete guide to building courses with Markdown and components",
+    "es": "Complete guide to building courses with Markdown and components (ES)"
+  },
+  "version": "1.0.0",
+  "author": "LearnMD Team",
+  "lastUpdated": "2026-03-30T04:21:32.456Z",
+  "difficulty": "beginner",
+  "estimatedTime": "3 hours",
+  "lessons": [
+    "01-cli-scaffolding",
+    "02-mdx-components",
+    "03-metadata-and-sync"
+  ]
+}

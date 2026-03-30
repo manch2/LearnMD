@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/cli",
-  "version": "0.0.3-beta.1",
+  "version": "0.0.3-beta.2",
   "description": "CLI for creating and building LearnMD courses",
   "type": "module",
   "bin": {

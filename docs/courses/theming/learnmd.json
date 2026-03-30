@@ -1,0 +1,19 @@
+{
+  "title": {
+    "en": "Theming",
+    "es": "Theming (ES)"
+  },
+  "description": {
+    "en": "Customize the look and feel of your LearnMD instance",
+    "es": "Customize the look and feel of your LearnMD instance (ES)"
+  },
+  "version": "1.0.0",
+  "author": "LearnMD Team",
+  "lastUpdated": "2026-03-30T04:21:35.465Z",
+  "difficulty": "beginner",
+  "estimatedTime": "2 hours",
+  "lessons": [
+    "01-customizing-theme",
+    "02-layouts"
+  ]
+}

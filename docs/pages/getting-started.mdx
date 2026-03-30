@@ -1,0 +1,57 @@
+# Getting Started with LearnMD
+
+LearnMD is a modern, lightweight, and extensible framework for building interactive documentation and courses using MDX.
+
+## Prerequisites
+
+- **Node.js**: v18.0.0 or higher
+- **pnpm**: (Recommended) but npm or yarn also work
+
+## Installation
+
+You can create a new LearnMD project using our CLI:
+
+```bash
+npx learnmd init my-course
+cd my-course
+npm install
+```
+
+## Project Structure
+
+A typical LearnMD project looks like this:
+
+```text
+my-course/
+├── docs/             # Optional: If you want nested documentation
+├── courses/          # Your courses and lessons
+│   └── my-first-course/
+│       ├── learnmd.json
+│       ├── overview.mdx
+│       └── lessons/
+│           └── introduction.mdx
+├── pages/            # Custom MDX pages
+├── public/           # Static assets
+├── learnmd.config.ts # Core configuration
+└── package.json
+```
+
+## Development
+
+To start the development server:
+
+```bash
+npm run dev
+```
+
+This will launch the interactive course at `http://localhost:5173`.
+
+## Adding Lessons
+
+Use the CLI to quickly add new lessons:
+
+```bash
+npx learnmd add lesson "My New Lesson" --course my-first-course
+```
+
+This will create a new MDX file in `courses/my-first-course/lessons/` and update the `learnmd.json` configuration for that course.

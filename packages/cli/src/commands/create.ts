@@ -19,14 +19,14 @@ export async function createCommand(name?: string, options?: CreateOptions) {
   if (!isNonInteractive) {
     intro(chalk.bgBlue(' 📚 Create LearnMD Project '));
   }
-  
+
   let projectName = name;
   if (!projectName && !isNonInteractive) {
     projectName = await askForProjectName();
   } else if (!projectName && isNonInteractive) {
     projectName = 'my-course';
   }
-  
+
   if (!projectName) return; // Cancelled
 
   const isInWorkspace = await checkIfInLearnMDWorkspace();
@@ -103,7 +103,7 @@ async function createBasicStructure(projectPath: string) {
 
   // Course config for the demo course
   await writeFile(join(projectPath, 'courses/demo-course/learnmd.json'), getCourseConfig('Demo Course'));
-  
+
   // Overview MDX
   await writeFile(join(projectPath, 'courses/demo-course/overview.mdx'), `---
 title: Demo Course Overview
@@ -219,7 +219,6 @@ const components = {
   LanguageSwitcher,
   Paragraph,
   Title,
-};
 };
 
 // Glob all markdown files dynamically across all courses
@@ -344,6 +343,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
     },
+    dedupe: ['react', 'react-dom', '@learnmd/core']
   },
 });
 `;

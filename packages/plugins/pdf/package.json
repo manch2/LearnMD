@@ -1,6 +1,6 @@
 {
   "name": "@learnmd/plugin-pdf",
-  "version": "0.0.3-beta.1",
+  "version": "0.0.3-beta.2",
   "description": "PDF certification plugin for LearnMD",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,12 +18,15 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "jspdf": "^4.2.1",
-    "@learnmd/core": "workspace:*"
+    "@learnmd/core": "workspace:*",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "@types/node": "^20.11.0"
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.4.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

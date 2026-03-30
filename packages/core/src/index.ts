@@ -171,8 +171,6 @@ export function createLearnMD(config: LearnMDConfig = {}) {
   };
 }
 
-export { LearnMDProvider, useLearnMD } from './components/LearnMDProvider.js';
-
 /**
  * Default export
  */

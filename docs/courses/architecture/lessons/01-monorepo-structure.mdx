@@ -1,0 +1,43 @@
+# Monorepo Structure
+
+LearnMD uses a monorepo structure to manage its various packages and examples efficiently. This is powered by [Turborepo](https://turbo.build/).
+
+## Benefits of Monorepo
+
+- **Code Sharing**: Share types, components, and utilities across packages easily.
+- **Consistent Tooling**: Unified linting, testing, and building configurations.
+- **Simplified Dependency Management**: All packages use the same version of shared dependencies.
+
+## Key Directories
+
+### `packages/`
+
+This is where the core logic of LearnMD lives:
+
+-   `core/`: The foundational engine.
+-   `cli/`: The developer command-line interface.
+-   `default-theme/`: The standard look and feel.
+-   `plugins/`: Official extensions.
+
+### `docs/`
+
+The site you are currently viewing! It's a LearnMD project itself, demonstrating how to use the framework for documentation.
+
+### `examples/`
+
+Ready-to-use templates and demonstration projects to help you get started quickly.
+
+<Callout type="info">
+  Interested in contributing? Check out the `CONTRIBUTING.md` file in the root directory.
+</Callout>
+
+<Quiz 
+  question="Which tool does LearnMD use to manage its monorepo?"
+  options={[
+    { label: 'Lerna', isCorrect: false },
+    { label: 'Turborepo', isCorrect: true },
+    { label: 'Nx', isCorrect: false },
+    { label: 'Bazel', isCorrect: false }
+  ]}
+  explanation="LearnMD leverages Turborepo for efficient task execution and monorepo management."
+/>

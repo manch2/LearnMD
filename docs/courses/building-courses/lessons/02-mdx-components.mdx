@@ -1,0 +1,57 @@
+# MDX Components
+
+LearnMD is more than just markdown. It's MDX, which means you can use powerful React components directly in your content.
+
+## Built-in Components
+
+### 1. Callout
+
+Use callouts to highlight important information, warnings, or tips.
+
+```mdx
+<Callout type="info">
+  This is an informative callout!
+</Callout>
+```
+
+Types supported: `info`, `warning`, `error`, `success`.
+
+### 2. Quiz
+
+Add interactivity and check for understanding with quizzes.
+
+```mdx
+<Quiz 
+  question="What is 1 + 1?"
+  options={[
+    { label: '1', isCorrect: false },
+    { label: '2', isCorrect: true },
+    { label: '3', isCorrect: false }
+  ]}
+/>
+```
+
+### 3. Video Embed
+
+Easily embed videos from YouTube or Vimeo.
+
+```mdx
+<Video url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="Introduction Video" />
+```
+
+## Creating Custom Components
+
+You can define your own components and use them in your MDX files. Simply export them from a central file and register them in your theme.
+
+<Callout type="success">
+  MDX is a great way to build interactive and engaging learning experiences!
+</Callout>
+
+<Quiz 
+  question="Can you use standard React components in LearnMD lessons?"
+  options={[
+    { label: 'Yes, because LearnMD uses MDX', isCorrect: true },
+    { label: 'No, only standard Markdown is supported', isCorrect: false }
+  ]}
+  explanation="LearnMD leverages MDX to allow seamless integration of React components within documentation content."
+/>

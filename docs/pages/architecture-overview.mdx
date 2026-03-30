@@ -1,0 +1,36 @@
+# Architecture Overview
+
+LearnMD is designed to be highly modular and extensible. It leverages modern web technologies to provide a fast and developer-friendly experience.
+
+## Core Pillars
+
+1.  **MDX-First**: Content is written in MDX, allowing you to use React components directly in your documentation.
+2.  **Plugin Architecture**: Core features like Gamification and PDF generation are implemented as plugins.
+3.  **Static Site Generation**: Built on top of Vite for extremely fast builds and HMR.
+4.  **Flexible Routing**: Automatic routing for courses, lessons, and custom pages.
+
+## Monorepo Structure
+
+The project uses Turborepo to manage multiple packages:
+
+-   `@learnmd/core`: The engine that powers everything—parser, router, i18n, and state management.
+-   `@learnmd/cli`: Command-line tool for project initialization and content synchronization.
+-   `@learnmd/default-theme`: A polished, responsive UI built with Tailwind CSS.
+-   `@learnmd/plugins`: Official plugins for badges, PDF exports, and more.
+
+## Data Flow
+
+When a user visits a lesson:
+
+1.  The `RouterManager` identifies the course and lesson from the URL.
+2.  The `Parser` reads the MDX content and extracts frontmatter metadata.
+3.  The `LearnMDProvider` provides the global state (progress, gamification points).
+4.  The theme components render the content and interactive elements (Quizzes, Callouts).
+
+## Customization
+
+You can customize almost every aspect of LearnMD:
+
+-   **Theming**: Override components or styles in the default theme.
+-   **Plugins**: Create your own plugins to add custom hooks and functionality.
+-   **Config**: Fine-tune the behavior in `learnmd.config.ts`.

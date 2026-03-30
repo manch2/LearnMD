@@ -1,0 +1,43 @@
+# Metadata and Syncing
+
+LearnMD uses a JSON file (`learnmd.json`) in each course directory to manage metadata and lesson order.
+
+## What is in `learnmd.json`?
+
+The `learnmd.json` file typically contains:
+-   `id`: A unique identifier for the course.
+-   `title`: The display name of the course.
+-   `description`: A brief summary of what the course covers.
+-   `lessons`: An ordered list of lesson objects (slug, title).
+
+## Why use a JSON file?
+
+Using a JSON file for configuration allows for:
+1.  **Ordering**: Easily reorder lessons without changing filenames.
+2.  **Metadata Management**: Store additional information like tags, difficulty, or estimated duration.
+3.  **Efficiency**: The core engine can quickly read the course structure without parsing every MDX file.
+
+## The `sync` Command
+
+Manually updating the JSON file can be error-prone. The `sync` command automates this process:
+
+```bash
+npx learnmd sync building-courses
+```
+
+This command scans the `lessons/` directory, extracts titles from MDX frontmatter, and updates the `learnmd.json` file accordingly.
+
+<Callout type="warning">
+  Always run `sync` after manually adding or reordering MDX files!
+</Callout>
+
+<Quiz 
+  question="What happens when you run the `sync` command?"
+  options={[
+    { label: 'It deletes all MDX files', isCorrect: false },
+    { label: 'It updates the learnmd.json file based on the MDX files', isCorrect: true },
+    { label: 'It starts the development server', isCorrect: false },
+    { label: 'It builds the project for production', isCorrect: false }
+  ]}
+  explanation="The `sync` command ensures that the JSON course configuration is always in sync with the actual MDX files."
+/>

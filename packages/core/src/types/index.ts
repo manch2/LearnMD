@@ -118,6 +118,8 @@ export interface Course {
   estimatedTime?: string;
   prerequisites?: string[];
   expectedSkills?: string[];
+  author?: string | string[];
+  lastUpdated?: string;
 }
 
 /**

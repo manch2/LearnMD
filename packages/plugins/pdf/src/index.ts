@@ -1,10 +1,14 @@
 import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
 import { BasePlugin, PluginContext, UserProfile } from '@learnmd/core';
 
 export interface CertificateOptions {
   courseTitle: string;
   completionDate?: Date;
   signature?: string;
+  template?: React.ReactNode;
 }
 
 export class PDFPlugin extends BasePlugin {
@@ -22,13 +26,45 @@ export class PDFPlugin extends BasePlugin {
       return;
     }
 
+    const { courseTitle, completionDate = new Date(), signature = 'LearnMD Instructors', template } = options;
+
+    if (template) {
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '-9999px';
+      container.style.width = '11in';
+      container.style.height = '8.5in';
+      container.style.backgroundColor = 'white';
+      document.body.appendChild(container);
+
+      const root = createRoot(container);
+      root.render(React.createElement(React.Fragment, null, template));
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      try {
+        const canvas = await html2canvas(container, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const doc = new jsPDF({
+          orientation: 'landscape',
+          unit: 'in',
+          format: 'letter'
+        });
+        doc.addImage(imgData, 'PNG', 0, 0, 11, 8.5);
+        doc.save(`Certificate-${courseTitle.replace(/\\s+/g, '-')}.pdf`);
+      } finally {
+        root.unmount();
+        document.body.removeChild(container);
+      }
+      return;
+    }
+
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'in',
       format: 'letter'
     });
-
-    const { courseTitle, completionDate = new Date(), signature = 'LearnMD Instructors' } = options;
 
     // Add border
     doc.setLineWidth(0.1);
@@ -81,7 +117,7 @@ export class PDFPlugin extends BasePlugin {
     doc.line(7.5, 7.3, 9.5, 7.3);
 
     // Save the PDF
-    doc.save(`Certificate-${courseTitle.replace(/\s+/g, '-')}.pdf`);
+    doc.save(`Certificate-${courseTitle.replace(/\\s+/g, '-')}.pdf`);
   }
 }
 

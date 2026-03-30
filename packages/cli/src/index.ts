@@ -55,6 +55,8 @@ program
   .option('-n, --non-interactive', 'Run without interactive prompts')
   .option('-d, --difficulty <difficulty>', 'Difficulty level for course')
   .option('-t, --time <time>', 'Estimated completion time for course')
+  .option('-a, --author <author>', 'Author of the course')
+  .option('--desc, --description <description>', 'Description of the course or lesson')
   .action(async (type, name, options) => {
     if (type === 'course') {
       await addCourseCommand(name, options);

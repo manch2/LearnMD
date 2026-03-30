@@ -1,0 +1,40 @@
+# CLI Scaffolding
+
+The LearnMD CLI is your best friend when it comes to building courses. It automates tedious tasks and ensures your project stays consistent.
+
+## Command Overview
+
+The CLI provides a set of commands for common tasks:
+
+-   `init`: Create a new LearnMD project from a template.
+-   `add lesson`: Scaffold a new lesson in an existing course.
+-   `sync`: Synchronize MDX file metadata with the JSON configuration.
+-   `dev`: Start the local development server.
+-   `build`: Prepare your documentation for production.
+
+## Creating a Lesson
+
+To add a new lesson named "My New Lesson" to the "Building Courses" course:
+
+```bash
+npx learnmd add lesson "My New Lesson" --course building-courses
+```
+
+This command will:
+1.  Generate a new MDX file with the slug `my-new-lesson.mdx`.
+2.  Update the `courses/building-courses/learnmd.json` file to include the new lesson.
+
+<Callout type="info">
+  You can also manually create the MDX files and then run `learnmd sync` to update the configuration.
+</Callout>
+
+<Quiz 
+  question="Which CLI command is used to update the learnmd.json configuration based on current MDX files?"
+  options={[
+    { label: 'init', isCorrect: false },
+    { label: 'add lesson', isCorrect: false },
+    { label: 'sync', isCorrect: true },
+    { label: 'dev', isCorrect: false }
+  ]}
+  explanation="The `sync` command ensures the JSON configuration accurately reflects the MDX files present in each course."
+/>
