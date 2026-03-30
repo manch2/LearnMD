@@ -1,0 +1,43 @@
+# Layouts
+
+LearnMD provides several built-in layouts to choose from, depending on the type of content you are presenting.
+
+## Available Layouts
+
+-   **Lesson Layout**: Optimized for reading and interaction. Includes a sidebar for navigation and a main content area.
+-   **Overview Layout**: A clean layout for the course introduction page.
+-   **Page Layout**: A simple layout for custom pages like "About Us" or "Contact".
+
+## How to Set a Layout
+
+You can specify the layout for a lesson or page in its MDX frontmatter:
+
+```markdown
+---
+title: My Lesson
+layout: lesson
+---
+```
+
+## Custom Layouts
+
+If you need a layout that isn't provided by the framework, you can easily create your own.
+
+1.  Create a React component for your layout.
+2.  Use the `Content` component from `@learnmd/core` to render the MDX content.
+3.  Register your layout in your theme or config.
+
+<Callout type="success">
+  Layouts provide a consistent structure for your documentation and courses.
+</Callout>
+
+<Quiz 
+  question="Where do you specify which layout a lesson should use?"
+  options={[
+    { label: 'In the learnmd.config.ts file', isCorrect: false },
+    { label: 'In the MDX frontmatter', isCorrect: true },
+    { label: 'In the learnmd.json file', isCorrect: false },
+    { label: 'In the package.json file', isCorrect: false }
+  ]}
+  explanation="Layouts are defined on a per-file basis using the frontmatter metadata in the MDX file."
+/>

@@ -1,0 +1,20 @@
+{
+  "title": {
+    "en": "Creating Plugins",
+    "es": "Creating Plugins (ES)"
+  },
+  "description": {
+    "en": "Extend LearnMD with custom plugins",
+    "es": "Extend LearnMD with custom plugins (ES)"
+  },
+  "version": "1.0.0",
+  "author": "LearnMD Team",
+  "lastUpdated": "2026-03-30T04:21:33.963Z",
+  "difficulty": "advanced",
+  "estimatedTime": "4 hours",
+  "lessons": [
+    "01-plugin-lifecycle",
+    "02-gamification-badges",
+    "03-pdf-certificates"
+  ]
+}

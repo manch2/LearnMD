@@ -1,0 +1,48 @@
+# Gamification and Badges
+
+One of LearnMD's most powerful features is its built-in gamification engine, implemented as an official plugin.
+
+## How it Works
+
+The gamification engine tracks user activity and awards points and badges based on certain criteria.
+
+### 1. Points
+
+Points can be awarded for completing lessons and passing quizzes. These points are tracked in the user's progress.
+
+### 2. Badges
+
+Badges are awarded for reaching specific milestones. You can define custom badges in your configuration:
+
+```typescript
+// learnmd.config.ts
+gamification: {
+  badges: [
+    { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
+    { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' }
+  ]
+}
+```
+
+### 3. Streaks
+
+The gamification engine also tracks daily login streaks to encourage consistent learning.
+
+## Customizing Gamification
+
+You can customize the point system and even create your own gamification rules by building a plugin that interacts with the `GamificationManager`.
+
+<Callout type="success">
+  Gamification can significantly increase student engagement and motivation!
+</Callout>
+
+<Quiz 
+  question="Where are custom badges defined in a LearnMD project?"
+  options={[
+    { label: 'In the learnmd.json file of each course', isCorrect: false },
+    { label: 'In the learnmd.config.ts file', isCorrect: true },
+    { label: 'In the individual MDX files', isCorrect: false },
+    { label: 'In the theme files', isCorrect: false }
+  ]}
+  explanation="Custom badges are globally defined in the project's central `learnmd.config.ts` file."
+/>

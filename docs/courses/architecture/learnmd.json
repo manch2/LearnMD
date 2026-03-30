@@ -1,0 +1,19 @@
+{
+  "title": {
+    "en": "Architecture",
+    "es": "Architecture (ES)"
+  },
+  "description": {
+    "en": "Learn the internal architecture of LearnMD",
+    "es": "Learn the internal architecture of LearnMD (ES)"
+  },
+  "version": "1.0.0",
+  "author": "LearnMD Team",
+  "lastUpdated": "2026-03-30T04:21:30.824Z",
+  "difficulty": "beginner",
+  "estimatedTime": "2 hours",
+  "lessons": [
+    "01-monorepo-structure",
+    "02-core-engine"
+  ]
+}

@@ -1,0 +1,46 @@
+# Customizing the Theme
+
+LearnMD comes with a beautiful and responsive default theme built with Tailwind CSS. However, you can easily customize it to match your brand.
+
+## Quick Customization
+
+You can make simple changes to the theme directly in `learnmd.config.ts`:
+
+```typescript
+// learnmd.config.ts
+theme: {
+  primaryColor: '#8b5cf6', // A nice purple
+  darkMode: true,
+}
+```
+
+This will update the primary accent color and set the initial color mode.
+
+## Overriding Styles
+
+Since the default theme uses Tailwind CSS, you can easily override any style by providing your own CSS file.
+
+1.  Create a CSS file (e.g., `src/custom.css`).
+2.  Import it in your main entry point.
+3.  Use Tailwind's `@layer` directive to override components.
+
+## Advanced Customization
+
+For more complex changes, you can:
+-   **Create a Custom Theme Package**: Build your own theme as a separate package.
+-   **Override Components**: Replace specific theme components with your own implementations.
+
+<Callout type="info">
+  Check out the `@learnmd/default-theme` source code to see how it's built!
+</Callout>
+
+<Quiz 
+  question="Which CSS framework is used for the default LearnMD theme?"
+  options={[
+    { label: 'Bootstrap', isCorrect: false },
+    { label: 'Tailwind CSS', isCorrect: true },
+    { label: 'Bulma', isCorrect: false },
+    { label: 'SASS/SCSS', isCorrect: false }
+  ]}
+  explanation="The default LearnMD theme is built using Tailwind CSS for rapid styling and easy customization."
+/>

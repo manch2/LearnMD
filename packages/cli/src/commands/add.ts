@@ -19,6 +19,8 @@ export interface AddOptions {
   nonInteractive?: boolean;
   difficulty?: string;
   time?: string;
+  author?: string;
+  description?: string;
 }
 
 export async function addCourseCommand(initialName?: string, options?: AddOptions) {
@@ -89,6 +91,9 @@ export async function addCourseCommand(initialName?: string, options?: AddOption
     estimatedTime = '1 hour';
   }
 
+  const description = options?.description || `An interactive course: ${name}`;
+  const author = options?.author || 'LearnMD Author';
+
   const slug = (name as string).toLowerCase().replace(/\s+/g, '-');
   const coursePath = join(process.cwd(), 'courses', slug, 'lessons');
   
@@ -102,10 +107,12 @@ export async function addCourseCommand(initialName?: string, options?: AddOption
         es: `${name as string} (ES)`
       },
       description: {
-        en: `An interactive course: ${name as string}`,
-        es: `Un curso interactivo: ${name as string}`
+        en: description,
+        es: `${description} (ES)`
       },
       version: '1.0.0',
+      author: author,
+      lastUpdated: new Date().toISOString(),
       difficulty: difficulty as string,
       estimatedTime: estimatedTime as string,
       lessons: ['introduction']
@@ -152,6 +159,7 @@ title: Overview
 export async function addLessonCommand(title: string, options?: AddOptions) {
   const courseSlug = options?.course || 'demo-course';
   const isNonInteractive = options?.nonInteractive;
+  const description = options?.description || `Description for ${title}`;
   
   if (!isNonInteractive) {
     console.log(chalk.blue(`\n📝 Adding new lesson: ${title} to ${courseSlug}\n`));
@@ -167,8 +175,8 @@ title:
   en: '${title}'
   es: '${title} (ES)'
 description:
-  en: 'Description for ${title}'
-  es: 'Descripción para ${title}'
+  en: '${description}'
+  es: '${description} (ES)'
 duration: '10 minutes'
 ---
 

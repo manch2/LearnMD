@@ -1,0 +1,46 @@
+# PDF Certificates
+
+The PDF plugin allows you to generate professional-looking certificates for users who successfully complete your courses.
+
+## Features
+
+-   **Automatic Generation**: Generate a PDF as soon as a user finishes all lessons in a course.
+-   **Customizable Templates**: Design your own certificate layouts using HTML/CSS or React.
+-   **Data Injection**: Automatically include the user's name, the course title, and the completion date.
+
+## Usage
+
+To enable PDF certificates, add the `PdfPlugin` to your configuration:
+
+```typescript
+// learnmd.config.ts
+import { PdfPlugin } from '@learnmd/plugins';
+
+export default defineConfig({
+  plugins: [
+    PdfPlugin({
+      template: 'standard',
+      showScore: true
+    })
+  ]
+});
+```
+
+## How it works
+
+The PDF plugin listens for the `course:complete` hook. When triggered, it uses the course data to generate a PDF file that the user can download.
+
+<Callout type="warning">
+  Ensure you have the necessary fonts and assets available for the PDF generator.
+</Callout>
+
+<Quiz 
+  question="Which hook does the PDF plugin listen to for generating certificates?"
+  options={[
+    { label: 'app:init', isCorrect: false },
+    { label: 'lesson:complete', isCorrect: false },
+    { label: 'course:complete', isCorrect: true },
+    { label: 'progress:update', isCorrect: false }
+  ]}
+  explanation="The PDF plugin generates a certificate once a course is fully completed by listening to the `course:complete` hook."
+/>
