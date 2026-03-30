@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Plugins'
 ---
 
@@ -9,47 +9,26 @@ title: 'Plugins'
 
 <Paragraph i18n="intro">
   <en>
-    LearnMD plugins extend the core runtime without forcing you to fork the theme. In beta.3,
-    plugins can register hooks, read storage, and inject UI into official theme slots.
+    LearnMD plugins extend the runtime without forcing you to fork the theme. In `0.0.4-beta.1`, plugins can register hooks, read storage, and inject UI into official theme slots.
   </en>
   <es>
-    Los plugins de LearnMD extienden el runtime base sin obligarte a modificar el theme. En
-    beta.3, los plugins pueden registrar hooks, leer almacenamiento e inyectar UI en slots
-    oficiales del theme.
+    Los plugins de LearnMD extienden el runtime sin obligarte a bifurcar el theme. En `0.0.4-beta.1`, los plugins pueden registrar hooks, leer storage e inyectar UI en slots oficiales del theme.
   </es>
 </Paragraph>
 
----
-
-## Plugin Model
+## Plugin Model / Modelo de plugins
 
 <Paragraph i18n="model">
   <en>
-    Plugins are configured in `learnmd.config.ts`. Each plugin receives a `PluginContext` with
-    access to storage, i18n, hooks, and component registration. The theme owns layout and visual
-    styling, while plugins provide behavior and optional UI blocks that render inside stable slots.
+    Plugins are configured in `learnmd.config.ts`. Each plugin receives a `PluginContext` with access to storage, i18n, hooks, and component registration. The theme owns layout and visual styling, while plugins provide behavior and optional UI blocks.
   </en>
   <es>
-    Los plugins se configuran en `learnmd.config.ts`. Cada plugin recibe un `PluginContext` con
-    acceso a storage, i18n, hooks y registro de componentes. El theme es el dueno del layout y
-    del estilo visual, mientras que los plugins aportan comportamiento y bloques UI opcionales
-    que se renderizan dentro de slots estables.
+    Los plugins se configuran en `learnmd.config.ts`. Cada plugin recibe un `PluginContext` con acceso a storage, i18n, hooks y registro de componentes. El theme es dueño del layout y del estilo visual, mientras los plugins aportan comportamiento y bloques de UI opcionales.
   </es>
 </Paragraph>
 
 ```typescript
-import type {
-  Plugin,
-  PluginContext,
-  PluginSlotName,
-} from '@learnmd/core';
-
-interface Plugin {
-  name: string;
-  version: string;
-  onLoad: (ctx: PluginContext) => void | Promise<void>;
-  onUnload?: (ctx: PluginContext) => void | Promise<void>;
-}
+import type { PluginContext, PluginSlotName } from '@learnmd/core';
 
 type PluginSlotName =
   | 'profile:summary'
@@ -72,194 +51,91 @@ interface PluginContext {
         },
     component?: unknown
   ) => void;
-  config: Record<string, unknown>;
 }
 ```
 
-<Paragraph i18n="hooks">
-  <en>
-    Common hooks in beta.3 include `app:init`, `lesson:complete`, `quiz:submit`, `progress:update`
-    and `profile:update`. Use hooks for behavior, and slots only when your plugin needs UI.
-  </en>
-  <es>
-    Los hooks comunes en beta.3 incluyen `app:init`, `lesson:complete`, `quiz:submit`,
-    `progress:update` y `profile:update`. Usa hooks para comportamiento, y slots solo cuando tu
-    plugin necesite UI.
-  </es>
-</Paragraph>
-
----
-
-## Official Plugins
+## Official Plugins / Plugins oficiales
 
 ### Badges Plugin (`@learnmd/plugin-badges`)
 
 <Paragraph i18n="badges">
   <en>
-    The badges plugin is responsible for awarding insignias. It consumes the public profile state,
-    including `globalScore`, and evaluates badge criteria without taking ownership of point
-    calculation.
+    The badges plugin awards insignias based on the public profile state, including `globalScore`. It evaluates badge criteria but does not own point calculation.
   </en>
   <es>
-    El plugin de badges es responsable de otorgar insignias. Consume el estado publico del perfil,
-    incluido `globalScore`, y evalua criterios de badges sin aduenarse del calculo de puntos.
+    El plugin de badges otorga insignias a partir del estado público del perfil, incluido `globalScore`. Evalúa criterios de badges, pero no es dueño del cálculo de puntos.
   </es>
 </Paragraph>
 
 ```typescript
-import { defineConfig } from '@learnmd/core';
-import { BadgesPlugin } from '@learnmd/plugin-badges';
-
-export default defineConfig({
-  gamification: {
-    points: {
-      lessonCompletion: 100,
-      quizPassed: 10,
-      quizPerfectScore: 15,
+new BadgesPlugin([
+  {
+    id: 'first-steps',
+    name: { en: 'First Steps', es: 'Primeros pasos' },
+    description: { en: 'Complete your first lesson.', es: 'Completa tu primera lección.' },
+    icon: '??',
+    criteria: {
+      type: 'course_progress',
+      courseId: 'getting-started',
+      percentage: 1,
     },
   },
-  plugins: [
-    new BadgesPlugin([
-      {
-        id: 'first-steps',
-        name: 'First Steps',
-        description: 'Complete your first lesson.',
-        icon: '??',
-        criteria: {
-          type: 'course_progress',
-          courseId: 'getting-started',
-          percentage: 1,
-        },
-      },
-      {
-        id: 'score-500',
-        name: 'Momentum',
-        description: 'Reach 500 global points.',
-        icon: '??',
-        criteria: {
-          type: 'global_score',
-          score: 500,
-        },
-      },
-    ]),
-  ],
-});
+  {
+    id: 'score-500',
+    name: { en: 'Momentum', es: 'Impulso' },
+    description: { en: 'Reach 500 global points.', es: 'Alcanza 500 puntos globales.' },
+    icon: '??',
+    criteria: {
+      type: 'global_score',
+      score: 500,
+    },
+  },
+])
 ```
-
-<Paragraph i18n="badges-criteria">
-  <en>
-    Supported criteria include `course_progress`, `courses_completed`, and `global_score`. This
-    lets you build badges from progress, completions, or the public global score generated by the
-    gamification system.
-  </en>
-  <es>
-    Los criterios soportados incluyen `course_progress`, `courses_completed` y `global_score`.
-    Esto te permite construir badges desde progreso, cursos completados o el puntaje global
-    publico generado por el sistema de gamificacion.
-  </es>
-</Paragraph>
 
 ### PDF Plugin (`@learnmd/plugin-pdf`)
 
 <Paragraph i18n="pdf">
   <en>
-    The PDF plugin is the only owner of certificate downloads. If you do not register
-    `new PDFPlugin()`, LearnMD will not render certificate actions in the profile and users will
-    not be able to generate PDFs from the UI.
+    The PDF plugin is the only owner of certificate downloads. If you do not register `new PDFPlugin()`, LearnMD must not render certificate actions in the profile.
   </en>
   <es>
-    El plugin PDF es el unico dueno de las descargas de certificados. Si no registras
-    `new PDFPlugin()`, LearnMD no renderiza acciones de certificados en el perfil y los usuarios no
-    podran generar PDFs desde la UI.
+    El plugin PDF es el único dueño de las descargas de certificados. Si no registras `new PDFPlugin()`, LearnMD no debe renderizar acciones de certificado en el perfil.
   </es>
 </Paragraph>
 
 ```typescript
-import { defineConfig } from '@learnmd/core';
-import { PDFPlugin } from '@learnmd/plugin-pdf';
-
-export default defineConfig({
-  plugins: [
-    new PDFPlugin({
-      signature: 'LearnMD Team',
-    }),
-  ],
-});
+new PDFPlugin({
+  signature: 'LearnMD Team',
+})
 ```
 
 <Paragraph i18n="pdf-ui">
   <en>
-    In beta.3, the plugin injects its UI through the `profile:courseActions` slot. The default
-    theme decides where that slot is shown, but the action only exists when the plugin is present.
+    The plugin injects its interface through the `profile:courseActions` slot. The theme decides where the slot is rendered, but the action exists only when the plugin is present.
   </en>
   <es>
-    En beta.3, el plugin inyecta su UI a traves del slot `profile:courseActions`. El theme por
-    defecto decide donde se muestra ese slot, pero la accion solo existe cuando el plugin esta
-    presente.
+    El plugin inyecta su interfaz mediante el slot `profile:courseActions`. El theme decide dónde se renderiza ese slot, pero la acción existe solo cuando el plugin está presente.
   </es>
 </Paragraph>
 
-```typescript
-import React from 'react';
-import { PDFPlugin } from '@learnmd/plugin-pdf';
-
-const CertificateTemplate = (
-  <div
-    style={{
-      width: '11in',
-      height: '8.5in',
-      padding: '48px',
-      background: '#ffffff',
-      color: '#0f172a',
-      fontFamily: 'Georgia, serif',
-    }}
-  >
-    <h1>Certificate of Completion</h1>
-    <p>This certifies successful completion.</p>
-  </div>
-);
-
-new PDFPlugin({
-  signature: 'LearnMD Instructors',
-  template: CertificateTemplate,
-});
-```
-
----
-
-## UI Slots
+## UI Slots / Slots de UI
 
 <Paragraph i18n="slots">
   <en>
-    Plugins with UI should target theme slots instead of patching the theme. This keeps LearnMD
-    modular: the theme controls layout and styling primitives, while plugins register React
-    components for known integration points.
+    Plugins with UI should target official theme slots instead of patching the theme. This keeps LearnMD modular and lets themes keep visual ownership.
   </en>
   <es>
-    Los plugins con UI deben apuntar a slots del theme en lugar de parchear el theme. Esto mantiene
-    LearnMD modular: el theme controla layout y primitivas visuales, mientras los plugins registran
-    componentes React para puntos de integracion conocidos.
+    Los plugins con UI deben usar slots oficiales del theme en lugar de parchear el theme. Esto mantiene LearnMD modular y permite que el theme conserve la responsabilidad visual.
   </es>
 </Paragraph>
 
 <Paragraph i18n="slots-list">
   <en>
-    Current public slots:
-
-    | Slot | Purpose |
-    |------|---------|
-    | `profile:summary` | Small summary widgets near the top of the profile |
-    | `profile:courseActions` | Per-course actions such as certificates |
-    | `profile:sections` | Additional profile sections rendered below badges |
+    Public slots include `profile:summary` for compact widgets, `profile:courseActions` for per-course actions such as certificates, and `profile:sections` for additional profile panels.
   </en>
   <es>
-    Slots publicos actuales:
-
-    | Slot | Proposito |
-    |------|-----------|
-    | `profile:summary` | Widgets pequenos cerca de la parte superior del perfil |
-    | `profile:courseActions` | Acciones por curso, como certificados |
-    | `profile:sections` | Secciones adicionales del perfil debajo de badges |
+    Los slots públicos incluyen `profile:summary` para widgets compactos, `profile:courseActions` para acciones por curso como certificados y `profile:sections` para paneles adicionales del perfil.
   </es>
 </Paragraph>
 
@@ -294,21 +170,24 @@ export class WelcomePlugin extends BasePlugin {
 <Callout type="tip">
   <Paragraph i18n="slots-tip">
     <en>
-      A plugin can ship its own UI logic, but it should reuse the theme's CSS variables and visual
-      tokens. That way users can change colors, spacing, and typography from `theme` without
-      rewriting each plugin.
+      A plugin can ship its own UI logic, but it should reuse the theme CSS variables and tokens so users can restyle the platform from `theme` without rewriting each plugin.
     </en>
     <es>
-      Un plugin puede traer su propia logica UI, pero debe reutilizar las variables CSS y tokens
-      visuales del theme. Asi los usuarios pueden cambiar colores, espaciado y tipografia desde
-      `theme` sin reescribir cada plugin.
+      Un plugin puede traer su propia lógica de UI, pero debe reutilizar las variables CSS y los tokens del theme para que los usuarios puedan rediseñar la plataforma desde `theme` sin reescribir cada plugin.
     </es>
   </Paragraph>
 </Callout>
 
----
+## Creating Your Own Plugin / Crear tu propio plugin
 
-## Creating Your Own Plugin
+<Paragraph i18n="custom-register">
+  <en>
+    Register custom plugins in `plugins`. If your plugin needs UI, register slot components in `onLoad`; if it only changes behavior, hooks are enough.
+  </en>
+  <es>
+    Registra plugins personalizados en `plugins`. Si tu plugin necesita UI, registra componentes de slot en `onLoad`; si solo cambia comportamiento, los hooks son suficientes.
+  </es>
+</Paragraph>
 
 ```typescript
 import { BasePlugin, type PluginContext } from '@learnmd/core';
@@ -330,23 +209,3 @@ export class AnalyticsPlugin extends BasePlugin {
 }
 ```
 
-<Paragraph i18n="custom-register">
-  <en>
-    Register custom plugins in `plugins`. If your plugin needs UI, register slot components in
-    `onLoad`; if it is behavior-only, hooks are enough.
-  </en>
-  <es>
-    Registra plugins personalizados en `plugins`. Si tu plugin necesita UI, registra componentes
-    de slot en `onLoad`; si es solo de comportamiento, los hooks son suficientes.
-  </es>
-</Paragraph>
-
-```typescript
-import { defineConfig } from '@learnmd/core';
-import { AnalyticsPlugin } from './plugins/analytics';
-import { WelcomePlugin } from './plugins/welcome';
-
-export default defineConfig({
-  plugins: [new AnalyticsPlugin(), new WelcomePlugin()],
-});
-```

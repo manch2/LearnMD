@@ -1,0 +1,16 @@
+{
+  "title": {
+    "en": "Express Onboarding",
+    "es": "Onboarding Exprés"
+  },
+  "description": {
+    "en": "A short onboarding path for new LearnMD maintainers.",
+    "es": "Una ruta corta de onboarding para nuevos maintainers de LearnMD."
+  },
+  "version": "1.0.0",
+  "difficulty": "beginner",
+  "estimatedTime": "20m",
+  "lessons": [
+    "introduction"
+  ]
+}

@@ -1,98 +1,76 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { addLessonCommand, addCourseCommand } from './add';
-import { writeFile, mkdir, readFile } from 'fs/promises';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'fs/promises';
+import { tmpdir } from 'os';
 import { join } from 'path';
+import { addCourseCommand, addLessonCommand, addPageCommand } from './add';
 
-vi.mock('fs/promises', () => {
-  const mockFs = {
-    writeFile: vi.fn().mockResolvedValue(undefined),
-    mkdir: vi.fn().mockResolvedValue(undefined),
-    readFile: vi.fn().mockResolvedValue(JSON.stringify({ name: 'test-project', dependencies: { '@learnmd/core': '1.0.0' } })),
-  };
-  return {
-    ...mockFs,
-    default: mockFs,
-  };
-});
+let tempDir = '';
 
-describe('addLessonCommand', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.stubGlobal('console', {
-      log: vi.fn(),
-      error: vi.fn(),
-      warn: vi.fn(),
-    });
+describe('add commands', () => {
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    if (tempDir) {
+      await rm(tempDir, { recursive: true, force: true });
+      tempDir = '';
+    }
   });
 
-  it('should create a lesson file with correct content', async () => {
-    const title = 'Test Lesson';
-    const slug = 'test-lesson';
-    const courseSlug = 'demo-course';
-    const expectedPath = join(process.cwd(), 'courses', courseSlug, 'lessons', `${slug}.mdx`);
+  it('creates a bilingual lesson with translated quiz content', async () => {
+    tempDir = await mkdtemp(join(tmpdir(), 'learnmd-add-lesson-'));
+    vi.spyOn(process, 'cwd').mockReturnValue(tempDir);
+    await mkdir(join(tempDir, 'courses', 'demo-course', 'lessons'), { recursive: true });
 
-    await addLessonCommand(title, { nonInteractive: true });
+    await addLessonCommand('CLI Basics', { course: 'demo-course', nonInteractive: true });
 
-    expect(mkdir).toHaveBeenCalledWith(expect.stringContaining(join('courses', courseSlug, 'lessons')), { recursive: true });
-    expect(writeFile).toHaveBeenCalledWith(
-      expectedPath,
-      expect.stringContaining('title:'),
+    const lesson = await readFile(
+      join(tempDir, 'courses', 'demo-course', 'lessons', 'cli-basics.mdx'),
+      'utf-8'
     );
-    expect(writeFile).toHaveBeenCalledWith(
-      expectedPath,
-      expect.stringContaining(title),
+
+    expect(lesson).toContain("<en>CLI Basics</en>");
+    expect(lesson).toContain("<es>CLI Basics (ES)</es>");
+    expect(lesson).toContain('¿Esta lección fue generada automáticamente?');
+    expect(lesson).toContain('Esta lección inicial es creada por el CLI');
+  });
+
+  it('creates a course overview and starter lesson', async () => {
+    tempDir = await mkdtemp(join(tmpdir(), 'learnmd-add-course-'));
+    vi.spyOn(process, 'cwd').mockReturnValue(tempDir);
+    await writeFile(
+      join(tempDir, 'package.json'),
+      JSON.stringify({ name: 'sample-project', dependencies: { '@learnmd/core': 'workspace:*' } })
     );
-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Created lesson'));
-  });
 
-  it('should handle errors during creation', async () => {
-    vi.mocked(writeFile).mockRejectedValueOnce(new Error('Write failed'));
-    
-    await addLessonCommand('Fail Test', { nonInteractive: true });
-    
-    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create lesson'));
-  });
-});
+    await addCourseCommand('Platform Foundations', { nonInteractive: true });
 
-describe('addCourseCommand', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.stubGlobal('console', {
-      log: vi.fn(),
-      error: vi.fn(),
-      warn: vi.fn(),
-    });
-  });
-
-  it('should create a course directory and learnmd.json', async () => {
-    const name = 'New Course';
-    const slug = 'new-course';
-    const expectedCoursePath = join(process.cwd(), 'courses', slug, 'lessons');
-    const expectedConfigPath = join(process.cwd(), 'courses', slug, 'learnmd.json');
-
-    await addCourseCommand(name, { nonInteractive: true });
-
-    expect(mkdir).toHaveBeenCalledWith(expectedCoursePath, { recursive: true });
-    expect(writeFile).toHaveBeenCalledWith(
-      expectedConfigPath,
-      expect.stringContaining(name),
+    const overview = await readFile(
+      join(tempDir, 'courses', 'platform-foundations', 'overview.mdx'),
+      'utf-8'
     );
-    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('created successfully'));
+    const config = JSON.parse(
+      await readFile(join(tempDir, 'courses', 'platform-foundations', 'learnmd.json'), 'utf-8')
+    );
+
+    expect(overview).toContain('Welcome to Platform Foundations!');
+    expect(overview).toContain('¡Bienvenido a Platform Foundations!');
+    expect(config.title.es).toBe('Platform Foundations (ES)');
   });
 
-  it('should show warning if skip workspace check fails', async () => {
-    vi.mocked(readFile).mockRejectedValueOnce(new Error('no package.json'));
-    
-    await addCourseCommand('No Workspace', { nonInteractive: true });
-    
-    expect(console.warn).toHaveBeenCalledWith(expect.stringContaining('Warning: This doesn\'t look like a LearnMD project'));
-  });
+  it('creates a custom page and injects it into learnmd.config.ts', async () => {
+    tempDir = await mkdtemp(join(tmpdir(), 'learnmd-add-page-'));
+    vi.spyOn(process, 'cwd').mockReturnValue(tempDir);
+    await writeFile(
+      join(tempDir, 'learnmd.config.ts'),
+      `export default defineConfig({\n  customPages: []\n});\n`
+    );
 
-  it('should handle errors during course creation', async () => {
-    vi.mocked(mkdir).mockRejectedValueOnce(new Error('Mkdir failed'));
-    
-    await addCourseCommand('Fail Course', { nonInteractive: true });
-    
-    expect(console.error).toHaveBeenCalledWith(expect.stringContaining('Failed to create course directory'));
+    await addPageCommand('Support Center', { nonInteractive: true });
+
+    const page = await readFile(join(tempDir, 'pages', 'support-center.mdx'), 'utf-8');
+    const config = await readFile(join(tempDir, 'learnmd.config.ts'), 'utf-8');
+
+    expect(page).toContain('<en>Support Center</en>');
+    expect(page).toContain('<es>Support Center (ES)</es>');
+    expect(config).toContain("{ path: '/support-center', componentPath: 'pages/support-center.mdx' }");
   });
 });

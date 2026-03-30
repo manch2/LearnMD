@@ -7,14 +7,10 @@ export interface ContentPageProps {
 }
 
 export function ContentPage({ children, className = '', prose = true }: ContentPageProps) {
-  const proseClass = prose ? 'prose dark:prose-invert' : '';
-
   return (
     <div className={`w-full px-4 py-8 md:py-10 ${className}`.trim()}>
-      <div
-        className={`mx-auto w-full max-w-[var(--content-max-width)] ${proseClass}`.trim()}
-      >
-        {children}
+      <div className="mx-auto w-full max-w-[var(--content-max-width)]">
+        <div className={prose ? 'prose dark:prose-invert max-w-none' : ''}>{children}</div>
       </div>
     </div>
   );

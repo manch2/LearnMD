@@ -1,16 +1,18 @@
-# PDF Certificates
+﻿<Title i18n="title">
+  <en>PDF Certificates</en>
+  <es>Certificados PDF</es>
+</Title>
 
-The PDF plugin owns certificate generation in LearnMD beta.3.
+<Paragraph i18n="intro">
+  <en>
+    The PDF plugin owns certificate generation in LearnMD `0.0.4-beta.1`. If the plugin is not registered, the default UI must not show certificate actions.
+  </en>
+  <es>
+    El plugin PDF es dueño de la generación de certificados en LearnMD `0.0.4-beta.1`. Si el plugin no está registrado, la UI por defecto no debe mostrar acciones de certificados.
+  </es>
+</Paragraph>
 
-## Features
-
--   Certificate downloads are available only when `new PDFPlugin()` is registered.
--   The plugin injects its UI into the `profile:courseActions` slot.
--   You can customize the default signature and provide a custom React template.
-
-## Usage
-
-Register the plugin in `learnmd.config.ts`:
+## Registration / Registro
 
 ```typescript
 import { defineConfig } from '@learnmd/core';
@@ -25,13 +27,16 @@ export default defineConfig({
 });
 ```
 
-## How it works
+<Paragraph i18n="behavior">
+  <en>
+    The plugin registers a UI action for completed courses in the `profile:courseActions` slot. Without the plugin, users do not have an alternate certificate flow in the default interface.
+  </en>
+  <es>
+    El plugin registra una acción de UI para cursos completados en el slot `profile:courseActions`. Sin el plugin, los usuarios no tienen un flujo alternativo de certificados en la interfaz por defecto.
+  </es>
+</Paragraph>
 
-The plugin registers a UI action for completed courses in the profile. If the plugin is missing,
-no certificate button is rendered and the user has no alternative certificate flow in the default
-UI.
-
-## Custom template
+## Custom Template / Plantilla personalizada
 
 ```typescript
 import React from 'react';
@@ -51,17 +56,37 @@ new PDFPlugin({
 ```
 
 <Callout type="warning">
-  The default theme only shows certificate actions when the plugin is present and the course is
-  completed.
+  <Paragraph i18n="warning">
+    <en>
+      Certificate UI should always be gated by plugin registration. Do not import certificate generation directly from the theme layer.
+    </en>
+    <es>
+      La UI de certificados siempre debe estar controlada por el registro del plugin. No importes la generación de certificados directamente desde la capa del theme.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="What happens if the PDF plugin is not registered in beta.3?"
-  options={[
-    { label: 'Certificates still appear in the profile by default', isCorrect: false },
-    { label: 'The user can trigger certificate downloads from a hidden action', isCorrect: false },
-    { label: 'No certificate action is rendered in the default UI', isCorrect: true },
-    { label: 'The plugin is auto-enabled by gamification', isCorrect: false }
+<Quiz
+  id="pdf-certificates-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What happens if `PDFPlugin` is not registered?',
+        es: '¿Qué ocurre si `PDFPlugin` no está registrado?',
+      },
+      options: [
+        { id: 'a', label: { en: 'Certificates still appear by default', es: 'Los certificados siguen apareciendo por defecto' } },
+        { id: 'b', label: { en: 'No certificate action is rendered in the default UI', es: 'No se renderiza ninguna acción de certificado en la UI por defecto' } },
+        { id: 'c', label: { en: 'Gamification enables the certificate flow automatically', es: 'La gamificación habilita el flujo de certificados automáticamente' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'Certificate downloads are fully governed by `PDFPlugin`.',
+        es: 'Las descargas de certificados están totalmente gobernadas por `PDFPlugin`.',
+      },
+    },
   ]}
-  explanation="In beta.3, PDF certificates are governed entirely by the PDF plugin. Without it, the default UI does not render any certificate action."
 />
+

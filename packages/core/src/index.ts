@@ -56,7 +56,7 @@ import { PluginRegistry, createDefaultPluginContext, HOOKS } from './plugins/ind
 /**
  * Core version
  */
-export const VERSION = '0.0.3-beta.3';
+export const VERSION = '0.0.4-beta.1';
 
 export function defineConfig(config: LearnMDConfig): LearnMDConfig {
   return config;

@@ -1,0 +1,47 @@
+---
+title:
+  en: 'Advanced Security'
+  es: 'Seguridad avanzada'
+description:
+  en: 'Use plugin boundaries to keep sensitive flows explicit.'
+  es: 'Usa los límites de plugins para mantener explícitos los flujos sensibles.'
+duration: '30 minutes'
+---
+
+<Title i18n="title">
+  <en>Advanced Security</en>
+  <es>Seguridad avanzada</es>
+</Title>
+
+<Paragraph i18n="intro">
+  <en>
+    Certificate downloads are a good example of a gated flow: the UI appears only if the responsible plugin is explicitly registered.
+  </en>
+  <es>
+    Las descargas de certificados son un buen ejemplo de un flujo controlado: la UI aparece solo si el plugin responsable está registrado explícitamente.
+  </es>
+</Paragraph>
+
+<Quiz
+  id="advanced-security-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What should happen if the PDF plugin is missing?',
+        es: '¿Qué debería pasar si falta el plugin PDF?',
+      },
+      options: [
+        { id: 'a', label: { en: 'The certificate button should still appear', es: 'El botón de certificado debería seguir apareciendo' } },
+        { id: 'b', label: { en: 'Certificate actions should not be rendered', es: 'No deberían renderizarse acciones de certificado' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'The default UI should gate certificate actions entirely behind the PDF plugin registration.',
+        es: 'La UI por defecto debe dejar las acciones de certificado completamente controladas por el registro del plugin PDF.',
+      },
+      points: 10,
+    },
+  ]}
+/>

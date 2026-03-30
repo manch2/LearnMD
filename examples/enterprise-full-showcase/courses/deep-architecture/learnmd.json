@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "Deep Architecture",
+    "es": "Arquitectura profunda"
+  },
+  "description": {
+    "en": "A deeper walkthrough of LearnMD architecture, plugin slots, and release flow.",
+    "es": "Un recorrido más profundo por la arquitectura de LearnMD, los slots de plugins y el flujo de releases."
+  },
+  "version": "1.0.0",
+  "difficulty": "advanced",
+  "estimatedTime": "1h 30m",
+  "lessons": [
+    "introduction",
+    "data-modeling",
+    "advanced-security"
+  ]
+}

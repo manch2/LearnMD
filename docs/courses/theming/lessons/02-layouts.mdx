@@ -1,43 +1,69 @@
-# Layouts
+﻿<Title i18n="title">
+  <en>Layouts</en>
+  <es>Layouts</es>
+</Title>
 
-LearnMD provides several built-in layouts to choose from, depending on the type of content you are presenting.
+<Paragraph i18n="intro">
+  <en>
+    LearnMD combines reusable layouts with a shared content wrapper. The goal is to keep lessons, course overviews, the home page, and custom pages visually consistent while still letting the theme decide the presentation.
+  </en>
+  <es>
+    LearnMD combina layouts reutilizables con un contenedor de contenido compartido. El objetivo es mantener consistencia visual entre lecciones, overviews de curso, el home y las páginas personalizadas, dejando que el theme decida la presentación.
+  </es>
+</Paragraph>
 
-## Available Layouts
+## Default Pattern / Patrón por defecto
 
--   **Lesson Layout**: Optimized for reading and interaction. Includes a sidebar for navigation and a main content area.
--   **Overview Layout**: A clean layout for the course introduction page.
--   **Page Layout**: A simple layout for custom pages like "About Us" or "Contact".
+<Paragraph i18n="pattern">
+  <en>
+    Lessons use the course viewer layout, while static pages such as home and custom pages render through `ContentPage`. That gives them the same readable width and spacing rules.
+  </en>
+  <es>
+    Las lecciones usan el layout del course viewer, mientras que las páginas estáticas como el home y las páginas personalizadas se renderizan mediante `ContentPage`. Eso les da las mismas reglas de ancho legible y espaciado.
+  </es>
+</Paragraph>
 
-## How to Set a Layout
-
-You can specify the layout for a lesson or page in its MDX frontmatter:
-
-```markdown
----
-title: My Lesson
-layout: lesson
----
+```tsx
+<MainLayout>
+  <Header />
+  <ContentPage>
+    <MyCustomPage />
+  </ContentPage>
+</MainLayout>
 ```
 
-## Custom Layouts
-
-If you need a layout that isn't provided by the framework, you can easily create your own.
-
-1.  Create a React component for your layout.
-2.  Use the `Content` component from `@learnmd/core` to render the MDX content.
-3.  Register your layout in your theme or config.
-
 <Callout type="success">
-  Layouts provide a consistent structure for your documentation and courses.
+  <Paragraph i18n="success">
+    <en>
+      Keep layout concerns in the theme or scaffold, not inside each content page. That is the easiest way to avoid width and spacing drift over time.
+    </en>
+    <es>
+      Mantén las decisiones de layout en el theme o en el scaffold, no dentro de cada página de contenido. Esa es la forma más simple de evitar que el ancho y el espaciado se desalineen con el tiempo.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Where do you specify which layout a lesson should use?"
-  options={[
-    { label: 'In the learnmd.config.ts file', isCorrect: false },
-    { label: 'In the MDX frontmatter', isCorrect: true },
-    { label: 'In the learnmd.json file', isCorrect: false },
-    { label: 'In the package.json file', isCorrect: false }
+<Quiz
+  id="layouts-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'Which wrapper should custom pages use to share the same readable width as the home page?',
+        es: '¿Qué wrapper deben usar las páginas personalizadas para compartir el mismo ancho legible del home?',
+      },
+      options: [
+        { id: 'a', label: { en: 'PluginSlot', es: 'PluginSlot' } },
+        { id: 'b', label: { en: 'ContentPage', es: 'ContentPage' } },
+        { id: 'c', label: { en: 'RouterManager', es: 'RouterManager' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: '`ContentPage` is the shared wrapper used by the scaffold and default theme for home and custom pages.',
+        es: '`ContentPage` es el wrapper compartido que usan el scaffold y el theme por defecto para el home y las páginas personalizadas.',
+      },
+    },
   ]}
-  explanation="Layouts are defined on a per-file basis using the frontmatter metadata in the MDX file."
 />
+

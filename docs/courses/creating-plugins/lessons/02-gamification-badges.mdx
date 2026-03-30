@@ -1,48 +1,83 @@
-# Gamification and Badges
+﻿<Title i18n="title">
+  <en>Gamification and Badges</en>
+  <es>Gamificación e insignias</es>
+</Title>
 
-One of LearnMD's most powerful features is its built-in gamification engine, implemented as an official plugin.
+<Paragraph i18n="intro">
+  <en>
+    LearnMD separates score logic from badge logic. The built-in gamification plugin owns `globalScore`, achievements, and streaks, while `@learnmd/plugin-badges` evaluates badge criteria.
+  </en>
+  <es>
+    LearnMD separa la lógica de puntaje de la lógica de insignias. El plugin integrado de gamificación es dueño del `globalScore`, los logros y las rachas, mientras `@learnmd/plugin-badges` evalúa criterios de badges.
+  </es>
+</Paragraph>
 
-## How it Works
+## Points and Score / Puntos y score
 
-The gamification engine tracks user activity and awards points and badges based on certain criteria.
-
-### 1. Points
-
-Points can be awarded for completing lessons and passing quizzes. These points are tracked in the user's progress.
-
-### 2. Badges
-
-Badges are awarded for reaching specific milestones. You can define custom badges in your configuration:
+<Paragraph i18n="points">
+  <en>
+    Points are configured in `gamification.points.*` and rolled into the public profile score. This makes the score reusable by badges, leaderboards, or any future plugin that needs a stable reputation signal.
+  </en>
+  <es>
+    Los puntos se configuran en `gamification.points.*` y se acumulan en el puntaje público del perfil. Esto hace que el score sea reutilizable por badges, leaderboards o cualquier plugin futuro que necesite una señal estable de reputación.
+  </es>
+</Paragraph>
 
 ```typescript
-// learnmd.config.ts
-gamification: {
-  badges: [
-    { id: 'first-lesson', name: 'First Steps', icon: '🚀' },
-    { id: 'quiz-master', name: 'Quiz Master', icon: '🏆' }
-  ]
-}
+export default defineConfig({
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+      quizPassed: 10,
+      quizPerfectScore: 25,
+    },
+  },
+  plugins: [
+    new BadgesPlugin([
+      {
+        id: 'score-500',
+        name: { en: 'Momentum', es: 'Impulso' },
+        description: { en: 'Reach 500 global points.', es: 'Alcanza 500 puntos globales.' },
+        icon: '??',
+        criteria: { type: 'global_score', score: 500 },
+      },
+    ]),
+  ],
+});
 ```
 
-### 3. Streaks
-
-The gamification engine also tracks daily login streaks to encourage consistent learning.
-
-## Customizing Gamification
-
-You can customize the point system and even create your own gamification rules by building a plugin that interacts with the `GamificationManager`.
-
 <Callout type="success">
-  Gamification can significantly increase student engagement and motivation!
+  <Paragraph i18n="success">
+    <en>
+      Keeping score and badges separate makes the system easier to extend: one plugin calculates progress, another one rewards milestones.
+    </en>
+    <es>
+      Mantener separados el score y los badges hace que el sistema sea más fácil de extender: un plugin calcula progreso y otro recompensa hitos.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Where are custom badges defined in a LearnMD project?"
-  options={[
-    { label: 'In the learnmd.json file of each course', isCorrect: false },
-    { label: 'In the learnmd.config.ts file', isCorrect: true },
-    { label: 'In the individual MDX files', isCorrect: false },
-    { label: 'In the theme files', isCorrect: false }
+<Quiz
+  id="gamification-badges-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'Which plugin should own badge rules in LearnMD?',
+        es: '¿Qué plugin debe ser dueño de las reglas de badges en LearnMD?',
+      },
+      options: [
+        { id: 'a', label: { en: '@learnmd/plugin-badges', es: '@learnmd/plugin-badges' } },
+        { id: 'b', label: { en: 'The PDF plugin', es: 'El plugin PDF' } },
+        { id: 'c', label: { en: 'The router manager', es: 'El router manager' } },
+      ],
+      correctAnswer: 'a',
+      explanation: {
+        en: 'Badge criteria belong in `@learnmd/plugin-badges`, while the built-in gamification plugin owns score and achievements.',
+        es: 'Los criterios de badges pertenecen a `@learnmd/plugin-badges`, mientras que el plugin integrado de gamificación es dueño del score y los logros.',
+      },
+    },
   ]}
-  explanation="Custom badges are globally defined in the project's central `learnmd.config.ts` file."
 />
+

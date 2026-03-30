@@ -1,40 +1,65 @@
-# CLI Scaffolding
+﻿<Title i18n="title">
+  <en>CLI Scaffolding</en>
+  <es>Scaffolding con CLI</es>
+</Title>
 
-The LearnMD CLI is your best friend when it comes to building courses. It automates tedious tasks and ensures your project stays consistent.
+<Paragraph i18n="intro">
+  <en>
+    The LearnMD CLI is the main entry point for new projects. It creates the app shell, the initial course structure, bilingual MDX starter files, and the configuration aligned with the current runtime.
+  </en>
+  <es>
+    El CLI de LearnMD es la puerta de entrada principal para los nuevos proyectos. Crea el shell de la app, la estructura inicial de cursos, archivos MDX bilingües de arranque y la configuración alineada con el runtime actual.
+  </es>
+</Paragraph>
 
-## Command Overview
+## Common Commands / Comandos comunes
 
-The CLI provides a set of commands for common tasks:
-
--   `init`: Create a new LearnMD project from a template.
--   `add lesson`: Scaffold a new lesson in an existing course.
--   `sync`: Synchronize MDX file metadata with the JSON configuration.
--   `dev`: Start the local development server.
--   `build`: Prepare your documentation for production.
-
-## Creating a Lesson
-
-To add a new lesson named "My New Lesson" to the "Building Courses" course:
+<Paragraph i18n="commands">
+  <en>
+    Use `learnmd create` to scaffold a project, `learnmd add course` and `learnmd add lesson` to expand content, and `learnmd sync` when you need to reconcile MDX files with `learnmd.json`.
+  </en>
+  <es>
+    Usa `learnmd create` para generar un proyecto, `learnmd add course` y `learnmd add lesson` para ampliar contenido, y `learnmd sync` cuando necesites reconciliar archivos MDX con `learnmd.json`.
+  </es>
+</Paragraph>
 
 ```bash
 npx learnmd add lesson "My New Lesson" --course building-courses
 ```
 
-This command will:
-1.  Generate a new MDX file with the slug `my-new-lesson.mdx`.
-2.  Update the `courses/building-courses/learnmd.json` file to include the new lesson.
-
 <Callout type="info">
-  You can also manually create the MDX files and then run `learnmd sync` to update the configuration.
+  <Paragraph i18n="sync-note">
+    <en>
+      You can also create MDX files manually and then run `learnmd sync` to rebuild the course metadata.
+    </en>
+    <es>
+      También puedes crear archivos MDX manualmente y luego ejecutar `learnmd sync` para reconstruir los metadatos del curso.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Which CLI command is used to update the learnmd.json configuration based on current MDX files?"
-  options={[
-    { label: 'init', isCorrect: false },
-    { label: 'add lesson', isCorrect: false },
-    { label: 'sync', isCorrect: true },
-    { label: 'dev', isCorrect: false }
+<Quiz
+  id="cli-scaffolding-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'Which command updates `learnmd.json` from the current MDX files?',
+        es: '¿Qué comando actualiza `learnmd.json` a partir de los archivos MDX actuales?',
+      },
+      options: [
+        { id: 'a', label: { en: 'init', es: 'init' } },
+        { id: 'b', label: { en: 'add lesson', es: 'add lesson' } },
+        { id: 'c', label: { en: 'sync', es: 'sync' } },
+        { id: 'd', label: { en: 'dev', es: 'dev' } },
+      ],
+      correctAnswer: 'c',
+      explanation: {
+        en: 'The `sync` command makes sure the JSON course structure matches the MDX files present in the course.',
+        es: 'El comando `sync` asegura que la estructura JSON del curso coincida con los archivos MDX presentes en el curso.',
+      },
+    },
   ]}
-  explanation="The `sync` command ensures the JSON configuration accurately reflects the MDX files present in each course."
 />
+

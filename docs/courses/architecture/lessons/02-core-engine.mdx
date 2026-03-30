@@ -1,57 +1,73 @@
-# Core Engine
+﻿<Title i18n="title">
+  <en>Core Engine</en>
+  <es>Motor central</es>
+</Title>
 
-The `@learnmd/core` package is the heart of the framework. It handles the logic for parsing, routing, and state management.
+<Paragraph i18n="intro">
+  <en>
+    `@learnmd/core` is the runtime heart of the framework. It exposes the provider, routing helpers, storage, parsing utilities, gamification orchestration, and the plugin registry.
+  </en>
+  <es>
+    `@learnmd/core` es el corazón del runtime del framework. Expone el provider, helpers de routing, storage, utilidades de parsing, orquestación de gamificación y el registro de plugins.
+  </es>
+</Paragraph>
 
-## Key Components
+## Main Responsibilities / Responsabilidades principales
 
-### 1. Parser
-
-The Parser takes your MDX files and extracts:
--   **Frontmatter**: Metadata like title, description, and tags.
--   **Content**: The rendered React components and markdown.
--   **Structure**: Identifying headings for the table of contents.
-
-### 2. Router Manager
-
-Manages the mapping between URLs and your content:
--   `/courses/:courseId`: Course overview.
--   `/courses/:courseId/lessons/:lessonSlug`: Individual lessons.
--   `/:pagePath`: Custom pages.
-
-### 3. LearnMD Provider
-
-A React Context provider that makes the global state available to your entire application:
--   `progress`: Current user progress in all courses.
--   `gamification`: Points, badges, and streaks.
--   `i18n`: Translations and language settings.
-
-## Extensibility via Hooks
-
-The core engine provides a robust hook system that plugins can use to tap into the application lifecycle:
+<Paragraph i18n="responsibilities">
+  <en>
+    The core package parses MDX metadata, initializes the shared app state, persists progress, and coordinates hooks between official and custom plugins.
+  </en>
+  <es>
+    El paquete core parsea metadatos MDX, inicializa el estado compartido de la app, persiste el progreso y coordina hooks entre plugins oficiales y personalizados.
+  </es>
+</Paragraph>
 
 ```typescript
-// Example plugin hook
-export const MyPlugin = {
-  name: 'my-plugin',
-  setup: (ctx) => {
-    ctx.registerHook('lesson:complete', async (data) => {
-      console.log(`Lesson ${data.lessonSlug} completed!`);
-    });
-  }
-};
+import { createLearnMD } from '@learnmd/core';
+
+const app = createLearnMD({
+  defaultLanguage: 'en',
+  gamification: {
+    points: {
+      lessonCompletion: 100,
+    },
+  },
+});
 ```
 
 <Callout type="warning">
-  Avoid modifying the core engine directly unless you are building a feature that benefits all users. Use plugins instead!
+  <Paragraph i18n="warning">
+    <en>
+      Prefer extending the runtime through plugins before modifying the core directly. Core changes should benefit the framework as a whole.
+    </en>
+    <es>
+      Prefiere extender el runtime mediante plugins antes de modificar el core directamente. Los cambios en el core deben beneficiar al framework completo.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="What is the primary responsibility of the LearnMD Provider?"
-  options={[
-    { label: 'To parse MDX files', isCorrect: false },
-    { label: 'To manage URL routing', isCorrect: false },
-    { label: 'To provide global state (progress, gamification, etc.) via Context', isCorrect: true },
-    { label: 'To generate PDF certificates', isCorrect: false }
+<Quiz
+  id="core-engine-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'What is one responsibility of `@learnmd/core`?',
+        es: '¿Cuál es una responsabilidad de `@learnmd/core`?',
+      },
+      options: [
+        { id: 'a', label: { en: 'Generate PDF certificates by itself', es: 'Generar certificados PDF por sí solo' } },
+        { id: 'b', label: { en: 'Coordinate state, storage, routing, and plugins', es: 'Coordinar estado, storage, routing y plugins' } },
+        { id: 'c', label: { en: 'Replace the theme package', es: 'Reemplazar el paquete del theme' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'The core runtime owns shared orchestration such as storage, routing, context, and plugin lifecycle.',
+        es: 'El runtime core es dueño de la orquestación compartida como storage, routing, contexto y ciclo de vida de plugins.',
+      },
+    },
   ]}
-  explanation="The LearnMD Provider uses React Context to share essential state across the application."
 />
+

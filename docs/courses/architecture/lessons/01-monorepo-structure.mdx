@@ -1,43 +1,71 @@
-# Monorepo Structure
+﻿<Title i18n="title">
+  <en>Monorepo Structure</en>
+  <es>Estructura del monorepo</es>
+</Title>
 
-LearnMD uses a monorepo structure to manage its various packages and examples efficiently. This is powered by [Turborepo](https://turbo.build/).
+<Paragraph i18n="intro">
+  <en>
+    LearnMD uses a monorepo to keep packages, docs, plugins, and examples aligned. Turborepo coordinates builds and tests so changes in the core, theme, and CLI can evolve together.
+  </en>
+  <es>
+    LearnMD usa un monorepo para mantener alineados paquetes, documentación, plugins y ejemplos. Turborepo coordina builds y pruebas para que el core, el theme y el CLI evolucionen juntos.
+  </es>
+</Paragraph>
 
-## Benefits of Monorepo
+## Benefits / Beneficios
 
-- **Code Sharing**: Share types, components, and utilities across packages easily.
-- **Consistent Tooling**: Unified linting, testing, and building configurations.
-- **Simplified Dependency Management**: All packages use the same version of shared dependencies.
+<Paragraph i18n="benefits">
+  <en>
+    A monorepo makes code sharing, dependency management, and release coordination much easier. Shared types and components move together instead of drifting across separate repositories.
+  </en>
+  <es>
+    Un monorepo hace mucho más fácil compartir código, manejar dependencias y coordinar releases. Los tipos y componentes compartidos avanzan juntos en lugar de desviarse entre repositorios separados.
+  </es>
+</Paragraph>
 
-## Key Directories
+## Key Directories / Directorios clave
 
-### `packages/`
-
-This is where the core logic of LearnMD lives:
-
--   `core/`: The foundational engine.
--   `cli/`: The developer command-line interface.
--   `default-theme/`: The standard look and feel.
--   `plugins/`: Official extensions.
-
-### `docs/`
-
-The site you are currently viewing! It's a LearnMD project itself, demonstrating how to use the framework for documentation.
-
-### `examples/`
-
-Ready-to-use templates and demonstration projects to help you get started quickly.
+<Paragraph i18n="directories">
+  <en>
+    `packages/` contains the framework packages, `docs/` is a real LearnMD site used as documentation, and `examples/` contains showcase projects generated from the CLI and then customized with content.
+  </en>
+  <es>
+    `packages/` contiene los paquetes del framework, `docs/` es un sitio real de LearnMD usado como documentación y `examples/` contiene proyectos de demostración generados desde el CLI y luego personalizados con contenido.
+  </es>
+</Paragraph>
 
 <Callout type="info">
-  Interested in contributing? Check out the `CONTRIBUTING.md` file in the root directory.
+  <Paragraph i18n="contributing">
+    <en>
+      If you want to contribute to LearnMD itself, start by reading the workspace structure before changing any package in isolation.
+    </en>
+    <es>
+      Si quieres contribuir a LearnMD, empieza entendiendo la estructura del workspace antes de modificar un paquete de forma aislada.
+    </es>
+  </Paragraph>
 </Callout>
 
-<Quiz 
-  question="Which tool does LearnMD use to manage its monorepo?"
-  options={[
-    { label: 'Lerna', isCorrect: false },
-    { label: 'Turborepo', isCorrect: true },
-    { label: 'Nx', isCorrect: false },
-    { label: 'Bazel', isCorrect: false }
+<Quiz
+  id="monorepo-structure-quiz"
+  questions={[
+    {
+      id: 'q1',
+      type: 'multiple-choice',
+      question: {
+        en: 'Which tool coordinates builds and tests across the LearnMD monorepo?',
+        es: '¿Qué herramienta coordina los builds y tests en el monorepo de LearnMD?',
+      },
+      options: [
+        { id: 'a', label: { en: 'Lerna', es: 'Lerna' } },
+        { id: 'b', label: { en: 'Turborepo', es: 'Turborepo' } },
+        { id: 'c', label: { en: 'Bazel', es: 'Bazel' } },
+      ],
+      correctAnswer: 'b',
+      explanation: {
+        en: 'LearnMD uses Turborepo to orchestrate tasks across packages and apps.',
+        es: 'LearnMD usa Turborepo para orquestar tareas entre paquetes y aplicaciones.',
+      },
+    },
   ]}
-  explanation="LearnMD leverages Turborepo for efficient task execution and monorepo management."
 />
+

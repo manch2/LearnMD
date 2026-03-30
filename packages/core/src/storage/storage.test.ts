@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { LocalStorageAdapter, StorageManager } from './index';
-import type { UserProfile } from '../types';
+import { createDefaultUserProfile, LocalStorageAdapter, StorageManager } from './index';
+import type { CourseProgress, UserProfile } from '../types';
 
 describe('LocalStorageAdapter', () => {
   let adapter: LocalStorageAdapter;
+  let store: Record<string, string>;
 
   beforeEach(() => {
     adapter = new LocalStorageAdapter('test');
-    
-    const store: Record<string, string> = {};
+    store = {};
     const mock = {
       getItem: (key: string) => store[key] || null,
       setItem: (key: string, value: string) => { 
@@ -55,20 +55,56 @@ describe('LocalStorageAdapter', () => {
     expect(await adapter.get('a')).toBeNull();
     expect(localStorage.getItem('other')).toBe('val');
   });
+
+  it('should list only keys that match the prefix', async () => {
+    await adapter.set('first', 1);
+    await adapter.set('second', 2);
+    localStorage.setItem('other:key', 'noop');
+
+    await expect(adapter.keys()).resolves.toEqual(['first', 'second']);
+  });
+
+  it('should return null when stored JSON is invalid', async () => {
+    store['test:broken'] = '{invalid';
+
+    await expect(adapter.get('broken')).resolves.toBeNull();
+  });
 });
 
 describe('StorageManager', () => {
   let manager: StorageManager;
+  let store: Record<string, string>;
+
+  const createProgress = (courseId: string, overrides: Partial<CourseProgress> = {}): CourseProgress => ({
+    courseId,
+    lessons: {},
+    completedLessons: [],
+    totalPoints: 0,
+    badges: [],
+    startedAt: 1,
+    lastAccessedAt: 1,
+    ...overrides,
+  });
 
   beforeEach(() => {
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-      clear: vi.fn(),
-      length: 0,
-      key: vi.fn(),
-    });
+    store = {};
+    const localStorageMock = {
+      getItem: vi.fn((key: string) => store[key] ?? null),
+      setItem: vi.fn((key: string, value: string) => {
+        store[key] = value;
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete store[key];
+      }),
+      clear: vi.fn(() => {
+        Object.keys(store).forEach((key) => delete store[key]);
+      }),
+      get length() {
+        return Object.keys(store).length;
+      },
+      key: vi.fn((index: number) => Object.keys(store)[index] ?? null),
+    };
+    vi.stubGlobal('localStorage', localStorageMock);
     manager = new StorageManager();
   });
 
@@ -115,15 +151,82 @@ describe('StorageManager', () => {
   it('should update lesson progress and total points', async () => {
     const courseId = 'course-1';
     const lessonSlug = 'lesson-1';
-    
-    // Initial state: no progress
-    vi.mocked(localStorage.getItem).mockReturnValue(null);
-    
+
     await manager.updateLessonProgress(courseId, lessonSlug, { completed: true, points: 10 });
-    
+
     expect(localStorage.setItem).toHaveBeenCalledWith(
-        expect.stringContaining(`progress:${courseId}`),
-        expect.stringContaining('"totalPoints":10')
+      expect.stringContaining(`progress:${courseId}`),
+      expect.stringContaining('"totalPoints":10')
     );
+  });
+
+  it('tracks time spent and exposes lesson progress', async () => {
+    await manager.updateLessonProgress('course-1', 'lesson-1', { timeSpent: 15 });
+    await manager.trackTimeSpent('course-1', 'lesson-1', 30);
+
+    const lessonProgress = await manager.getLessonProgress('course-1', 'lesson-1');
+    expect(lessonProgress?.timeSpent).toBe(45);
+    expect(lessonProgress?.completed).toBe(false);
+  });
+
+  it('completes lessons and avoids duplicating completed entries', async () => {
+    await manager.completeLesson('course-1', 'lesson-1', 90, true, 25);
+    await manager.updateLessonProgress('course-1', 'lesson-1', { completed: true });
+
+    const courseProgress = await manager.getCourseProgress('course-1');
+    expect(courseProgress?.completedLessons).toEqual(['lesson-1']);
+    expect(courseProgress?.lessons['lesson-1']?.quizPassed).toBe(true);
+    expect(courseProgress?.totalPoints).toBe(25);
+  });
+
+  it('lists, resets, clears, exports, and imports course progress', async () => {
+    await manager.saveUserProfile(createDefaultUserProfile({ id: 'user-2', globalScore: 77 }));
+    await manager.saveCourseProgress(
+      createProgress('course-a', {
+        lessons: {
+          intro: {
+            lessonSlug: 'intro',
+            completed: true,
+            completedAt: 10,
+            timeSpent: 20,
+            lastAccessedAt: 10,
+          },
+        },
+        completedLessons: ['intro'],
+        totalPoints: 20,
+      })
+    );
+    await manager.saveCourseProgress(createProgress('course-b', { totalPoints: 12 }));
+
+    const allProgress = await manager.getAllCourseProgress();
+    expect(Object.keys(allProgress)).toEqual(['course-a', 'course-b']);
+
+    const exported = await manager.exportData();
+    expect(exported).toEqual(
+      expect.objectContaining({
+        userProfile: expect.objectContaining({ id: 'user-2', globalScore: 77 }),
+        courseProgress: expect.objectContaining({
+          'course-a': expect.objectContaining({ totalPoints: 20 }),
+          'course-b': expect.objectContaining({ totalPoints: 12 }),
+        }),
+      })
+    );
+
+    await manager.resetCourseProgress('course-b');
+    expect(await manager.getCourseProgress('course-b')).toBeNull();
+
+    await manager.clearAllProgress();
+    expect(await manager.getAllCourseProgress()).toEqual({});
+
+    await manager.importData({
+      userProfile: createDefaultUserProfile({ id: 'user-imported', totalPoints: 99 }),
+      courseProgress: {
+        imported: createProgress('ignored', { totalPoints: 33 }),
+      },
+    });
+
+    expect((await manager.getUserProfile())?.id).toBe('user-imported');
+    expect((await manager.getCourseProgress('imported'))?.courseId).toBe('imported');
+    expect((await manager.getCourseProgress('imported'))?.totalPoints).toBe(33);
   });
 });

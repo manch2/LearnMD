@@ -7,7 +7,7 @@ vi.mock('fs/promises', () => {
   const mockFs = {
     mkdir: vi.fn().mockResolvedValue(undefined),
     writeFile: vi.fn().mockResolvedValue(undefined),
-    readFile: vi.fn().mockResolvedValue(JSON.stringify({ name: 'test-project' })),
+    readFile: vi.fn().mockResolvedValue(JSON.stringify({ name: 'learnmd', workspaces: ['packages/*'] })),
   };
   return {
     ...mockFs,
@@ -42,6 +42,32 @@ describe('createCommand', () => {
     expect(writeFile).toHaveBeenCalledWith(join(projectName, 'src/App.tsx'), expect.any(String));
     expect(writeFile).toHaveBeenCalledWith(join(projectName, 'learnmd.config.ts'), expect.any(String));
     expect(writeFile).toHaveBeenCalledWith(join(projectName, 'courses/demo-course/learnmd.json'), expect.any(String));
+
+    const appFileCall = vi.mocked(writeFile).mock.calls.find(
+      ([path]) => path === join(projectName, 'src/App.tsx')
+    );
+    expect(appFileCall?.[1]).toContain('ContentPage');
+    expect(appFileCall?.[1]).toContain('BrowserRouter basename={import.meta.env.BASE_URL}');
+    expect(appFileCall?.[1]).toContain('<MDXProvider components={components}>');
+
+    const cssFileCall = vi.mocked(writeFile).mock.calls.find(
+      ([path]) => path === join(projectName, 'src/index.css')
+    );
+    expect(cssFileCall?.[1]).toContain('html,');
+    expect(cssFileCall?.[1]).not.toContain('color-scheme: light dark;');
+
+    const configFileCall = vi.mocked(writeFile).mock.calls.find(
+      ([path]) => path === join(projectName, 'learnmd.config.ts')
+    );
+    expect(configFileCall?.[1]).toContain('contentMaxWidth');
+    expect(configFileCall?.[1]).toContain('lessonCompletion: 100');
+    expect(configFileCall?.[1]).not.toContain('pointsPerLesson');
+
+    const packageJsonCall = vi.mocked(writeFile).mock.calls.find(
+      ([path]) => path === join(projectName, 'package.json')
+    );
+    expect(packageJsonCall?.[1]).toContain('"@learnmd/core": "workspace:*"');
+    expect(packageJsonCall?.[1]).toContain('"@learnmd/default-theme": "workspace:*"');
   });
 
   it('should handle errors during project creation', async () => {

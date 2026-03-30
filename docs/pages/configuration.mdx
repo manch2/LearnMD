@@ -1,22 +1,22 @@
----
+﻿---
 title: 'Configuration'
 ---
 
 <Title i18n="title">
   <en>Configuration Reference</en>
-  <es>Referencia de Configuracion</es>
+  <es>Referencia de Configuración</es>
 </Title>
 
 <Paragraph i18n="intro">
   <en>
-    Every LearnMD project is configured through `learnmd.config.ts`. In beta.3 the runtime config, theme config, gamification config, and plugin registration are aligned with the real behavior of the framework.
+    Every LearnMD project is configured through `learnmd.config.ts`. In `0.0.4-beta.1`, the public configuration matches the runtime behavior for theme, gamification, plugins, and custom pages.
   </en>
   <es>
-    Cada proyecto LearnMD se configura mediante `learnmd.config.ts`. En beta.3 la configuracion de runtime, theme, gamification y plugins ya coincide con el comportamiento real del framework.
+    Cada proyecto LearnMD se configura mediante `learnmd.config.ts`. En `0.0.4-beta.1`, la configuración pública coincide con el comportamiento real del runtime para theme, gamificación, plugins y páginas personalizadas.
   </es>
 </Paragraph>
 
-## Basic Example
+## Basic Example / Ejemplo base
 
 ```typescript
 import { defineConfig } from '@learnmd/core';
@@ -67,9 +67,9 @@ export default defineConfig({
     new BadgesPlugin([
       {
         id: 'global-500',
-        name: 'XP 500',
-        description: 'Reach a global score of 500.',
-        icon: '🏆',
+        name: { en: 'XP 500', es: 'XP 500' },
+        description: { en: 'Reach a global score of 500.', es: 'Alcanza un puntaje global de 500.' },
+        icon: '??',
         criteria: { type: 'global_score', score: 500 },
       },
     ]),
@@ -78,46 +78,38 @@ export default defineConfig({
 });
 ```
 
-## Root Options
+## Root Options / Opciones raíz
 
-| Option | Type | Notes |
-|--------|------|-------|
-| `title` | `string` | Brand title used by the app shell |
-| `description` | `string` | Project description |
-| `defaultLanguage` | `string` | Initial language |
-| `availableLanguages` | `string[]` | Supported languages |
-| `basePath` | `string` | Deployment base path |
-| `storagePrefix` | `string` | Prefix for LearnMD storage |
-| `enableAnalytics` | `boolean` | Reserved analytics flag |
-| `theme` | `ThemeConfig` | Visual customization |
-| `gamification` | `false \| GamificationConfig` | Global score and achievement rules |
-| `navigation` | `NavigationItem[]` | Header links |
-| `customPages` | `CustomPage[]` | Static MDX routes |
-| `plugins` | `Plugin[]` | Registered plugins |
+<Paragraph i18n="root-options">
+  <en>
+    The root config controls project identity, languages, theming, plugins, and static routes. The most important top-level keys are `title`, `description`, `defaultLanguage`, `availableLanguages`, `theme`, `gamification`, `navigation`, `customPages`, and `plugins`.
+  </en>
+  <es>
+    La configuración raíz controla la identidad del proyecto, los idiomas, el theme, los plugins y las rutas estáticas. Las claves principales son `title`, `description`, `defaultLanguage`, `availableLanguages`, `theme`, `gamification`, `navigation`, `customPages` y `plugins`.
+  </es>
+</Paragraph>
 
 <Callout type="info">
-  `enableGamification` is no longer the practical switch. In beta.3 the runtime uses `gamification: false` to disable the built-in gamification plugin.
+  <Paragraph i18n="gamification-switch">
+    <en>
+      `enableGamification` is no longer the practical switch. Use `gamification: false` when you want to disable the built-in score plugin completely.
+    </en>
+    <es>
+      `enableGamification` ya no es el interruptor práctico. Usa `gamification: false` cuando quieras desactivar por completo el plugin integrado de puntaje.
+    </es>
+  </Paragraph>
 </Callout>
 
-## Theme Configuration
+## Theme Configuration / Configuración del theme
 
-The theme now exposes the options that are actually consumed by the default theme:
-
-| Option | Type |
-|--------|------|
-| `primaryColor` | `string` |
-| `secondaryColor` | `string` |
-| `backgroundColor` | `string` |
-| `surfaceColor` | `string` |
-| `textColor` | `string` |
-| `mutedTextColor` | `string` |
-| `borderColor` | `string` |
-| `fontFamily` | `string` |
-| `headingFontFamily` | `string` |
-| `borderRadius` | `number \| string` |
-| `contentMaxWidth` | `number \| string` |
-| `logoText` | `string` |
-| `darkMode` | `boolean \| object` |
+<Paragraph i18n="theme-config">
+  <en>
+    `ThemeConfig` now exposes real options consumed by the default theme, including brand colors, typography, border radius, and `contentMaxWidth` for the shared content container used by home and custom pages.
+  </en>
+  <es>
+    `ThemeConfig` ahora expone opciones reales consumidas por el theme por defecto, incluyendo colores de marca, tipografía, radio de bordes y `contentMaxWidth` para el contenedor compartido que usan el home y las páginas personalizadas.
+  </es>
+</Paragraph>
 
 ```typescript
 theme: {
@@ -126,6 +118,7 @@ theme: {
   fontFamily: '"Inter", system-ui, sans-serif',
   headingFontFamily: '"Space Grotesk", "Inter", system-ui, sans-serif',
   contentMaxWidth: '72rem',
+  logoText: 'LearnMD Docs',
   darkMode: {
     enabled: true,
     backgroundColor: '#0f172a',
@@ -136,9 +129,16 @@ theme: {
 }
 ```
 
-## Gamification Configuration
+## Gamification / Gamificación
 
-Gamification now controls the global public score and achievements. Badges remain a separate plugin.
+<Paragraph i18n="gamification">
+  <en>
+    Gamification owns the public `globalScore`, points, achievements, and streaks. Badge rules stay in `@learnmd/plugin-badges`, so the score system and the badge system remain modular.
+  </en>
+  <es>
+    La gamificación es dueña del `globalScore` público, los puntos, los logros y las rachas. Las reglas de insignias se mantienen en `@learnmd/plugin-badges`, para que el sistema de puntaje y el de badges sigan siendo modulares.
+  </es>
+</Paragraph>
 
 ```typescript
 gamification: {
@@ -157,24 +157,29 @@ gamification: {
 }
 ```
 
-To disable the built-in gamification plugin completely:
-
 ```typescript
 gamification: false
 ```
 
-## Plugins
+## Plugins / Plugins
 
-Plugins are the extension mechanism for behavior and UI. If a plugin is not registered in `plugins`, its UI must not appear in the application.
+<Paragraph i18n="plugins">
+  <en>
+    Plugins extend behavior and UI. If a plugin is not registered inside `plugins`, its actions and interface should not appear in the application.
+  </en>
+  <es>
+    Los plugins extienden el comportamiento y la UI. Si un plugin no está registrado dentro de `plugins`, sus acciones y su interfaz no deben aparecer en la aplicación.
+  </es>
+</Paragraph>
 
 ```typescript
 plugins: [
   new BadgesPlugin([
     {
       id: 'score-1000',
-      name: 'XP 1000',
-      description: 'Reach a global score of 1000.',
-      icon: '🚀',
+      name: { en: 'XP 1000', es: 'XP 1000' },
+      description: { en: 'Reach a global score of 1000.', es: 'Alcanza un puntaje global de 1000.' },
+      icon: '??',
       criteria: { type: 'global_score', score: 1000 },
     },
   ]),
@@ -182,9 +187,16 @@ plugins: [
 ]
 ```
 
-## Custom Pages
+## Custom Pages / Páginas personalizadas
 
-`customPages` maps app routes to MDX files. In beta.3 those pages share the same content container as the home content, so spacing and readable width stay consistent.
+<Paragraph i18n="custom-pages">
+  <en>
+    `customPages` maps application routes to MDX files. In `0.0.4-beta.1`, those pages use the same content wrapper as the home page, so width and spacing stay aligned.
+  </en>
+  <es>
+    `customPages` conecta rutas de la aplicación con archivos MDX. En `0.0.4-beta.1`, esas páginas usan el mismo contenedor de contenido que el home, así que el ancho y el espaciado se mantienen alineados.
+  </es>
+</Paragraph>
 
 ```typescript
 customPages: [
@@ -193,9 +205,14 @@ customPages: [
 ]
 ```
 
-## Migration Notes for Beta.3
+## Migration Notes / Notas de migración
 
-1. Replace old `pointsPerLesson` and `pointsPerQuiz` with `gamification.points.lessonCompletion` and `gamification.points.quizPassed`.
-2. Use `gamification: false` instead of `enableGamification: false`.
-3. Keep badges in `@learnmd/plugin-badges`; the core gamification plugin owns score and achievements, not badge criteria.
-4. Register `PDFPlugin` explicitly if you want certificate actions in the UI.
+<Paragraph i18n="migration">
+  <en>
+    Replace `pointsPerLesson` and `pointsPerQuiz` with `gamification.points.*`, use `gamification: false` instead of `enableGamification: false`, keep badges in `@learnmd/plugin-badges`, and register `PDFPlugin` explicitly if you want certificate actions in the UI.
+  </en>
+  <es>
+    Reemplaza `pointsPerLesson` y `pointsPerQuiz` por `gamification.points.*`, usa `gamification: false` en lugar de `enableGamification: false`, mantén las insignias en `@learnmd/plugin-badges` y registra `PDFPlugin` explícitamente si quieres acciones de certificados en la UI.
+  </es>
+</Paragraph>
+
