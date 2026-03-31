@@ -313,7 +313,7 @@ describe('PDFPlugin', () => {
 
     expect(createRoot).toHaveBeenCalledWith(container);
     expect(renderMock).toHaveBeenCalled();
-    expect(html2canvas).toHaveBeenCalledWith(container, { scale: 2 });
+    expect(html2canvas).toHaveBeenCalledWith(container, { scale: 2, useCORS: true });
     expect(addImage).toHaveBeenCalled();
     expect(unmountMock).toHaveBeenCalled();
     expect(removeChild).toHaveBeenCalledWith(container);
