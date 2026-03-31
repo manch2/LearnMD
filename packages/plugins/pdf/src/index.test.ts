@@ -224,14 +224,26 @@ describe('PDFPlugin', () => {
     });
   });
 
-  it('generates the default PDF flow in the browser environment', async () => {
+  it('generates the default PDF flow resolving to classic template', async () => {
+    const renderMock = vi.fn();
+    const unmountMock = vi.fn();
+    vi.mocked(createRoot).mockReturnValue({
+      render: renderMock,
+      unmount: unmountMock,
+    } as unknown as ReturnType<typeof createRoot>);
+    
+    vi.mocked(html2canvas).mockResolvedValue({
+      toDataURL: vi.fn(() => 'data:image/png;base64,test'),
+    } as unknown as HTMLCanvasElement);
+
+    const appendChild = vi.fn();
+    const removeChild = vi.fn();
+    const container = { style: {} };
+
     vi.stubGlobal('window', {});
     vi.stubGlobal('document', {
-      createElement: vi.fn(),
-      body: {
-        appendChild: vi.fn(),
-        removeChild: vi.fn(),
-      },
+      createElement: vi.fn(() => container),
+      body: { appendChild, removeChild },
     });
 
     const plugin = new PDFPlugin();
@@ -250,10 +262,11 @@ describe('PDFPlugin', () => {
 
     await plugin.generateCertificate(profile, { courseTitle: 'Systems Design' });
 
+    expect(createRoot).toHaveBeenCalledWith(container);
+    expect(renderMock).toHaveBeenCalled();
+    expect(html2canvas).toHaveBeenCalled();
     expect(save).toHaveBeenCalled();
-    expect(text).toHaveBeenCalled();
   });
-
   it('renders the React template flow before exporting the PDF', async () => {
     const appendChild = vi.fn();
     const removeChild = vi.fn();
@@ -281,7 +294,8 @@ describe('PDFPlugin', () => {
       unmount: unmountMock,
     } as unknown as ReturnType<typeof createRoot>);
 
-    const plugin = new PDFPlugin({ template: React.createElement('div', null, 'Certificate template') });
+    const CustomTemplate = () => React.createElement('div', null, 'Custom cert');
+    const plugin = new PDFPlugin({ courseTemplates: { 'Systems Design': CustomTemplate }});
     const profile: UserProfile = {
       id: 'user-1',
       name: 'Ada Lovelace',

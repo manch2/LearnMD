@@ -4,16 +4,30 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BasePlugin, PluginContext, UserProfile, CourseProgress } from '@learnmd/core';
 
+import { ClassicCertificate } from './templates/ClassicCertificate';
+import { ModernCertificate } from './templates/ModernCertificate';
+
+export interface CertificateTemplateProps {
+  courseTitle: string;
+  studentName: string;
+  completionDate: Date;
+  signature?: string;
+}
+
+export type BuiltInTemplate = 'classic' | 'modern';
+export type TemplateType = BuiltInTemplate | React.ComponentType<CertificateTemplateProps>;
+
 export interface CertificateOptions {
   courseTitle: string;
   completionDate?: Date;
   signature?: string;
-  template?: React.ReactNode;
+  template?: TemplateType;
 }
 
 export interface PDFPluginConfig {
   signature?: string;
-  template?: React.ReactNode;
+  defaultTemplate?: TemplateType;
+  courseTemplates?: Record<string, TemplateType>;
 }
 
 interface ProfileCourseActionProps {
@@ -53,99 +67,58 @@ export class PDFPlugin extends BasePlugin {
       courseTitle,
       completionDate = new Date(),
       signature = options.signature || (this.config as PDFPluginConfig | undefined)?.signature || 'LearnMD Instructors',
-      template = options.template || (this.config as PDFPluginConfig | undefined)?.template,
+      template = options.template,
     } = options;
 
+    const config = this.config as PDFPluginConfig | undefined;
+    
+    // Resolve template
+    let resolvedTemplate: TemplateType = 'classic';
     if (template) {
-      const container = document.createElement('div');
-      container.style.position = 'absolute';
-      container.style.left = '-9999px';
-      container.style.top = '-9999px';
-      container.style.width = '11in';
-      container.style.height = '8.5in';
-      container.style.backgroundColor = 'white';
-      document.body.appendChild(container);
-
-      const root = createRoot(container);
-      root.render(React.createElement(React.Fragment, null, template));
-
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      try {
-        const canvas = await html2canvas(container, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        const doc = new jsPDF({
-          orientation: 'landscape',
-          unit: 'in',
-          format: 'letter'
-        });
-        doc.addImage(imgData, 'PNG', 0, 0, 11, 8.5);
-        doc.save(`Certificate-${courseTitle.replace(/\\s+/g, '-')}.pdf`);
-      } finally {
-        root.unmount();
-        document.body.removeChild(container);
-      }
-      return;
+      resolvedTemplate = template;
+    } else if (config?.courseTemplates && config.courseTemplates[options.courseTitle]) {
+      resolvedTemplate = config.courseTemplates[options.courseTitle];
+    } else if (config?.defaultTemplate) {
+      resolvedTemplate = config.defaultTemplate;
     }
 
-    const doc = new jsPDF({
-      orientation: 'landscape',
-      unit: 'in',
-      format: 'letter'
-    });
+    const TemplateComponent = 
+      resolvedTemplate === 'modern' ? ModernCertificate : 
+      resolvedTemplate === 'classic' ? ClassicCertificate : 
+      resolvedTemplate as React.ComponentType<CertificateTemplateProps>;
 
-    // Add border
-    doc.setLineWidth(0.1);
-    doc.rect(0.5, 0.5, 10, 7.5);
-    doc.setLineWidth(0.02);
-    doc.rect(0.6, 0.6, 9.8, 7.3);
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
+    container.style.top = '-9999px';
+    container.style.width = '11in';
+    container.style.height = '8.5in';
+    document.body.appendChild(container);
 
-    // Title
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(40);
-    doc.setTextColor(59, 130, 246); // Blue
-    doc.text('Certificate of Completion', 5.5, 2.5, { align: 'center' });
+    const root = createRoot(container);
+    root.render(React.createElement(TemplateComponent, {
+      courseTitle,
+      studentName: profile.name || 'Student Name',
+      completionDate,
+      signature
+    }));
 
-    // Subtitle
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(20);
-    doc.setTextColor(100, 100, 100);
-    doc.text('This is to certify that', 5.5, 3.5, { align: 'center' });
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Student Name
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(30);
-    doc.setTextColor(0, 0, 0);
-    doc.text(profile.name || 'Student Name', 5.5, 4.5, { align: 'center' });
-
-    // Course Text
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(16);
-    doc.setTextColor(100, 100, 100);
-    doc.text('has successfully completed the course', 5.5, 5.3, { align: 'center' });
-
-    // Course Title
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(16, 185, 129); // Emerald
-    doc.text(courseTitle, 5.5, 6.0, { align: 'center' });
-
-    // Date and Signature labels
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    
-    const dateStr = completionDate.toLocaleDateString();
-    doc.text(dateStr, 2.5, 7.2, { align: 'center' });
-    doc.text('Date', 2.5, 7.5, { align: 'center' });
-    doc.line(1.5, 7.3, 3.5, 7.3);
-
-    doc.text(signature, 8.5, 7.2, { align: 'center' });
-    doc.text('Signature', 8.5, 7.5, { align: 'center' });
-    doc.line(7.5, 7.3, 9.5, 7.3);
-
-    // Save the PDF
-    doc.save(`Certificate-${courseTitle.replace(/\\s+/g, '-')}.pdf`);
+    try {
+      const canvas = await html2canvas(container, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'in',
+        format: 'letter'
+      });
+      doc.addImage(imgData, 'PNG', 0, 0, 11, 8.5);
+      doc.save(`Certificate-${courseTitle.replace(/\\s+/g, '-')}.pdf`);
+    } finally {
+      root.unmount();
+      document.body.removeChild(container);
+    }
   }
 }
 

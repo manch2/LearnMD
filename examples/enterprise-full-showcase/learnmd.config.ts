@@ -1,6 +1,7 @@
 import { defineConfig } from '@learnmd/core';
 import { BadgesPlugin } from '@learnmd/plugin-badges';
 import { PDFPlugin } from '@learnmd/plugin-pdf';
+import { CustomBrandCertificate } from './src/components/certificates/CustomBrandCertificate';
 
 export default defineConfig({
   title: 'LearnMD Enterprise Full Showcase',
@@ -40,6 +41,11 @@ export default defineConfig({
   plugins: [
     new PDFPlugin({
       signature: 'LearnMD Enterprise Team',
+      defaultTemplate: 'classic',
+      courseTemplates: {
+        'express-onboarding': 'classic',
+        'deep-architecture': CustomBrandCertificate
+      }
     }),
     new BadgesPlugin([
       {

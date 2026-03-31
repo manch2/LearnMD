@@ -1,4 +1,4 @@
-﻿<Title i18n="title">
+<Title i18n="title">
   <en>PDF Certificates</en>
   <es>Certificados PDF</es>
 </Title>
@@ -36,22 +36,31 @@ export default defineConfig({
   </es>
 </Paragraph>
 
-## Custom Template / Plantilla personalizada
+## Course Templates & Custom Templates
 
 ```typescript
 import React from 'react';
-import { PDFPlugin } from '@learnmd/plugin-pdf';
+import { PDFPlugin, CertificateTemplateProps } from '@learnmd/plugin-pdf';
 
-const CertificateTemplate = (
-  <div style={{ width: '11in', height: '8.5in', padding: '48px' }}>
+const CustomCertificate: React.FC<CertificateTemplateProps> = ({ 
+  courseTitle, 
+  studentName, 
+  completionDate 
+}) => (
+  <div style={{ width: '11in', height: '8.5in', padding: '48px', backgroundColor: 'white' }}>
     <h1>Certificate of Completion</h1>
-    <p>Issued by LearnMD.</p>
+    <h2>{studentName}</h2>
+    <p>Completed: {courseTitle} on {completionDate.toLocaleDateString()}</p>
   </div>
 );
 
 new PDFPlugin({
   signature: 'Lead Instructor',
-  template: CertificateTemplate,
+  defaultTemplate: 'classic', // Built-in templates: 'classic' or 'modern'
+  courseTemplates: {
+    'onboarding-course': 'modern',
+    'special-course': CustomCertificate
+  }
 });
 ```
 
