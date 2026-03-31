@@ -1,4 +1,5 @@
 import React from 'react';
+import { useI18n } from '../hooks';
 
 export interface BadgeProps {
   id: string;
@@ -41,6 +42,7 @@ export function BadgeCard({
   badge: Omit<BadgeProps, 'size' | 'showTooltip'>;
   earnedAt?: number;
 }) {
+  const { translate } = useI18n();
   const formatDate = (timestamp: number) => {
     return new Date(timestamp).toLocaleDateString();
   };
@@ -57,7 +59,7 @@ export function BadgeCard({
         )}
         {earnedAt && (
           <p className="text-xs text-[rgb(var(--text-muted))] mt-2">
-            Earned on {formatDate(earnedAt)}
+            {translate('gamification.earned_on')} {formatDate(earnedAt)}
           </p>
         )}
       </div>
@@ -105,13 +107,14 @@ export function PointsDisplay({
 }
 
 export function StreakDisplay({ current, longest }: { current: number; longest: number }) {
+  const { translate } = useI18n();
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
         <span className="text-2xl">🔥</span>
         <div>
           <span className="text-2xl font-bold">{current}</span>
-          <p className="text-xs text-[rgb(var(--text-muted))]">Current Streak</p>
+          <p className="text-xs text-[rgb(var(--text-muted))]">{translate('gamification.current_streak')}</p>
         </div>
       </div>
       <div className="h-8 w-px bg-[rgb(var(--border-color))]" />
@@ -119,7 +122,7 @@ export function StreakDisplay({ current, longest }: { current: number; longest: 
         <span className="text-2xl">🏆</span>
         <div>
           <span className="text-xl font-bold">{longest}</span>
-          <p className="text-xs text-[rgb(var(--text-muted))]">Best Streak</p>
+          <p className="text-xs text-[rgb(var(--text-muted))]">{translate('gamification.best_streak')}</p>
         </div>
       </div>
     </div>
@@ -139,10 +142,11 @@ export function GamificationSummary({
   currentStreak: number;
   longestStreak: number;
 }) {
+  const { translate } = useI18n();
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div className="card flex items-center gap-4">
-        <PointsDisplay points={totalPoints} label="Total Points" />
+        <PointsDisplay points={totalPoints} label={translate('gamification.total_points')} />
       </div>
       <div className="card">
         <div className="flex items-center gap-2">
@@ -151,7 +155,7 @@ export function GamificationSummary({
             <span className="text-xl font-bold">
               {badgesEarned}/{totalBadges}
             </span>
-            <p className="text-xs text-[rgb(var(--text-muted))]">Badges Earned</p>
+            <p className="text-xs text-[rgb(var(--text-muted))]">{translate('gamification.badges_earned')}</p>
           </div>
         </div>
       </div>

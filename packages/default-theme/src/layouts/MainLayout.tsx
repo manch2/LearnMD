@@ -37,7 +37,7 @@ export function Header({
   navigation: manualNavigation,
 }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { currentLanguage } = useI18n();
+  const { currentLanguage, translate } = useI18n();
   const { config } = useLearnMD();
 
   const navigation = manualNavigation || config.navigation || [];
@@ -79,7 +79,7 @@ export function Header({
             <Link
               to="/profile"
               className="p-2 rounded-lg flex items-center justify-center hover:bg-[rgb(var(--bg-tertiary))] text-[rgb(var(--text-secondary))] hover:text-[rgb(var(--text-primary))] transition-colors"
-              title="User Profile"
+              title={translate('nav.profile')}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -140,6 +140,7 @@ export function Header({
 function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
+  const { translate } = useI18n();
 
   React.useEffect(() => {
     setMounted(true);
@@ -153,7 +154,7 @@ function ThemeToggle() {
     <button
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className="p-2 rounded-lg hover:bg-[rgb(var(--bg-tertiary))] transition-colors"
-      title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
+      title={`${translate('theme.switch_to')} ${resolvedTheme === 'dark' ? translate('theme.light') : translate('theme.dark')}`}
     >
       {resolvedTheme === 'dark' ? (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -95,7 +95,12 @@ function createScale(base: RGBTuple, mode: 'light' | 'dark'): Record<number, RGB
 
 function setColorScale(root: HTMLElement, prefix: string, color: string | undefined, mode: 'light' | 'dark') {
   const parsed = parseColor(color);
-  if (!parsed) return;
+  if (!parsed) {
+    [50, 100, 200, 300, 400, 500, 600, 700, 800, 900].forEach((shade) => {
+      root.style.removeProperty(`--${prefix}-${shade}`);
+    });
+    return;
+  }
 
   const scale = createScale(parsed, mode);
   Object.entries(scale).forEach(([shade, value]) => {
@@ -202,10 +207,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           )
         )
       );
+    } else {
+      root.style.removeProperty('--bg-primary');
+      root.style.removeProperty('--bg-secondary');
+      root.style.removeProperty('--bg-tertiary');
     }
 
     if (parsedText) {
       root.style.setProperty('--text-primary', toCssRgb(parsedText));
+    } else {
+      root.style.removeProperty('--text-primary');
     }
 
     if (parsedMuted) {
@@ -214,10 +225,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         '--text-muted',
         toCssRgb(mixColor(parsedMuted, isDark ? [255, 255, 255] : [0, 0, 0], isDark ? 0.18 : 0.15))
       );
+    } else {
+      root.style.removeProperty('--text-secondary');
+      root.style.removeProperty('--text-muted');
     }
 
     if (parsedBorder) {
       root.style.setProperty('--border-color', toCssRgb(parsedBorder));
+    } else {
+      root.style.removeProperty('--border-color');
     }
 
     if (themeConfig.fontFamily) {
