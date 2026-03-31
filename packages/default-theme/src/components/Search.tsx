@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useI18n } from '../hooks';
 
 export interface SearchResult {
   lessonSlug: string;
@@ -22,6 +23,7 @@ export function Search({
   placeholder = 'Search...',
   className = '',
 }: SearchProps) {
+  const { translate } = useI18n();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -101,7 +103,7 @@ export function Search({
 
       {isOpen && query && results.length === 0 && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-[rgb(var(--bg-primary))] border border-[rgb(var(--border-color))] rounded-lg shadow-lg p-4 text-center text-[rgb(var(--text-secondary))]">
-          No results found
+          {translate('search.noResults')}
         </div>
       )}
     </div>

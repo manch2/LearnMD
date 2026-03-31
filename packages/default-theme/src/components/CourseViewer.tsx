@@ -176,7 +176,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                       onClick={() => handleNavigate(prevLesson.slug)}
                       className="w-full px-6 py-3 border border-[rgb(var(--border-color))] hover:bg-[rgb(var(--bg-secondary))] text-[rgb(var(--text-primary))] font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
-                      <span>←</span> Previous
+                      <span>←</span> {translate('course.previous')}
                     </button>
                   )}
                 </div>
@@ -187,7 +187,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                       onClick={handleCompleteAndNext}
                       className="w-full px-6 py-3 bg-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-600))] text-white font-bold rounded-lg transition-colors shadow-sm"
                     >
-                      {nextLesson ? 'Mark Complete & Next' : 'Finish Course'}
+                      {nextLesson ? translate('course.mark_complete') : translate('course.finish')}
                     </button>
                   )}
                   {completedLessons.includes(currentSlug) && nextLesson && (
@@ -195,7 +195,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                       onClick={() => handleNavigate(nextLesson.slug)}
                       className="w-full px-6 py-3 bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--border-color))] text-[rgb(var(--text-primary))] font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
                     >
-                      Next <span>→</span>
+                      {translate('course.next')} <span>→</span>
                     </button>
                   )}
                   {completedLessons.includes(currentSlug) && !nextLesson && (
@@ -203,7 +203,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
                       onClick={() => handleNavigate('')}
                       className="w-full px-6 py-3 bg-[rgb(var(--bg-secondary))] hover:bg-[rgb(var(--border-color))] text-[rgb(var(--text-primary))] font-bold rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2"
                     >
-                      Return to Overview <span>→</span>
+                      {translate('course.return_overview')} <span>→</span>
                     </button>
                   )}
                 </div>
@@ -211,7 +211,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
             </>
           ) : (
             <div className="text-center p-8">
-              <p className="text-lg text-[rgb(var(--text-muted))]">Lesson not found.</p>
+              <p className="text-lg text-[rgb(var(--text-muted))]">{translate('course.not_found')}</p>
             </div>
           )}
         </div>
