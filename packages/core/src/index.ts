@@ -100,6 +100,7 @@ export function createLearnMD(config: LearnMDConfig = {}) {
     const ctx = createDefaultPluginContext({} as any, storage, i18n, config as Record<string, unknown>);
     // Bind context hooks to the actual registry so plugins can fire local hooks natively
     ctx.registerHook = (hook, fn) => pluginsRegistry.registerHook(hook, fn);
+    ctx.registerComponent = (name, comp) => pluginsRegistry.registerComponent(name, comp);
     (ctx as any).executeHook = (hook: string, ...args: any[]) => pluginsRegistry.executeHook(hook, ...args);
 
     activePlugins.forEach(p => {

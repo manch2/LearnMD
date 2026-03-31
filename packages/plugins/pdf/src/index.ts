@@ -158,10 +158,11 @@ function PDFProfileCourseAction({
 }: ProfileCourseActionProps & { plugin: PDFPlugin }) {
   const [isGenerating, setIsGenerating] = useState(false);
 
-  if (!profile || !courseId || !progress?.completedAt) {
+  if (!profile || !courseId) {
     return null;
   }
 
+  const isCompleted = !!progress?.completedAt;
   const label = translate?.('profile.download') || 'Download Certificate';
 
   const handleClick = async () => {
@@ -169,7 +170,7 @@ function PDFProfileCourseAction({
     try {
       await plugin.generateCertificate(profile, {
         courseTitle: courseId,
-        completionDate: progress.completedAt ? new Date(progress.completedAt) : undefined,
+        completionDate: progress?.completedAt ? new Date(progress.completedAt) : undefined,
       });
     } finally {
       setIsGenerating(false);
@@ -180,9 +181,14 @@ function PDFProfileCourseAction({
     'button',
     {
       onClick: handleClick,
-      disabled: isGenerating,
+      disabled: isGenerating || !isCompleted,
+      title: !isCompleted ? (translate?.('profile.complete_to_download') || 'Complete the course to download') : undefined,
       className:
-        'text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] hover:bg-[rgb(var(--color-primary-500))] hover:text-white rounded transition-colors disabled:opacity-50',
+        `text-sm px-4 py-1.5 font-medium border border-[rgb(var(--color-primary-500))] text-[rgb(var(--color-primary-500))] rounded transition-colors ${
+          !isCompleted || isGenerating 
+            ? 'opacity-50 cursor-not-allowed' 
+            : 'hover:bg-[rgb(var(--color-primary-500))] hover:text-white'
+        }`
     },
     isGenerating ? 'Generating...' : label
   );
