@@ -177,18 +177,27 @@ export function Quiz({
                     }`}
                 >
                   <p className="text-sm font-semibold tracking-wide uppercase text-slate-500 dark:text-gray-400 mb-2">{translate('quiz.question')} {index + 1}</p>
-                  <p className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-3">{question?.question}</p>
+                  <p className="text-lg font-medium text-slate-900 dark:text-gray-200 mb-3">{question ? getTranslatedString(question.question as unknown as Record<string, string>, currentLanguage) : ''}</p>
                   <p
                     className={`font-semibold ${answer.correct ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}`}
                   >
-                    {translate('quiz.your_answer')}: {answer.selectedAnswer}
+                    {translate('quiz.your_answer')}: {(() => {
+                      const opt = question?.options?.find((o) => o.id === answer.selectedAnswer);
+                      return opt ? getTranslatedString(opt.label as unknown as Record<string, string>, currentLanguage) : answer.selectedAnswer;
+                    })()}
                   </p>
                   {!answer.correct && (
                     <p className="font-semibold text-emerald-700 dark:text-emerald-400 mt-2">
                       {translate('quiz.correct_answer')}:{' '}
-                      {Array.isArray(question?.correctAnswer)
-                        ? question?.correctAnswer[0]
-                        : question?.correctAnswer}
+                      {(() => {
+                        if (!question) return '';
+                        const correctIds = Array.isArray(question.correctAnswer) ? question.correctAnswer : [question.correctAnswer];
+                        const opts = question.options?.filter((o) => correctIds.includes(o.id));
+                        if (opts?.length) {
+                          return opts.map((o) => getTranslatedString(o.label as unknown as Record<string, string>, currentLanguage)).join(', ');
+                        }
+                        return correctIds.join(', ');
+                      })()}
                     </p>
                   )}
                 </div>
