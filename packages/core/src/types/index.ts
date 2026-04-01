@@ -393,4 +393,8 @@ export interface Config {
   navigation?: { label: string | TranslatedString; path: string }[];
   customPages?: { path: string; componentPath: string }[];
   plugins?: Array<Plugin | (() => Plugin)>;
+  mdx?: {
+    syntaxHighlighter?: 'prism' | 'rehype-pretty-code';
+    theme?: any;
+  };
 }

@@ -1,27 +1,27 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import mdx from '@mdx-js/rollup';
-import remarkGfm from 'remark-gfm';
-import remarkFrontmatter from 'remark-frontmatter';
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+import { getMDXOptions } from '@learnmd/core';
+import learnMdConfig from './learnmd.config';
 import { resolve } from 'path';
 
-export default defineConfig({
-  base: '/LearnMD/',
-  plugins: [
-    {
-      enforce: 'pre',
-      ...mdx({
-        remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter],
-        providerImportSource: '@mdx-js/react'
-      })
+export default defineConfig(async () => {
+  const mdxOptions = await getMDXOptions(learnMdConfig);
+
+  return {
+    base: '/LearnMD/',
+    plugins: [
+      {
+        enforce: 'pre',
+        ...mdx(mdxOptions)
+      },
+      react()
+    ],
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, './src'),
+      },
+      dedupe: ['react', 'react-dom', 'react-router-dom', '@mdx-js/react', '@learnmd/core']
     },
-    react()
-  ],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, './src'),
-    },
-    dedupe: ['react', 'react-dom', 'react-router-dom', '@mdx-js/react', '@learnmd/core']
-  },
+  };
 });

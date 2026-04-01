@@ -254,3 +254,189 @@
 .prose th {
   @apply bg-[rgb(var(--bg-tertiary))] font-semibold;
 }
+
+/* Code Theme Variables */
+html {
+  --code-bg: #2d2d2d;
+  --code-fg: #ccc;
+  --code-comment: #999;
+  --code-punctuation: #ccc;
+  --code-tag: #e2777a;
+  --code-function-name: #6196cc;
+  --code-number: #f08d49;
+  --code-property: #f8c555;
+  --code-selector: #cc99cd;
+  --code-string: #7ec699;
+  --code-operator: #67cdcc;
+  --code-inserted: #98c379;
+}
+
+html[data-code-theme="light"] {
+  --code-bg: #f5f2f0;
+  --code-fg: #393a34;
+  --code-comment: #999;
+  --code-punctuation: #999;
+  --code-tag: #905;
+  --code-function-name: #dd4a68;
+  --code-number: #905;
+  --code-property: #905;
+  --code-selector: #690;
+  --code-string: #690;
+  --code-operator: #9a6e3a;
+  --code-inserted: #690;
+}
+
+html[data-code-theme="dark"] {
+  --code-bg: #2d2d2d;
+  --code-fg: #ccc;
+  --code-comment: #999;
+  --code-punctuation: #ccc;
+  --code-tag: #e2777a;
+  --code-function-name: #6196cc;
+  --code-number: #f08d49;
+  --code-property: #f8c555;
+  --code-selector: #cc99cd;
+  --code-string: #7ec699;
+  --code-operator: #67cdcc;
+  --code-inserted: #98c379;
+}
+
+/* Prism Syntax Highlighting Base Styles */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--code-fg);
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Remove default MDX prose pre background when language-* is present */
+.prose pre[class*="language-"] {
+  background: var(--code-bg);
+  padding: 0;
+  margin: 0;
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: var(--code-bg);
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+}
+
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--code-comment);
+}
+
+.token.punctuation {
+  color: var(--code-punctuation);
+}
+
+.token.tag,
+.token.attr-name,
+.token.namespace,
+.token.deleted {
+  color: var(--code-tag);
+}
+
+.token.function-name {
+  color: var(--code-function-name);
+}
+
+.token.boolean,
+.token.number,
+.token.function {
+  color: var(--code-number);
+}
+
+.token.property,
+.token.class-name,
+.token.constant,
+.token.symbol {
+  color: var(--code-property);
+}
+
+.token.selector,
+.token.important,
+.token.atrule,
+.token.keyword,
+.token.builtin {
+  color: var(--code-selector);
+}
+
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.variable {
+  color: var(--code-string);
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: var(--code-operator);
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.inserted {
+  color: var(--code-inserted);
+}
+
+/* Compatibilidad extra con rehype-pretty-code */
+figure[data-rehype-pretty-code-figure] {
+  margin: 0;
+}
+figure[data-rehype-pretty-code-figure] pre {
+  padding: 0;
+}
+figure[data-rehype-pretty-code-figure] code {
+  display: grid;
+}
+figure[data-rehype-pretty-code-figure] .line {
+  padding: 0 1rem;
+}
+html[data-code-theme="light"] figure[data-rehype-pretty-code-figure] span[data-theme="dark"] {
+  display: none;
+}
+html[data-code-theme="dark"] figure[data-rehype-pretty-code-figure] span[data-theme="light"] {
+  display: none;
+}

@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BasePlugin, PluginContext, UserProfile, CourseProgress } from '@learnmd/core';
 
-import { ClassicCertificate } from './templates/ClassicCertificate';
-import { ModernCertificate } from './templates/ModernCertificate';
+import { ClassicCertificate } from './templates/ClassicCertificate.js';
+import { ModernCertificate } from './templates/ModernCertificate.js';
 
 export interface CertificateTemplateProps {
   courseTitle: string;

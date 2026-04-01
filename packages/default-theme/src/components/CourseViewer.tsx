@@ -13,6 +13,7 @@ import { Title } from './Title';
 import { getTranslatedString, Course, useLearnMD } from '@learnmd/core';
 import { CourseOverview } from './CourseOverview';
 import { useI18n } from '../hooks/useI18n';
+import { defaultMDXComponents } from './mdx';
 
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -101,7 +102,7 @@ export function CourseViewer({ allLessons, coursesConfig = {} }: CourseViewerPro
 
   // Inject props into Quiz to handle completion
   const components = {
-    Callout,
+    ...defaultMDXComponents,
     Quiz: (props: any) => {
       const isCompleted = completedLessons.includes(currentSlug);
       // We don't have the exact score in completedLessons array, but we can assume 100 or fetch it

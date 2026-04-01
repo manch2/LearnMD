@@ -1,19 +1,11 @@
 /// <reference types="vite/client" />
 import { LearnMDProvider } from '@learnmd/core';
-import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, Callout, Quiz, VideoEmbed, Progress, LanguageSwitcher, Paragraph, Title, ContentPage } from '@learnmd/default-theme';
+import { CatalogViewer, CourseViewer, ProfileViewer, MainLayout, Header, ContentPage, defaultMDXComponents } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
 
-const components = {
-  Callout,
-  Quiz,
-  VideoEmbed,
-  Progress,
-  LanguageSwitcher,
-  Paragraph,
-  Title,
-};
+const components = defaultMDXComponents;
 
 // Glob all markdown files dynamically across all courses
 const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });

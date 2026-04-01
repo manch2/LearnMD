@@ -19,6 +19,9 @@ export * from './gamification/index.js';
 // Plugins
 export * from './plugins/index.js';
 
+// MDX
+export * from './mdx/index.js';
+
 // LearnMD Context
 export * from './components/LearnMDProvider.js';
 

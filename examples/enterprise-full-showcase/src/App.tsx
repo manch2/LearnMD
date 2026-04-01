@@ -6,28 +6,14 @@ import {
   ProfileViewer,
   MainLayout,
   Header,
-  Callout,
-  Quiz,
-  VideoEmbed,
-  Progress,
-  LanguageSwitcher,
-  Paragraph,
-  Title,
   ContentPage,
+  defaultMDXComponents,
 } from '@learnmd/default-theme';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MDXProvider } from '@mdx-js/react';
 import config from '../learnmd.config';
 
-const components = {
-  Callout,
-  Quiz,
-  VideoEmbed,
-  Progress,
-  LanguageSwitcher,
-  Paragraph,
-  Title,
-};
+const components = defaultMDXComponents;
 
 const lessonModules = import.meta.glob('../courses/*/lessons/*.mdx', { eager: true });
 const allLessons = Object.entries(lessonModules).map(([path, mod]) => {
